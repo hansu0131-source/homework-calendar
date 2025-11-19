@@ -66,13 +66,6 @@
         cursor: pointer;
     }
 
-    input[type="text"] {
-        border: 1px solid #ffc9dd;
-        border-radius: 8px;
-        padding: 6px;
-        width: 90%;
-    }
-
     textarea {
         width: 95%;
         min-height: 50px;
@@ -82,6 +75,15 @@
         resize: vertical;
         font-family: inherit;
     }
+
+    .nickbox {
+        border-radius: 8px;
+        border: 1px solid #ffc9dd;
+        padding: 6px;
+        width: 90%;
+        background: #fff5fa;
+    }
+
 </style>
 </head>
 
@@ -96,6 +98,7 @@
 </table>
 
 <script>
+/* Firebase 설정 */
 const firebaseConfig = {
     apiKey: "AIzaSyAHmLNi5VOuAE-gXnAg-fEfzylPZvzvfVo",
     authDomain: "daily-checklist-91e5a.firebaseapp.com",
@@ -109,21 +112,25 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
+/* Firestore 컬렉션 */
 const configRef = db.collection("config").doc("checklist");
 const spacesRef = db.collection("spaces");
 
 let fields = [];
 
+/* 항목 감시 */
 configRef.onSnapshot(doc => {
     if (!doc.exists) return;
     fields = doc.data().fields;
     renderTable();
 });
 
-spacesRef.onSnapshot(snapshot => {
+/* 행 감시 */
+spacesRef.onSnapshot(() => {
     renderTable();
 });
 
+/* 테이블 렌더 */
 function renderTable() {
     const thead = document.getElementById("thead");
     const tbody = document.getElementById("tbody");
@@ -147,15 +154,17 @@ function renderTable() {
             const row = document.createElement("tr");
 
             row.innerHTML = `
-                <td><input value="${data.nickname}" onchange="update('${doc.id}', 'nickname', this.value)"></td>
-                <td><input value="${data.userid}" onchange="update('${doc.id}', 'userid', this.value)"></td>
+                <td><input class="nickbox" value="${data.nickname}" readonly></td>
+                <td><input class="nickbox" value="${data.userid}" readonly></td>
+
                 ${fields.map(f => `
                     <td>
-                        <input type="checkbox" 
-                            ${checks[f] ? "checked" : ""} 
+                        <input type="checkbox"
+                            ${checks[f] ? "checked" : ""}
                             onchange="updateCheck('${doc.id}', '${f}', this.checked)">
                     </td>
                 `).join("")}
+
                 <td>
                     <textarea onchange="update('${doc.id}', 'memo', this.value)">${data.memo || ""}</textarea>
                 </td>
@@ -166,6 +175,8 @@ function renderTable() {
     });
 }
 
+
+/* 업데이트 함수 */
 function update(docID, field, value) {
     spacesRef.doc(docID).update({ [field]: value });
 }
