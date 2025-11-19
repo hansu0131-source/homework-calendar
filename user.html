@@ -408,13 +408,48 @@ function renderSpaces(){
         card.className = "space-card";
 
         card.innerHTML = `
-            <div class="space-header">
-                <div class="badge-nick">닉네임: ${item.nickname || ""}</div>
-                <div class="badge-id">
-                    <span>아이디: ${item.userid || ""}</span>
-                    <button type="button" onclick="copyUserId('${item.userid || ""}')">복사</button>
-                </div>
+    <div class="space-header" style="display:flex; justify-content:space-between; align-items:center;">
+        <div>
+            <div class="badge-nick">닉네임: ${item.nickname || ""}</div>
+            <div class="badge-id" style="margin-top:4px;">
+                <span>아이디: ${item.userid || ""}</span>
+                <button type="button" onclick="copyUserId('${item.userid || ""}')">복사</button>
             </div>
+        </div>
+
+        <!-- ★★★ 유저용 삭제 버튼 ★★★ -->
+        <button 
+            type="button" 
+            onclick="deleteSpace('${item.id}')"
+            style="
+                background:#ffb3d4;
+                color:white;
+                font-size:11px;
+                padding:5px 10px;
+                border-radius:999px;
+                border:none;
+            ">
+            삭제
+        </button>
+    </div>
+
+    <div class="space-fields">
+        ${fields.map(name => `
+            <div class="field-chip">
+                <input type="checkbox"
+                       ${checks[name] ? "checked" : ""}
+                       onchange="updateSpaceCheck('${item.id}','${name}',this.checked)">
+                <span>${name}</span>
+            </div>
+        `).join("")}
+    </div>
+
+    <div class="space-memo">
+        <div class="input-small-label">메모</div>
+        <textarea
+            onchange="updateSpaceMemo('${item.id}',this.value)">${item.memo || ""}</textarea>
+    </div>
+`;
             <div class="space-fields">
                 ${fields.map(name => `
                     <div class="field-chip">
@@ -434,6 +469,11 @@ function renderSpaces(){
 
         container.appendChild(card);
     });
+}
+function deleteSpace(docId){
+    if(!confirm("이 숙제를 완료하셨나요?")) return;
+    spacesRef.doc(docId).delete()
+        .catch(()=>alert("삭제 중 오류가 발생했어요."));
 }
 </script>
 
