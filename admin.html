@@ -296,7 +296,33 @@
             max-width: 640px;
             margin: 0 auto;
         }
-    }
+    }/* --- 모바일 카드 안 요소들이 넘치지 않도록 제어 --- */
+.space-header,
+.badge-nick,
+.badge-id {
+    max-width: 100%;
+    overflow: hidden;
+}
+
+.badge-id span {
+    max-width: 130px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* 닉네임 입력창이 자동으로 줄어들도록 */
+.badge-nick input {
+    width: 100% !important;
+    max-width: 140px;
+    min-width: 50px;
+}
+
+/* 카드 내부에서 강제로 줄바꿈 허용 */
+.space-card {
+    word-break: break-all;
+    overflow-wrap: break-word;
+}
 </style>
 </head>
 
