@@ -13,142 +13,107 @@
     * { box-sizing:border-box; }
 
     body {
-        background:#FFEAF4;
+        background:#FFEFF7;
         font-family:-apple-system,BlinkMacSystemFont,"Pretendard",system-ui,sans-serif;
-        margin:0; padding:16px; color:#633f52;
+        margin:0; padding:16px; color:#4b2e3d;
     }
 
     h1 {
-        text-align:center; color:#ff66a6;
-        margin:0 0 8px; font-size:22px;
+        text-align:center; color:#ff6fa8;
+        margin:0 0 6px 0; font-size:22px;
     }
 
     .tag {
-        display:inline-block;
-        background:#ff9ac5;
-        color:white;
-        padding:4px 12px;
-        border-radius:999px;
-        font-size:12px;
-        margin-left:50%;
-        transform:translateX(-50%);
+        text-align:center; font-size:12px; color:#fff;
+        background:#ff9ac5; padding:4px 12px;
+        border-radius:999px; display:inline-block;
+        margin-left:50%; transform:translateX(-50%);
         margin-bottom:18px;
     }
 
     .card {
-        background:white;
-        border-radius:16px;
-        padding:12px;
-        margin-bottom:18px;
-        box-shadow:0 3px 12px rgba(255,135,180,0.25);
+        background:#ffffff; padding:12px;
+        border-radius:14px; box-shadow:0 3px 12px rgba(255,140,170,0.22);
+        margin-bottom:16px;
     }
 
     .section-title {
         font-size:15px; font-weight:700;
-        margin-bottom:10px; color:#ff66a6;
-        display:flex; align-items:center; gap:6px;
+        margin-bottom:8px; color:#ff6fa8;
     }
 
     textarea {
         width:100%; min-height:70px;
-        border:1px solid #ffc7dd;
-        border-radius:10px;
-        padding:8px;
-        font-size:13px;
-        resize:vertical;
-        background:#fff7fb;
+        border-radius:10px; border:1px solid #ffc9dd;
+        padding:8px; resize:vertical;
+        font-family:inherit; font-size:13px;
+        background:#fffafd;
     }
 
-    input[type="number"] {
-        width:100%; padding:6px;
-        border:1px solid #ffc7dd;
-        border-radius:8px;
-        font-size:12px;
-        background:#fff7fb;
-        text-align:center;
+    button {
+        padding:8px 14px; border:none;
+        border-radius:999px; background:#ff6fa8;
+        color:white; font-weight:600;
+        cursor:pointer; font-size:13px;
     }
 
-    .summary-table {
-        width:100%; border-collapse:collapse;
-        margin-top:6px; font-size:12px;
-    }
+    button:active { transform:translateY(1px); }
 
-    .summary-table th, .summary-table td {
-        border:1px solid #ffd3e4;
-        padding:4px 6px; text-align:center;
-        white-space:nowrap;
-    }
-
-    .summary-table th {
-        background:#ffd8e9; color:#884b6a;
-        font-weight:600;
-    }
-
-    .label-top { font-size:12px; color:#8e5c74; margin-bottom:4px; }
-
+    /* Space Card */
     .space-card {
-        padding:12px;
-        background:white;
-        border-radius:14px;
-        border:1px solid #ffd3e4;
-        box-shadow:0 2px 6px rgba(0,0,0,0.06);
-        margin-bottom:12px;
+        margin-bottom:12px; padding:12px;
+        border-radius:12px; background:#fffdfb;
+        border:1px solid #ffd3e3;
+        box-shadow:0 2px 6px rgba(0,0,0,0.03);
     }
+
+    .space-header {
+        display:flex; justify-content:space-between;
+        align-items:center; margin-bottom:6px; gap:6px;
+    }
+
+    .space-main { display:flex; flex-direction:column; gap:6px; }
 
     .badge-nick {
-        display:inline-block;
-        padding:6px 12px;
-        background:#ffd8e9;
-        border-radius:999px;
-        font-size:14px; font-weight:600;
-        color:#a4476f;
-        margin-bottom:8px;
+        font-size:13px; font-weight:600;
+        padding:4px 10px; border-radius:999px;
+        background:#ffdbea; color:#af5579;
     }
 
     .badge-id {
-        display:inline-flex;
-        align-items:center;
-        gap:6px;
-        padding:6px 10px;
-        background:#ffeef4;
-        border-radius:999px;
-        font-size:12px;
-        margin-bottom:10px;
-        color:#8a4d6b;
+        font-size:11px; padding:4px 8px;
+        border-radius:999px; background:#fff2f7;
+        color:#b05a7d; display:inline-flex;
+        align-items:center; gap:4px;
     }
 
     .badge-id button {
-        padding:3px 8px;
-        border:none;
-        font-size:11px;
-        background:#ff9ac5;
-        color:white;
-        border-radius:999px;
+        padding:2px 6px; font-size:10px;
+        border-radius:999px; background:#ff8fb8; color:#fff;
     }
 
-    .space-fields {
-        display:flex;
-        flex-wrap:wrap;
-        gap:8px;
-        margin-bottom:10px;
-    }
+    .space-fields { display:flex; flex-wrap:wrap; gap:6px; }
 
     .field-chip {
-        display:inline-flex;
-        align-items:center;
-        gap:4px;
-        padding:4px 8px;
-        background:#ffeef4;
-        border-radius:999px;
-        font-size:12px;
-        color:#8f4a6d;
+        display:inline-flex; align-items:center; gap:4px;
+        padding:4px 8px; border-radius:999px;
+        background:#ffe6f0; font-size:11px;
     }
 
     .field-chip input[type="checkbox"] {
-        width:18px; height:18px; accent-color:#ff66a6;
+        width:16px; height:16px; accent-color:#ff6fa8; margin:0;
     }
 
-    @media (min-width:720px){
+    .input-small-label {
+        font-size:12px; color:#b06b8d;
+        margin:6px 0 4px 0;
+    }
+
+    .space-memo textarea {
+        min-height:50px; font-size:12px;
+    }
+
+    @media(min-width:720px){
         body{ max-width:640px; margin:0 auto; }
     }
 </style>
@@ -159,69 +124,28 @@
 <h1>🐰 낭 - 숙제 체크</h1>
 <div class="tag">사용자 ID: 낭 (핑크)</div>
 
-<!-- 🩷 오늘의 한마디 -->
+<!-- 오늘의 한마디 -->
 <div class="card">
     <div class="section-title">📌 오늘의 한마디</div>
 
-    <div class="label-top">🥕 관리자 → 사용자의 메시지</div>
+    <div class="input-small-label">🥕 관리자 → 사용자</div>
     <div id="adminMessageBox"
-         style="white-space:pre-line; border-radius:10px; border:1px solid #ffcddf;
-         background:#fff3f8; padding:10px; font-size:13px; min-height:50px;">
-        (아직 관리자 메시지가 없습니다)
+         style="white-space:pre-line; padding:8px; border-radius:10px; border:1px solid #ffcddd; background:#fff8fb; font-size:13px;">
+         (관리자 메시지가 아직 없습니다)
     </div>
 
-    <div style="height:12px;"></div>
-
-    <div class="label-top">🐰 사용자 → 관리자</div>
-    <textarea id="userMessage" placeholder="오늘 하고 싶은 말을 적어주세요"></textarea>
-
+    <div class="input-small-label" style="margin-top:12px;">🐰 사용자 → 관리자</div>
+    <textarea id="userMessage" placeholder="오늘 하고 싶은 말 적기"></textarea>
     <div style="margin-top:6px; text-align:right;">
-        <button onclick="saveUserMessage()">저장</button>
+        <button onclick="saveUserMessage()">사용자 메시지 저장</button>
     </div>
 </div>
 
-<!-- 🌸 오늘 요약 -->
+<!-- 숙제 카드 목록 -->
 <div class="card">
-    <div class="section-title">📊 오늘의 숙제 요약 (읽기 전용)</div>
-    <table class="summary-table">
-        <tr>
-            <th></th><th>역팬</th><th>방셀</th><th>숙제</th><th>사진</th><th>움짤</th>
-        </tr>
-        <tr>
-            <td style="background:#fff3f8;">오늘</td>
-            <td id="today-역팬">0</td>
-            <td id="today-방셀">0</td>
-            <td id="today-숙제">0</td>
-            <td id="today-사진">0</td>
-            <td id="today-움짤">0</td>
-        </tr>
-    </table>
-</div>
-
-<!-- 🌸 누적 요약 -->
-<div class="card">
-    <div class="section-title">📊 누적 숙제 요약 (읽기 전용)</div>
-    <table class="summary-table">
-        <tr>
-            <th></th><th>역팬</th><th>방셀</th><th>숙제</th><th>사진</th><th>움짤</th>
-        </tr>
-        <tr>
-            <td style="background:#fff3f8;">누적</td>
-            <td id="total-역팬">0</td>
-            <td id="total-방셀">0</td>
-            <td id="total-숙제">0</td>
-            <td id="total-사진">0</td>
-            <td id="total-움짤">0</td>
-        </tr>
-    </table>
-</div>
-
-<!-- 🌸 숙제 카드 -->
-<div class="card">
-    <div class="section-title">📦 숙제 카드</div>
+    <div class="section-title">📦 내 숙제 체크</div>
     <div id="spacesContainer"></div>
 </div>
-
 
 <script>
 /* Firebase 초기화 */
@@ -234,123 +158,114 @@ const firebaseConfig = {
     appId:"1:66394691958:web:cf91f295456a2e10d18257",
     measurementId:"G-87WK4N4EGH"
 };
+
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
 const todayMessagesRef = db.collection("today").doc("messages");
-const summaryTodayRef  = db.collection("summary").doc("today");
-const summaryTotalRef  = db.collection("summary").doc("total");
-const configRef        = db.collection("config").doc("checklist");
-const spacesRef        = db.collection("spaces");
+const configRef = db.collection("config").doc("checklist");
+const spacesRef = db.collection("spaces");
 
+/* 상태 */
 let fields = [];
 let spacesData = [];
 
-/* 관리자 메시지 불러오기 */
+/* 관리자 메시지 */
 todayMessagesRef.onSnapshot(doc=>{
-    if(!doc.exists) return;
-    const data = doc.data();
-    document.getElementById("adminMessageBox").innerText =
-        data.adminMessage || "(아직 관리자 메시지가 없습니다)";
-    document.getElementById("userMessage").value =
-        data.userMessage || "";
+    if(doc.exists){
+        document.getElementById("adminMessageBox").innerText =
+            doc.data().adminMessage || "(관리자 메시지가 아직 없습니다)";
+        document.getElementById("userMessage").value =
+            doc.data().userMessage || "";
+    }
 });
 
 /* 사용자 메시지 저장 */
 function saveUserMessage(){
     const msg = document.getElementById("userMessage").value;
-    todayMessagesRef.set({ userMessage:msg },{merge:true});
-    alert("메시지 저장 완료!");
+    todayMessagesRef.set({
+        userMessage: msg,
+        date: new Date().toISOString()
+    },{merge:true});
+    alert("메시지를 전송했어요!");
 }
 
-/* 오늘 요약 */
-summaryTodayRef.onSnapshot(doc=>{
-    if(!doc.exists) return;
-    const data = doc.data();
-    ["역팬","방셀","숙제","사진","움짤"].forEach(a=>{
-        document.getElementById("today-"+a).innerText = data[a] ?? 0;
-    });
-});
-
-/* 누적 요약 */
-summaryTotalRef.onSnapshot(doc=>{
-    if(!doc.exists) return;
-    const data = doc.data();
-    ["역팬","방셀","숙제","사진","움짤"].forEach(a=>{
-        document.getElementById("total-"+a).innerText = data[a] ?? 0;
-    });
-});
-
-/* 항목 */
+/* 항목 로드 */
 configRef.onSnapshot(doc=>{
-    fields = doc.data().fields || [];
-    renderSpaces();
+    if(doc.exists){
+        fields = doc.data().fields || [];
+        renderSpaces();
+    }
 });
 
-/* spaces */
+/* 유저 대상 로드 */
 spacesRef.onSnapshot(snapshot=>{
     spacesData = snapshot.docs.map(d=>({ id:d.id, ...d.data() }));
     renderSpaces();
 });
 
-/* 체크 업데이트 */
-function updateCheck(id, field, value){
-    spacesRef.doc(id).update({
-        ["checks."+field]: value
+/* 체크업데이트 */
+function updateCheck(docId, field, val){
+    spacesRef.doc(docId).update({
+        ["checks."+field]: val
     });
 }
 
 /* 메모 업데이트 */
-function updateMemo(id, value){
-    spacesRef.doc(id).update({ memo:value });
+function updateMemo(docId, val){
+    spacesRef.doc(docId).update({ memo:val });
 }
 
-/* ID 복사 */
-function copyUserId(v){
-    navigator.clipboard.writeText(v).then(()=>{
-        alert("아이디 복사됨: "+v);
-    });
+/* ID 복사 기능 */
+function copyUserId(value){
+    if(!value) return;
+    navigator.clipboard.writeText(value)
+        .then(()=>alert("아이디 복사됨: "+value));
 }
 
 /* 카드 렌더 */
 function renderSpaces(){
-    const wrap = document.getElementById("spacesContainer");
-    wrap.innerHTML="";
+    const container = document.getElementById("spacesContainer");
+    container.innerHTML = "";
 
     if(!spacesData.length){
-        wrap.innerHTML = '<div style="font-size:12px; color:#9c6982;">등록된 숙제 대상이 없습니다.</div>';
+        container.innerHTML = "<div>아직 추가된 숙제 대상이 없습니다.</div>";
         return;
     }
 
     spacesData.forEach(item=>{
         const checks = item.checks || {};
 
-        wrap.innerHTML += `
-            <div class="space-card">
+        const card = document.createElement("div");
+        card.className = "space-card";
 
-                <div class="badge-nick">닉네임: ${item.nickname}</div>
-
-                <div class="badge-id">
-                    <span>아이디: ${item.userid}</span>
-                    <button onclick="copyUserId('${item.userid}')">복사</button>
+        card.innerHTML = `
+            <div class="space-header">
+                <div class="space-main">
+                    <div class="badge-nick">닉네임: ${item.nickname}</div>
+                    <div class="badge-id">
+                        <span>아이디: ${item.userid}</span>
+                        <button onclick="copyUserId('${item.userid}')">복사</button>
+                    </div>
                 </div>
-
-                <div class="space-fields">
-                    ${fields.map(f=>`
-                        <div class="field-chip">
-                            <input type="checkbox"
-                                ${checks[f]?"checked":""}
-                                onchange="updateCheck('${item.id}','${f}',this.checked)">
-                            <span>${f}</span>
-                        </div>
-                    `).join("")}
-                </div>
-
-                <div class="label-top">메모</div>
-                <textarea onchange="updateMemo('${item.id}',this.value)">${item.memo||""}</textarea>
-
             </div>
+
+            <div class="space-fields">
+                ${fields.map(f=>`
+                    <div class="field-chip">
+                        <input type="checkbox"
+                             ${checks[f]?"checked":""}
+                             onchange="updateCheck('${item.id}','${f}',this.checked)">
+                        <span>${f}</span>
+                    </div>
+                `).join("")}
+            </div>
+
+            <div class="input-small-label">메모</div>
+            <textarea onchange="updateMemo('${item.id}',this.value)">${item.memo||""}</textarea>
         `;
+
+        container.appendChild(card);
     });
 }
 </script>
