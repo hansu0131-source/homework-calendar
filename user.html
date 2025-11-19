@@ -11,7 +11,7 @@
 
 <style>
     body {
-        background: linear-gradient(180deg, #ffe0f0 0%, #fff5fb 100%);
+        background: #FFE9F4; /* 단색 핑크 */
         font-family: Pretendard, sans-serif;
         margin: 0;
         padding: 20px;
@@ -36,54 +36,69 @@
         margin-bottom: 18px;
     }
 
+    .box {
+        background: white;
+        padding: 12px;
+        border-radius: 12px;
+        box-shadow: 0 3px 12px rgba(255,140,170,0.25);
+        margin-bottom: 20px;
+    }
+
+    .section-title {
+        font-size: 16px;
+        font-weight: 700;
+        color: #ff6fa8;
+        margin-bottom: 6px;
+    }
+
+    textarea {
+        width: 100%;
+        min-height: 70px;
+        border-radius: 8px;
+        border: 1px solid #ffc9dd;
+        padding: 10px;
+        resize: vertical;
+        background: #fff;
+        font-family: inherit;
+    }
+
     table {
         width: 100%;
         border-collapse: collapse;
-        background: #ffffff;
+        background: white;
         border-radius: 14px;
         overflow: hidden;
-        box-shadow: 0 3px 12px rgba(255, 140, 170, 0.25);
+        box-shadow: 0 3px 12px rgba(255,140,170,0.25);
     }
 
     th {
         background: #ff9ac5;
-        padding: 10px;
-        color: #fff;
+        padding: 8px;
+        color: white;
         font-weight: 600;
         text-align: center;
     }
 
     td {
         border-bottom: 1px solid #ffc9dd;
-        padding: 10px;
+        padding: 6px;
         text-align: center;
     }
 
     input[type="checkbox"] {
-        width: 22px;
-        height: 22px;
+        width: 18px;
+        height: 18px;
         accent-color: #ff6fa8;
-        cursor: pointer;
     }
 
-    textarea {
-        width: 95%;
-        min-height: 50px;
-        border: 1px solid #ffc9dd;
-        border-radius: 8px;
-        padding: 6px;
-        resize: vertical;
-        font-family: inherit;
-    }
-
-    .nickbox {
+    .readonly-box {
         border-radius: 8px;
         border: 1px solid #ffc9dd;
         padding: 6px;
+        background: #fff6fb;
         width: 90%;
-        background: #fff5fa;
+        text-align: center;
     }
-
 </style>
 </head>
 
@@ -92,13 +107,33 @@
 <h1>🐰 낭 - 숙제 체크</h1>
 <div class="tag">사용자 ID: 낭 (핑크)</div>
 
+<!-- 🥕 관리자 → 사용자 메시지 -->
+<div class="box">
+    <div class="section-title">🥕 관리자 한마디</div>
+    <div id="adminMessageBox" style="white-space:pre-line; padding:10px; background:#fff0f7; border-radius:8px; border:1px solid #ffc9dd;">
+        (아직 관리자가 메시지를 남기지 않았습니다)
+    </div>
+</div>
+
+<!-- 🐰 사용자 → 관리자 메시지 -->
+<div class="box">
+    <div class="section-title">🐰 오늘의 한마디 (사용자가 관리자에게)</div>
+    <textarea id="userMessage" placeholder="관리자에게 남기고 싶은 말"></textarea>
+    <button onclick="saveUserMessage()" style="
+        margin-top:10px; padding:8px 14px;
+        border:none; border-radius:8px;
+        background:#ff6fa8; color:white; font-weight:600; cursor:pointer;
+    ">저장</button>
+</div>
+
+<!-- 체크리스트 테이블 -->
 <table id="table">
     <thead id="thead"></thead>
     <tbody id="tbody"></tbody>
 </table>
 
 <script>
-/* Firebase 설정 */
+/* Firebase Setup */
 const firebaseConfig = {
     apiKey: "AIzaSyAHmLNi5VOuAE-gXnAg-fEfzylPZvzvfVo",
     authDomain: "daily-checklist-91e5a.firebaseapp.com",
@@ -108,29 +143,43 @@ const firebaseConfig = {
     appId: "1:66394691958:web:cf91f295456a2e10d18257",
     measurementId: "G-87WK4N4EGH"
 };
-
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-/* Firestore 컬렉션 */
 const configRef = db.collection("config").doc("checklist");
 const spacesRef = db.collection("spaces");
+const todayRef = db.collection("today").doc("messages");
 
 let fields = [];
 
-/* 항목 감시 */
+/* 관리자 메시지 실시간 반영 */
+todayRef.onSnapshot(doc => {
+    if (doc.exists) {
+        document.getElementById("adminMessageBox").innerText =
+            doc.data().adminMessage || "(아직 관리자가 메시지를 남기지 않았습니다)";
+    }
+});
+
+/* 사용자 메시지 저장 */
+function saveUserMessage() {
+    const msg = document.getElementById("userMessage").value;
+    todayRef.set(
+        { userMessage: msg, date: new Date().toISOString() },
+        { merge: true }
+    );
+}
+
+/* 항목 실시간 */
 configRef.onSnapshot(doc => {
     if (!doc.exists) return;
     fields = doc.data().fields;
     renderTable();
 });
 
-/* 행 감시 */
-spacesRef.onSnapshot(() => {
-    renderTable();
-});
+/* 행 실시간 */
+spacesRef.onSnapshot(() => renderTable());
 
-/* 테이블 렌더 */
+/* 테이블 렌더링 */
 function renderTable() {
     const thead = document.getElementById("thead");
     const tbody = document.getElementById("tbody");
@@ -154,8 +203,8 @@ function renderTable() {
             const row = document.createElement("tr");
 
             row.innerHTML = `
-                <td><input class="nickbox" value="${data.nickname}" readonly></td>
-                <td><input class="nickbox" value="${data.userid}" readonly></td>
+                <td><div class="readonly-box">${data.nickname}</div></td>
+                <td><div class="readonly-box">${data.userid}</div></td>
 
                 ${fields.map(f => `
                     <td>
@@ -165,9 +214,7 @@ function renderTable() {
                     </td>
                 `).join("")}
 
-                <td>
-                    <textarea onchange="update('${doc.id}', 'memo', this.value)">${data.memo || ""}</textarea>
-                </td>
+                <td><textarea onchange="update('${doc.id}', 'memo', this.value)">${data.memo || ""}</textarea></td>
             `;
 
             tbody.appendChild(row);
@@ -175,16 +222,14 @@ function renderTable() {
     });
 }
 
-
-/* 업데이트 함수 */
-function update(docID, field, value) {
-    spacesRef.doc(docID).update({ [field]: value });
+/* 메모 업데이트 */
+function update(id, field, value) {
+    spacesRef.doc(id).update({ [field]: value });
 }
 
-function updateCheck(docID, field, value) {
-    spacesRef.doc(docID).update({
-        [`checks.${field}`]: value
-    });
+/* 체크박스 업데이트 */
+function updateCheck(id, field, value) {
+    spacesRef.doc(id).update({ [`checks.${field}`]: value });
 }
 </script>
 
