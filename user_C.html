@@ -170,3 +170,88 @@ const spacesRef = db.collection("spaces");
 
 let fields=[];
 let spacesData=[];
+    /* -------- 오늘의 한마디 -------- */
+msgRef.onSnapshot(doc=>{
+    const box=document.getElementById("adminMessageBox");
+    if(doc.exists){
+        const msg=doc.data().adminMessage || "(아직 메시지 없음)";
+        box.textContent = msg;
+    }
+});
+
+/* -------- 요약 실시간 -------- */
+summaryTodayRef.onSnapshot(doc=>{
+    const sum = doc.exists ?
+        Object.values(doc.data()).filter(v=>typeof v==="number").reduce((a,b)=>a+b,0) : 0;
+    document.getElementById("todaySum").textContent = sum+" 개";
+});
+
+summaryTotalRef.onSnapshot(doc=>{
+    const sum = doc.exists ?
+        Object.values(doc.data()).filter(v=>typeof v==="number").reduce((a,b)=>a+b,0) : 0;
+    document.getElementById("totalSum").textContent = sum+" 개";
+});
+
+/* -------- 항목 로드 -------- */
+configRef.onSnapshot(doc=>{
+    fields = doc.exists ? doc.data().fields || [] : [];
+    renderSpaces();
+});
+
+/* -------- 대상 로드 -------- */
+spacesRef.onSnapshot(snap=>{
+    spacesData = snap.docs.map(d=>({ id:d.id, ...d.data() }));
+    renderSpaces();
+});
+
+/* -------- 체크 반영 -------- */
+function updateCheck(id,name,value){
+    spacesRef.doc(id).update({
+        ["checks."+name]:value
+    });
+}
+
+/* -------- 삭제 -------- */
+function deleteCard(id){
+    if(!confirm("이 숙제 카드를 삭제할까요?")) return;
+    spacesRef.doc(id).delete();
+}
+
+/* -------- 카드 렌더링 -------- */
+function renderSpaces(){
+    const box=document.getElementById("spacesContainer");
+    box.innerHTML="";
+
+    spacesData.forEach(item=>{
+        const checks = item.checks || {};
+
+        let fieldHTML = fields.map(name => `
+            <div class="field-chip">
+                <input type="checkbox"
+                    ${checks[name] ? "checked" : ""}
+                    onchange="updateCheck('${item.id}','${name}',this.checked)">
+                <span>${name}</span>
+            </div>
+        `).join("");
+
+        box.innerHTML += `
+            <div class="space-card">
+                <div class="nick">🐰 ${item.nickname}</div>
+                <div class="userid">@ ${item.userid}</div>
+
+                <div class="fields">
+                    ${fieldHTML}
+                </div>
+
+                <button class="delete-btn" onclick="deleteCard('${item.id}')">
+                    <span>🐰</span> 숙제 완료!
+                </button>
+            </div>
+        `;
+    });
+}
+</script>
+
+</body>
+</html>
+
