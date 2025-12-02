@@ -437,9 +437,11 @@ function addSpace(){
 }
 
 /* 카드 목록 */
-spacesRef.orderBy("updatedDate","desc").onSnapshot(ss=>{
+// 1단계: updatedAt 기준으로 임시 조회 (옛 데이터도 받아오기 위함)
+spacesRef.orderBy("updatedAt","desc").onSnapshot(ss=>{
     spacesData = ss.docs.map(d=>({id:d.id, ...d.data()}));
         // 🔥 기존 카드 자동 복구
+    // 2단계: updatedDate 자동 생성
     spacesData.forEach(item => {
         if(!item.updatedDate){
             const converted = (item.updatedAt || new Date().toISOString()).slice(0,10);
@@ -449,25 +451,17 @@ spacesRef.orderBy("updatedDate","desc").onSnapshot(ss=>{
             item.updatedDate = converted;
         }
     });
+    // 3단계: updatedDate 기준 정렬
+    spacesData.sort((a,b) => b.updatedDate.localeCompare(a.updatedDate));
 
     renderSpaces();
 });
-
 function renderSpaces(){
     const box=document.getElementById("spacesContainer");
     box.innerHTML="";
 
     const todayStr = new Date().toISOString().slice(0,10);
 
-    spacesData.forEach(item=>{
-
-        /* 기존 카드 자동 보정 */
-        if(!item.updatedDate && item.updatedAt){
-            item.updatedDate = item.updatedAt.slice(0,10);
-        }
-        if(!item.updatedDate){
-            item.updatedDate = todayStr;
-        }
 
         const isToday = item.updatedDate === todayStr;
 
