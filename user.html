@@ -374,7 +374,7 @@ configRef.onSnapshot(doc=>{
    (관리자와 동일한 spaces 컬렉션 사용)
 =========================== */
 spacesRef.orderBy("updatedDate","desc").onSnapshot(ss=>{
-    spacesData = ss.docs.map(d=>({id:d.id, ...d.data()}));
+    spacesData = ss.docs.map(d=>({id:d.id,...d.data()}));
     renderSpaces();
 });
 
@@ -457,12 +457,14 @@ function updateCount(id,f,val){
         updatedDate: new Date().toISOString().slice(0,10)
     });
 }
+
 function updateMemo(id,val){
     spacesRef.doc(id).update({
         memo: val || "",
         updatedDate: new Date().toISOString().slice(0,10)
     });
 }
+
 function updateBalloon(id,val){
     spacesRef.doc(id).update({
         balloon: val || "",
