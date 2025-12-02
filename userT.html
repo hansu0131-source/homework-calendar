@@ -345,9 +345,11 @@ configRef.onSnapshot(doc=>{
 });
 
 /* 카드 로드 */
-spacesRef.orderBy("updatedDate","desc").onSnapshot(ss=>{
-    spacesData = ss.docs.map(d=>({id:d.id,...d.data()}));
-        // 🔥 기존 카드 자동 복구
+// 1단계: updatedAt 기준으로 임시 조회 (옛 카드도 받아오기 위함)
+spacesRef.orderBy("updatedAt","desc").onSnapshot(ss=>{
+    spacesData = ss.docs.map(d=>({id:d.id, ...d.data()}));
+
+    // 2단계: updatedDate 자동 생성 (기존 카드 보정)
     spacesData.forEach(item => {
         if(!item.updatedDate){
             const converted = (item.updatedAt || new Date().toISOString()).slice(0,10);
@@ -357,6 +359,9 @@ spacesRef.orderBy("updatedDate","desc").onSnapshot(ss=>{
             item.updatedDate = converted;
         }
     });
+
+    // 3단계: updatedDate 기준으로 정렬 (UI에 표시되는 정렬)
+    spacesData.sort((a,b)=> b.updatedDate.localeCompare(a.updatedDate));
 
     renderSpaces();
 });
@@ -372,16 +377,6 @@ function renderSpaces(){
     }
 
     const todayStr = new Date().toISOString().slice(0,10);
-
-    spacesData.forEach(item=>{
-
-        /* 기존 카드 보정 */
-        if(!item.updatedDate && item.updatedAt){
-            item.updatedDate = item.updatedAt.slice(0,10);
-        }
-        if(!item.updatedDate){
-            item.updatedDate = todayStr;
-        }
 
         const isToday = item.updatedDate === todayStr;
 
