@@ -2,12 +2,12 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<title>C9 숙제 캘린더 (SOOP 버전)</title>
+<title>C9 숙제 캘린더 (등록 기능 포함)</title>
 <style>
   /* --- 기본 스타일 --- */
   body { font-family: 'Pretendard', 'Malgun Gothic', sans-serif; background-color: #f0f2f5; display: flex; justify-content: center; padding: 20px; margin: 0; }
   .container { width: 100%; max-width: 600px; background: white; padding: 25px; border-radius: 15px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
-  input, button, textarea { font-family: inherit; }
+  input, button, textarea { font-family: inherit; box-sizing: border-box; }
 
   /* --- 캘린더 헤더 & 그리드 --- */
   .calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
@@ -35,9 +35,15 @@
 
   /* --- 1단계: 닉네임 리스트 --- */
   #nickname-view { display: none; border-top: 2px solid #eee; padding-top: 20px; animation: fadeIn 0.3s; }
-  .section-title { font-size: 1rem; color: #555; margin-bottom: 10px; font-weight: bold; }
+  .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+  .section-title { font-size: 1rem; color: #555; font-weight: bold; margin: 0; }
   
-  .nick-list { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .btn-add-show {
+    background-color: #333; color: white; border: none; padding: 6px 12px;
+    border-radius: 6px; font-size: 12px; cursor: pointer;
+  }
+
+  .nick-list { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; }
   .nick-btn {
     background: #fff; border: 2px solid #ddd; border-radius: 10px; padding: 15px 5px;
     font-size: 14px; font-weight: bold; color: #666; cursor: pointer; transition: 0.2s;
@@ -46,12 +52,31 @@
   .nick-btn:hover { transform: scale(1.02); }
   .nick-btn.active { border-color: #333; box-shadow: 0 0 0 2px #ddd; }
 
-  /* 상태별 닉네임 버튼 색상 */
-  .status-todo { border-color: #ddd; color: #666; } /* 대기 */
-  .status-partial { background-color: #fff8e1; border-color: #ffb74d; color: #f57c00; } /* 일부완료 */
-  .status-done { background-color: #e8f5e9; border-color: #81c784; color: #2e7d32; } /* 완료 */
+  /* 상태별 색상 */
+  .status-todo { border-color: #ddd; color: #666; }
+  .status-partial { background-color: #fff8e1; border-color: #ffb74d; color: #f57c00; }
+  .status-done { background-color: #e8f5e9; border-color: #81c784; color: #2e7d32; }
 
-  /* --- 2단계: 상세 정보 카드 --- */
+  /* --- [신규] 숙제 추가 폼 --- */
+  #add-form { 
+    display: none; background: #fff; border: 2px dashed #bbb; padding: 15px; border-radius: 10px; margin-bottom: 20px; 
+    animation: slideUp 0.2s;
+  }
+  .form-row { display: flex; gap: 10px; margin-bottom: 10px; }
+  .form-group { flex: 1; }
+  .form-label { font-size: 12px; color: #777; margin-bottom: 4px; display: block; }
+  .form-input { 
+    width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; 
+  }
+  .form-input:focus { border-color: #00a1ff; outline: none; }
+  
+  .btn-register {
+    width: 100%; background-color: #00a1ff; color: white; border: none; padding: 10px;
+    border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 5px;
+  }
+  .btn-register:hover { background-color: #008ecc; }
+
+  /* --- 2단계: 상세 정보 카드 (기존 유지) --- */
   #detail-card { display: none; margin-top: 20px; background: #f9f9f9; border-radius: 12px; padding: 20px; border: 1px solid #eee; animation: slideUp 0.3s; }
   
   .card-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 15px; }
@@ -69,7 +94,7 @@
   .task-label { font-size: 0.9rem; font-weight: bold; margin-bottom: 8px; display: block; color: #555; }
   .task-content { font-size: 1rem; line-height: 1.4; color: #333; margin-bottom: 10px; }
 
-  /* 진행상태 컨트롤 */
+  /* 진행상태 및 메모 */
   .status-control { margin-top: 15px; border-top: 1px solid #eee; padding-top: 15px; }
   .status-options { display: flex; gap: 5px; margin-bottom: 10px; }
   .status-radio { display: none; }
@@ -77,23 +102,18 @@
     flex: 1; text-align: center; padding: 8px; border-radius: 6px; cursor: pointer;
     font-size: 13px; font-weight: bold; color: #777; background: #eee; border: 1px solid #ddd;
   }
-  /* 라디오 버튼 선택 시 스타일 */
+  
   input[type="radio"]:checked + .status-label.lbl-todo { background: #9e9e9e; color: white; border-color: #9e9e9e; }
   input[type="radio"]:checked + .status-label.lbl-partial { background: #ff9800; color: white; border-color: #ff9800; }
   input[type="radio"]:checked + .status-label.lbl-done { background: #4caf50; color: white; border-color: #4caf50; }
 
-  /* 메모 입력창 */
   .memo-input {
     width: 100%; box-sizing: border-box; padding: 10px; border: 1px solid #ddd; border-radius: 6px;
     font-size: 14px; resize: vertical; min-height: 60px; margin-bottom: 10px;
   }
 
-  /* 버튼 그룹 */
   .btn-group { display: flex; gap: 10px; }
-  .btn-save {
-    flex: 1; background-color: #333; color: white; border: none; padding: 12px;
-    border-radius: 8px; font-weight: bold; cursor: pointer;
-  }
+  .btn-save { flex: 1; background-color: #333; color: white; border: none; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer; }
   .btn-soop {
     flex: 1; background-color: #00a1ff; color: white; border: none; padding: 12px;
     border-radius: 8px; text-decoration: none; font-weight: bold; cursor: pointer; text-align: center; font-size: 14px;
@@ -117,7 +137,41 @@
   <div class="calendar-grid" id="calendar"></div>
 
   <div id="nickname-view">
-    <div class="section-title" id="selected-date-text">숙제 대상자</div>
+    <div class="section-header">
+      <h3 class="section-title" id="selected-date-text">숙제 대상자</h3>
+      <button class="btn-add-show" onclick="toggleAddForm()">+ 숙제 추가하기</button>
+    </div>
+
+    <div id="add-form">
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">닉네임</label>
+          <input type="text" id="new-nick" class="form-input" placeholder="팬닉네임">
+        </div>
+        <div class="form-group">
+          <label class="form-label">SOOP 아이디</label>
+          <input type="text" id="new-id" class="form-input" placeholder="영문ID">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">낭플/총합 금액 (숫자만)</label>
+          <input type="number" id="new-amount" class="form-input" placeholder="1000" oninput="autoCalculate()">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">역팬(3%) - 자동계산</label>
+          <input type="number" id="new-reverse" class="form-input" readonly>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">숙제 내용 - 자동배정</label>
+        <input type="text" id="new-content" class="form-input">
+      </div>
+      <button class="btn-register" onclick="addNewTask()">등록 완료</button>
+    </div>
+
     <div class="nick-list" id="nick-list-container"></div>
   </div>
 
@@ -150,15 +204,12 @@
         <div class="status-options">
           <input type="radio" name="status" id="st-todo" value="todo" class="status-radio">
           <label for="st-todo" class="status-label lbl-todo">대기중</label>
-
           <input type="radio" name="status" id="st-partial" value="partial" class="status-radio">
           <label for="st-partial" class="status-label lbl-partial">일부 완료</label>
-
           <input type="radio" name="status" id="st-done" value="done" class="status-radio">
           <label for="st-done" class="status-label lbl-done">완전 완료</label>
         </div>
-        
-        <textarea id="detail-memo" class="memo-input" placeholder="여기에 진행상황을 입력하세요 (예: 사진만 전송함)"></textarea>
+        <textarea id="detail-memo" class="memo-input" placeholder="메모 (예: 사진 전송 완료)"></textarea>
       </div>
     </div>
 
@@ -171,22 +222,16 @@
 </div>
 
 <script>
-  // 1. 샘플 데이터 (status: todo/partial/done, memo 추가)
-  // 실제 사용 시엔 DB나 로컬스토리지에 저장 필요
+  // 데이터 저장소
   const homeworkData = {
     "2026-01-20": [
-      { nick: "큰손회장", id: "ceo123", amount: 10000, reverse: 300, content: "정성방셀 + 사진4 + 움짤4", status: "partial", memo: "사진만 먼저 드림" },
-      { nick: "열혈팬1", id: "hotfan1", amount: 5000, reverse: 150, content: "방셀 + 사진2 + 움짤1", status: "todo", memo: "" },
-      { nick: "구독자A", id: "sub_a", amount: 1000, reverse: 30, content: "고정사진 방셀", status: "done", memo: "완료했습니다!" }
-    ],
-    "2026-01-22": [
-      { nick: "개굴", id: "frog", amount: 3000, reverse: 90, content: "방셀 + 사진2", status: "todo", memo: "" }
+      { nick: "회장님", id: "ceo123", amount: 10000, reverse: 300, content: "정성방셀+사진4+움짤4", status: "partial", memo: "사진만 먼저" }
     ]
   };
 
   let currentDate = new Date();
   let selectedDateKey = null;
-  let currentTaskIndex = null; // 현재 보고 있는 상세 숙제의 인덱스
+  let currentTaskIndex = null;
 
   function renderCalendar() {
     const year = currentDate.getFullYear();
@@ -196,9 +241,10 @@
     const calendarEl = document.getElementById('calendar');
     calendarEl.innerHTML = '';
     
-    // 뷰 초기화
+    // 화면 초기화
     document.getElementById('nickname-view').style.display = 'none';
     document.getElementById('detail-card').style.display = 'none';
+    document.getElementById('add-form').style.display = 'none'; // 폼도 닫기
 
     ['일','월','화','수','목','금','토'].forEach(d => 
       calendarEl.innerHTML += `<div class="day-name">${d}</div>`
@@ -213,9 +259,6 @@
       const dateKey = `${year}-${String(month+1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
       const tasks = homeworkData[dateKey] || [];
       const hasTask = tasks.length > 0;
-      
-      // 숙제 안한 것(todo, partial)이 하나라도 있으면 표시해줄 수도 있음
-      // 여기선 단순히 갯수만 표시
       
       calendarEl.innerHTML += `
         <div class="day-cell ${hasTask ? 'has-homework' : ''}" onclick="selectDate('${dateKey}')">
@@ -234,33 +277,35 @@
   // --- 날짜 선택 ---
   function selectDate(dateKey) {
     selectedDateKey = dateKey;
-    const tasks = homeworkData[dateKey];
-    const nickView = document.getElementById('nickname-view');
-    const nickList = document.getElementById('nick-list-container');
+    const tasks = homeworkData[dateKey] || []; // 없으면 빈 배열
     
     document.getElementById('detail-card').style.display = 'none';
-    document.getElementById('selected-date-text').innerText = `${dateKey} 숙제 대상자`;
+    document.getElementById('add-form').style.display = 'none'; // 날짜 바꾸면 폼 닫기
+    document.getElementById('selected-date-text').innerText = `${dateKey} 리스트`;
+    
+    renderNickList(tasks);
+    document.getElementById('nickname-view').style.display = 'block';
+  }
+
+  // --- 닉네임 버튼 리스트 그리기 ---
+  function renderNickList(tasks) {
+    const nickList = document.getElementById('nick-list-container');
     nickList.innerHTML = '';
 
-    if (!tasks || tasks.length === 0) {
-      nickList.innerHTML = `<div style="grid-column: span 3; text-align:center; color:#999;">숙제 없음</div>`;
-      nickView.style.display = 'block';
+    if (tasks.length === 0) {
+      nickList.innerHTML = `<div style="grid-column: span 3; text-align:center; color:#999; padding: 10px;">등록된 숙제가 없습니다.</div>`;
       return;
     }
 
-    // 닉네임 버튼 생성
     tasks.forEach((task, index) => {
       const btn = document.createElement('button');
-      
-      // 상태에 따른 클래스 부여
       let statusClass = 'status-todo';
       if(task.status === 'partial') statusClass = 'status-partial';
       if(task.status === 'done') statusClass = 'status-done';
       
       btn.className = `nick-btn ${statusClass}`;
       btn.innerText = task.nick;
-      btn.dataset.index = index; // 인덱스 저장
-
+      
       btn.onclick = () => {
         document.querySelectorAll('.nick-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
@@ -268,8 +313,91 @@
       };
       nickList.appendChild(btn);
     });
+  }
 
-    nickView.style.display = 'block';
+  // --- 숙제 추가 폼 관련 기능 ---
+  function toggleAddForm() {
+    const form = document.getElementById('add-form');
+    // 토글: 켜져있으면 끄고, 꺼져있으면 켬
+    if(form.style.display === 'block') {
+      form.style.display = 'none';
+    } else {
+      // 폼 초기화 후 열기
+      document.getElementById('new-nick').value = '';
+      document.getElementById('new-id').value = '';
+      document.getElementById('new-amount').value = '';
+      document.getElementById('new-reverse').value = '';
+      document.getElementById('new-content').value = '';
+      form.style.display = 'block';
+      document.getElementById('new-nick').focus();
+    }
+  }
+
+  // 자동 계산 로직 (첫 번째 요청하신 규칙 적용)
+  function autoCalculate() {
+    const amount = parseInt(document.getElementById('new-amount').value) || 0;
+    const reverseInput = document.getElementById('new-reverse');
+    const contentInput = document.getElementById('new-content');
+
+    // 역팬 3%
+    const reverse = Math.floor(amount * 0.03);
+    reverseInput.value = reverse;
+
+    // 구간별 숙제 자동 배정
+    let content = "";
+    if (amount < 1000) {
+      content = "(소음단 - 숙제 없음)";
+    } else if (amount < 3000) {
+      content = "고정사진 방셀, 사진 1+, 움짤 0";
+    } else if (amount < 5000) {
+      content = "방셀, 사진 2, 움짤 0";
+    } else if (amount < 10000) {
+      content = "방셀, 사진 2, 움짤 1";
+    } else {
+      content = "정성방셀, 사진 4, 움짤 4";
+    }
+    contentInput.value = content;
+  }
+
+  // 신규 등록 실행
+  function addNewTask() {
+    if(!selectedDateKey) return alert("날짜를 선택해주세요.");
+    
+    const nick = document.getElementById('new-nick').value;
+    const id = document.getElementById('new-id').value;
+    const amount = parseInt(document.getElementById('new-amount').value) || 0;
+    const reverse = parseInt(document.getElementById('new-reverse').value) || 0;
+    const content = document.getElementById('new-content').value;
+
+    if(!nick || !id) return alert("닉네임과 아이디를 입력해주세요.");
+
+    // 데이터 구조 만들기
+    const newTask = {
+      nick: nick,
+      id: id,
+      amount: amount,
+      reverse: reverse,
+      content: content,
+      status: "todo",
+      memo: ""
+    };
+
+    // 배열이 없으면 생성
+    if(!homeworkData[selectedDateKey]) {
+      homeworkData[selectedDateKey] = [];
+    }
+
+    // 추가하고 화면 갱신
+    homeworkData[selectedDateKey].push(newTask);
+    
+    // 폼 닫기 및 갱신
+    document.getElementById('add-form').style.display = 'none';
+    renderNickList(homeworkData[selectedDateKey]);
+    
+    // 캘린더의 뱃지 숫자 업데이트를 위해 캘린더 다시 그리기 (선택적)
+    renderCalendar();
+    // 캘린더 다시 그리면 뷰가 닫히므로 다시 열어줌
+    document.getElementById('nickname-view').style.display = 'block';
   }
 
   // --- 상세 정보 표시 ---
@@ -277,48 +405,39 @@
     currentTaskIndex = index;
     const card = document.getElementById('detail-card');
     
-    // 기본 정보 채우기
     document.getElementById('detail-nick').innerText = task.nick;
     document.getElementById('detail-id').innerText = `@${task.id}`;
     document.getElementById('detail-amount').innerText = task.amount.toLocaleString();
     document.getElementById('detail-reverse').innerText = task.reverse.toLocaleString();
     document.getElementById('detail-content').innerText = task.content;
-    
-    // 상태 및 메모 불러오기
     document.getElementById('detail-memo').value = task.memo || '';
     
-    // 라디오 버튼 체크
     const status = task.status || 'todo';
     document.querySelector(`input[name="status"][value="${status}"]`).checked = true;
 
-    // SOOP 방송국 링크 (수정된 주소)
     document.getElementById('detail-link').href = `https://www.sooplive.co.kr/station/${task.id}`;
     
     card.style.display = 'block';
     card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   }
 
-  // --- 상태 저장 기능 ---
+  // --- 상태 저장 ---
   function saveTaskStatus() {
     if (!selectedDateKey || currentTaskIndex === null) return;
 
-    // 입력된 값 가져오기
     const newMemo = document.getElementById('detail-memo').value;
     const newStatus = document.querySelector('input[name="status"]:checked').value;
 
-    // 데이터 업데이트
     const task = homeworkData[selectedDateKey][currentTaskIndex];
     task.memo = newMemo;
     task.status = newStatus;
 
     alert('저장되었습니다.');
-
-    // 리스트 화면 갱신 (버튼 색상 변경을 위해)
-    selectDate(selectedDateKey);
+    renderNickList(homeworkData[selectedDateKey]);
     
-    // 저장 후 다시 상세창을 띄우고 싶다면 아래 주석 해제
-    // const btns = document.querySelectorAll('.nick-btn');
-    // btns[currentTaskIndex].click();
+    // 버튼 상태 업데이트 후 다시 클릭 효과 (선택 스타일 유지)
+    const btns = document.querySelectorAll('.nick-btn');
+    if(btns[currentTaskIndex]) btns[currentTaskIndex].classList.add('active');
   }
 
   function closeDetail() {
@@ -327,6 +446,7 @@
     currentTaskIndex = null;
   }
 
+  // 초기 실행
   renderCalendar();
 </script>
 
