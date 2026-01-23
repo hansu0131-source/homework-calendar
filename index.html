@@ -2,62 +2,59 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<title>C9 숙제 캘린더 (등록 기능 포함)</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"> <title>C9 숙제 캘린더</title>
 <style>
-  /* --- 기본 스타일 --- */
+  /* --- 스타일 (모바일 친화적으로 약간 조정) --- */
   body { font-family: 'Pretendard', 'Malgun Gothic', sans-serif; background-color: #f0f2f5; display: flex; justify-content: center; padding: 20px; margin: 0; }
   .container { width: 100%; max-width: 600px; background: white; padding: 25px; border-radius: 15px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
   input, button, textarea { font-family: inherit; box-sizing: border-box; }
 
-  /* --- 캘린더 헤더 & 그리드 --- */
+  /* 헤더 & 그리드 */
   .calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
   .calendar-header h2 { margin: 0; color: #333; font-size: 1.2rem; }
-  .nav-btn { background: none; border: 1px solid #ddd; border-radius: 5px; padding: 5px 10px; cursor: pointer; }
+  .nav-btn { background: white; border: 1px solid #ddd; border-radius: 5px; padding: 8px 12px; cursor: pointer; }
   
-  .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; margin-bottom: 20px;}
+  .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; margin-bottom: 20px;}
   .day-name { text-align: center; font-size: 0.8rem; color: #888; padding-bottom: 5px; }
   
   .day-cell { 
-    height: 60px; background: #fafafa; border: 1px solid #eee; border-radius: 8px; 
-    position: relative; cursor: pointer; transition: 0.2s; padding: 5px;
+    height: 65px; background: #fafafa; border: 1px solid #eee; border-radius: 8px; 
+    position: relative; cursor: pointer; transition: 0.2s; padding: 4px;
     display: flex; flex-direction: column; justify-content: space-between;
   }
   .day-cell:hover { background: #eef; border-color: #ccd; transform: translateY(-2px); }
-  .day-number { font-size: 14px; font-weight: bold; color: #333; }
+  .day-number { font-size: 13px; font-weight: bold; color: #333; }
   
   .has-homework { background-color: #e3f2fd !important; border: 1px solid #90caf9 !important; }
   .hw-badge {
-    align-self: flex-end;
-    background-color: #ff5252; color: white;
-    font-size: 10px; font-weight: bold;
-    padding: 2px 6px; border-radius: 10px;
+    align-self: flex-end; background-color: #ff5252; color: white;
+    font-size: 10px; font-weight: bold; padding: 2px 5px; border-radius: 8px;
   }
 
-  /* --- 1단계: 닉네임 리스트 --- */
+  /* 1단계: 리스트 */
   #nickname-view { display: none; border-top: 2px solid #eee; padding-top: 20px; animation: fadeIn 0.3s; }
   .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
   .section-title { font-size: 1rem; color: #555; font-weight: bold; margin: 0; }
   
   .btn-add-show {
-    background-color: #333; color: white; border: none; padding: 6px 12px;
+    background-color: #333; color: white; border: none; padding: 8px 14px;
     border-radius: 6px; font-size: 12px; cursor: pointer;
   }
 
-  .nick-list { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; }
+  .nick-list { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 20px; }
   .nick-btn {
-    background: #fff; border: 2px solid #ddd; border-radius: 10px; padding: 15px 5px;
-    font-size: 14px; font-weight: bold; color: #666; cursor: pointer; transition: 0.2s;
-    text-align: center; position: relative;
+    background: #fff; border: 2px solid #ddd; border-radius: 10px; padding: 12px 4px;
+    font-size: 13px; font-weight: bold; color: #666; cursor: pointer; transition: 0.2s;
+    text-align: center; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;
   }
   .nick-btn:hover { transform: scale(1.02); }
   .nick-btn.active { border-color: #333; box-shadow: 0 0 0 2px #ddd; }
 
-  /* 상태별 색상 */
   .status-todo { border-color: #ddd; color: #666; }
   .status-partial { background-color: #fff8e1; border-color: #ffb74d; color: #f57c00; }
   .status-done { background-color: #e8f5e9; border-color: #81c784; color: #2e7d32; }
 
-  /* --- [신규] 숙제 추가 폼 --- */
+  /* 등록 폼 */
   #add-form { 
     display: none; background: #fff; border: 2px dashed #bbb; padding: 15px; border-radius: 10px; margin-bottom: 20px; 
     animation: slideUp 0.2s;
@@ -65,20 +62,16 @@
   .form-row { display: flex; gap: 10px; margin-bottom: 10px; }
   .form-group { flex: 1; }
   .form-label { font-size: 12px; color: #777; margin-bottom: 4px; display: block; }
-  .form-input { 
-    width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; 
-  }
+  .form-input { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; }
   .form-input:focus { border-color: #00a1ff; outline: none; }
   
   .btn-register {
-    width: 100%; background-color: #00a1ff; color: white; border: none; padding: 10px;
+    width: 100%; background-color: #00a1ff; color: white; border: none; padding: 12px;
     border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 5px;
   }
-  .btn-register:hover { background-color: #008ecc; }
 
-  /* --- 2단계: 상세 정보 카드 (기존 유지) --- */
+  /* 2단계: 상세 카드 */
   #detail-card { display: none; margin-top: 20px; background: #f9f9f9; border-radius: 12px; padding: 20px; border: 1px solid #eee; animation: slideUp 0.3s; }
-  
   .card-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 15px; }
   .user-info h3 { margin: 0; font-size: 1.1rem; color: #333; }
   .user-id { font-size: 0.85rem; color: #888; }
@@ -92,14 +85,13 @@
 
   .task-box { background: white; padding: 15px; border-radius: 8px; border: 1px solid #eee; margin-bottom: 15px; }
   .task-label { font-size: 0.9rem; font-weight: bold; margin-bottom: 8px; display: block; color: #555; }
-  .task-content { font-size: 1rem; line-height: 1.4; color: #333; margin-bottom: 10px; }
+  .task-content { font-size: 1rem; line-height: 1.4; color: #333; margin-bottom: 10px; word-break: keep-all; }
 
-  /* 진행상태 및 메모 */
   .status-control { margin-top: 15px; border-top: 1px solid #eee; padding-top: 15px; }
   .status-options { display: flex; gap: 5px; margin-bottom: 10px; }
   .status-radio { display: none; }
   .status-label {
-    flex: 1; text-align: center; padding: 8px; border-radius: 6px; cursor: pointer;
+    flex: 1; text-align: center; padding: 10px; border-radius: 6px; cursor: pointer;
     font-size: 13px; font-weight: bold; color: #777; background: #eee; border: 1px solid #ddd;
   }
   
@@ -107,19 +99,17 @@
   input[type="radio"]:checked + .status-label.lbl-partial { background: #ff9800; color: white; border-color: #ff9800; }
   input[type="radio"]:checked + .status-label.lbl-done { background: #4caf50; color: white; border-color: #4caf50; }
 
-  .memo-input {
-    width: 100%; box-sizing: border-box; padding: 10px; border: 1px solid #ddd; border-radius: 6px;
-    font-size: 14px; resize: vertical; min-height: 60px; margin-bottom: 10px;
-  }
+  .memo-input { width: 100%; box-sizing: border-box; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; resize: vertical; min-height: 60px; margin-bottom: 10px; }
 
   .btn-group { display: flex; gap: 10px; }
   .btn-save { flex: 1; background-color: #333; color: white; border: none; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer; }
   .btn-soop {
     flex: 1; background-color: #00a1ff; color: white; border: none; padding: 12px;
-    border-radius: 8px; text-decoration: none; font-weight: bold; cursor: pointer; text-align: center; font-size: 14px;
-    display: flex; align-items: center; justify-content: center;
+    border-radius: 8px; text-decoration: none; font-weight: bold; cursor: pointer; text-align: center; font-size: 14px; display: flex; align-items: center; justify-content: center;
   }
-  .btn-soop:hover { background-color: #008ecc; }
+  .btn-del {
+      margin-top: 10px; width: 100%; background: #fff; border: 1px solid #ff5252; color: #ff5252; padding: 8px; border-radius: 6px; cursor: pointer; font-size: 12px;
+  }
 
   @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
   @keyframes slideUp { from { transform: translateY(10px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
@@ -139,7 +129,7 @@
   <div id="nickname-view">
     <div class="section-header">
       <h3 class="section-title" id="selected-date-text">숙제 대상자</h3>
-      <button class="btn-add-show" onclick="toggleAddForm()">+ 숙제 추가하기</button>
+      <button class="btn-add-show" onclick="toggleAddForm()">+ 숙제 추가</button>
     </div>
 
     <div id="add-form">
@@ -155,18 +145,18 @@
       </div>
       <div class="form-row">
         <div class="form-group">
-          <label class="form-label">낭플/총합 금액 (숫자만)</label>
+          <label class="form-label">총합 금액 (숫자만)</label>
           <input type="number" id="new-amount" class="form-input" placeholder="1000" oninput="autoCalculate()">
         </div>
       </div>
       <div class="form-row">
         <div class="form-group">
-          <label class="form-label">역팬(3%) - 자동계산</label>
+          <label class="form-label">역팬(3%)</label>
           <input type="number" id="new-reverse" class="form-input" readonly>
         </div>
       </div>
       <div class="form-group">
-        <label class="form-label">숙제 내용 - 자동배정</label>
+        <label class="form-label">숙제 내용 (자동)</label>
         <input type="text" id="new-content" class="form-input">
       </div>
       <button class="btn-register" onclick="addNewTask()">등록 완료</button>
@@ -203,13 +193,13 @@
         <span class="task-label">상태 및 메모</span>
         <div class="status-options">
           <input type="radio" name="status" id="st-todo" value="todo" class="status-radio">
-          <label for="st-todo" class="status-label lbl-todo">대기중</label>
+          <label for="st-todo" class="status-label lbl-todo">대기</label>
           <input type="radio" name="status" id="st-partial" value="partial" class="status-radio">
-          <label for="st-partial" class="status-label lbl-partial">일부 완료</label>
+          <label for="st-partial" class="status-label lbl-partial">일부</label>
           <input type="radio" name="status" id="st-done" value="done" class="status-radio">
-          <label for="st-done" class="status-label lbl-done">완전 완료</label>
+          <label for="st-done" class="status-label lbl-done">완료</label>
         </div>
-        <textarea id="detail-memo" class="memo-input" placeholder="메모 (예: 사진 전송 완료)"></textarea>
+        <textarea id="detail-memo" class="memo-input" placeholder="진행 상황 메모"></textarea>
       </div>
     </div>
 
@@ -217,21 +207,23 @@
       <button class="btn-save" onclick="saveTaskStatus()">💾 저장</button>
       <a href="#" target="_blank" class="btn-soop" id="detail-link">SOOP 방송국 ▶</a>
     </div>
+    <button class="btn-del" onclick="deleteTask()">🗑 이 숙제 삭제하기</button>
   </div>
-
 </div>
 
 <script>
-  // 데이터 저장소
-  const homeworkData = {
-    "2026-01-20": [
-      { nick: "회장님", id: "ceo123", amount: 10000, reverse: 300, content: "정성방셀+사진4+움짤4", status: "partial", memo: "사진만 먼저" }
-    ]
-  };
+  // --- 데이터 불러오기 (Local Storage 사용) ---
+  // 저장된 데이터가 없으면 빈 객체 {} 사용
+  let homeworkData = JSON.parse(localStorage.getItem('hwData_v1')) || {};
 
   let currentDate = new Date();
   let selectedDateKey = null;
   let currentTaskIndex = null;
+
+  // --- 데이터 저장 함수 ---
+  function saveDataToLocal() {
+    localStorage.setItem('hwData_v1', JSON.stringify(homeworkData));
+  }
 
   function renderCalendar() {
     const year = currentDate.getFullYear();
@@ -241,10 +233,10 @@
     const calendarEl = document.getElementById('calendar');
     calendarEl.innerHTML = '';
     
-    // 화면 초기화
+    // 뷰 초기화
     document.getElementById('nickname-view').style.display = 'none';
     document.getElementById('detail-card').style.display = 'none';
-    document.getElementById('add-form').style.display = 'none'; // 폼도 닫기
+    document.getElementById('add-form').style.display = 'none';
 
     ['일','월','화','수','목','금','토'].forEach(d => 
       calendarEl.innerHTML += `<div class="day-name">${d}</div>`
@@ -260,10 +252,13 @@
       const tasks = homeworkData[dateKey] || [];
       const hasTask = tasks.length > 0;
       
+      // 완료되지 않은 숙제 개수 카운트 (선택사항)
+      const notDoneCount = tasks.filter(t => t.status !== 'done').length;
+      
       calendarEl.innerHTML += `
         <div class="day-cell ${hasTask ? 'has-homework' : ''}" onclick="selectDate('${dateKey}')">
           <div class="day-number">${i}</div>
-          ${hasTask ? `<div class="hw-badge">${tasks.length}</div>` : ''}
+          ${hasTask ? `<div class="hw-badge">${tasks.length}건</div>` : ''}
         </div>
       `;
     }
@@ -274,26 +269,24 @@
     renderCalendar();
   }
 
-  // --- 날짜 선택 ---
   function selectDate(dateKey) {
     selectedDateKey = dateKey;
-    const tasks = homeworkData[dateKey] || []; // 없으면 빈 배열
+    const tasks = homeworkData[dateKey] || [];
     
     document.getElementById('detail-card').style.display = 'none';
-    document.getElementById('add-form').style.display = 'none'; // 날짜 바꾸면 폼 닫기
+    document.getElementById('add-form').style.display = 'none';
     document.getElementById('selected-date-text').innerText = `${dateKey} 리스트`;
     
     renderNickList(tasks);
     document.getElementById('nickname-view').style.display = 'block';
   }
 
-  // --- 닉네임 버튼 리스트 그리기 ---
   function renderNickList(tasks) {
     const nickList = document.getElementById('nick-list-container');
     nickList.innerHTML = '';
 
     if (tasks.length === 0) {
-      nickList.innerHTML = `<div style="grid-column: span 3; text-align:center; color:#999; padding: 10px;">등록된 숙제가 없습니다.</div>`;
+      nickList.innerHTML = `<div style="grid-column: span 3; text-align:center; color:#999; padding: 10px; font-size:12px;">숙제가 없습니다.</div>`;
       return;
     }
 
@@ -315,14 +308,11 @@
     });
   }
 
-  // --- 숙제 추가 폼 관련 기능 ---
   function toggleAddForm() {
     const form = document.getElementById('add-form');
-    // 토글: 켜져있으면 끄고, 꺼져있으면 켬
     if(form.style.display === 'block') {
       form.style.display = 'none';
     } else {
-      // 폼 초기화 후 열기
       document.getElementById('new-nick').value = '';
       document.getElementById('new-id').value = '';
       document.getElementById('new-amount').value = '';
@@ -333,17 +323,14 @@
     }
   }
 
-  // 자동 계산 로직 (첫 번째 요청하신 규칙 적용)
   function autoCalculate() {
     const amount = parseInt(document.getElementById('new-amount').value) || 0;
     const reverseInput = document.getElementById('new-reverse');
     const contentInput = document.getElementById('new-content');
 
-    // 역팬 3%
     const reverse = Math.floor(amount * 0.03);
     reverseInput.value = reverse;
 
-    // 구간별 숙제 자동 배정
     let content = "";
     if (amount < 1000) {
       content = "(소음단 - 숙제 없음)";
@@ -359,7 +346,6 @@
     contentInput.value = content;
   }
 
-  // 신규 등록 실행
   function addNewTask() {
     if(!selectedDateKey) return alert("날짜를 선택해주세요.");
     
@@ -371,7 +357,6 @@
 
     if(!nick || !id) return alert("닉네임과 아이디를 입력해주세요.");
 
-    // 데이터 구조 만들기
     const newTask = {
       nick: nick,
       id: id,
@@ -382,25 +367,19 @@
       memo: ""
     };
 
-    // 배열이 없으면 생성
     if(!homeworkData[selectedDateKey]) {
       homeworkData[selectedDateKey] = [];
     }
 
-    // 추가하고 화면 갱신
     homeworkData[selectedDateKey].push(newTask);
-    
-    // 폼 닫기 및 갱신
+    saveDataToLocal(); // 저장
+
     document.getElementById('add-form').style.display = 'none';
     renderNickList(homeworkData[selectedDateKey]);
-    
-    // 캘린더의 뱃지 숫자 업데이트를 위해 캘린더 다시 그리기 (선택적)
     renderCalendar();
-    // 캘린더 다시 그리면 뷰가 닫히므로 다시 열어줌
     document.getElementById('nickname-view').style.display = 'block';
   }
 
-  // --- 상세 정보 표시 ---
   function showMemberDetail(task, index) {
     currentTaskIndex = index;
     const card = document.getElementById('detail-card');
@@ -421,7 +400,6 @@
     card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   }
 
-  // --- 상태 저장 ---
   function saveTaskStatus() {
     if (!selectedDateKey || currentTaskIndex === null) return;
 
@@ -432,12 +410,25 @@
     task.memo = newMemo;
     task.status = newStatus;
 
+    saveDataToLocal(); // 저장
     alert('저장되었습니다.');
-    renderNickList(homeworkData[selectedDateKey]);
     
-    // 버튼 상태 업데이트 후 다시 클릭 효과 (선택 스타일 유지)
+    renderNickList(homeworkData[selectedDateKey]);
     const btns = document.querySelectorAll('.nick-btn');
     if(btns[currentTaskIndex]) btns[currentTaskIndex].classList.add('active');
+  }
+
+  function deleteTask() {
+      if (!confirm('정말 이 숙제를 삭제하시겠습니까?')) return;
+      
+      homeworkData[selectedDateKey].splice(currentTaskIndex, 1);
+      // 만약 배열이 비었으면 키 삭제도 고려 가능하나, 빈 배열로 둬도 무방
+      saveDataToLocal();
+      
+      closeDetail();
+      renderNickList(homeworkData[selectedDateKey]);
+      renderCalendar();
+      document.getElementById('nickname-view').style.display = 'block';
   }
 
   function closeDetail() {
@@ -446,7 +437,6 @@
     currentTaskIndex = null;
   }
 
-  // 초기 실행
   renderCalendar();
 </script>
 
