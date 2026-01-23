@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>C9 숙제 캘린더 (SOOP 버전)</title>
+<style>
+  /* --- 기본 스타일 --- */
+  body { font-family: 'Pretendard', 'Malgun Gothic', sans-serif; background-color: #f0f2f5; display: flex; justify-content: center; padding: 20px; margin: 0; }
+  .container { width: 100%; max-width: 600px; background: white; padding: 25px; border-radius: 15px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+  input, button, textarea { font-family: inherit; }
+
+  /* --- 캘린더 헤더 & 그리드 --- */
+  .calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+  .calendar-header h2 { margin: 0; color: #333; font-size: 1.2rem; }
+  .nav-btn { background: none; border: 1px solid #ddd; border-radius: 5px; padding: 5px 10px; cursor: pointer; }
+  
+  .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; margin-bottom: 20px;}
+  .day-name { text-align: center; font-size: 0.8rem; color: #888; padding-bottom: 5px; }
+  
+  .day-cell { 
+    height: 60px; background: #fafafa; border: 1px solid #eee; border-radius: 8px; 
+    position: relative; cursor: pointer; transition: 0.2s; padding: 5px;
+    display: flex; flex-direction: column; justify-content: space-between;
+  }
+  .day-cell:hover { background: #eef; border-color: #ccd; transform: translateY(-2px); }
+  .day-number { font-size: 14px; font-weight: bold; color: #333; }
+  
+  .has-homework { background-color: #e3f2fd !important; border: 1px solid #90caf9 !important; }
+  .hw-badge {
+    align-self: flex-end;
+    background-color: #ff5252; color: white;
+    font-size: 10px; font-weight: bold;
+    padding: 2px 6px; border-radius: 10px;
+  }
+
+  /* --- 1단계: 닉네임 리스트 --- */
+  #nickname-view { display: none; border-top: 2px solid #eee; padding-top: 20px; animation: fadeIn 0.3s; }
+  .section-title { font-size: 1rem; color: #555; margin-bottom: 10px; font-weight: bold; }
+  
+  .nick-list { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .nick-btn {
+    background: #fff; border: 2px solid #ddd; border-radius: 10px; padding: 15px 5px;
+    font-size: 14px; font-weight: bold; color: #666; cursor: pointer; transition: 0.2s;
+    text-align: center; position: relative;
+  }
+  .nick-btn:hover { transform: scale(1.02); }
+  .nick-btn.active { border-color: #333; box-shadow: 0 0 0 2px #ddd; }
+
+  /* 상태별 닉네임 버튼 색상 */
+  .status-todo { border-color: #ddd; color: #666; } /* 대기 */
+  .status-partial { background-color: #fff8e1; border-color: #ffb74d; color: #f57c00; } /* 일부완료 */
+  .status-done { background-color: #e8f5e9; border-color: #81c784; color: #2e7d32; } /* 완료 */
+
+  /* --- 2단계: 상세 정보 카드 --- */
+  #detail-card { display: none; margin-top: 20px; background: #f9f9f9; border-radius: 12px; padding: 20px; border: 1px solid #eee; animation: slideUp 0.3s; }
+  
+  .card-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 15px; }
+  .user-info h3 { margin: 0; font-size: 1.1rem; color: #333; }
+  .user-id { font-size: 0.85rem; color: #888; }
+  
+  .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
+  .stat-box { background: white; padding: 10px; border-radius: 8px; text-align: center; border: 1px solid #eee; }
+  .stat-label { font-size: 0.8rem; color: #777; display: block; margin-bottom: 4px; }
+  .stat-value { font-size: 1.1rem; font-weight: bold; color: #333; }
+  .stat-value.money { color: #00a1ff; } 
+  .stat-value.reverse { color: #ff5252; } 
+
+  .task-box { background: white; padding: 15px; border-radius: 8px; border: 1px solid #eee; margin-bottom: 15px; }
+  .task-label { font-size: 0.9rem; font-weight: bold; margin-bottom: 8px; display: block; color: #555; }
+  .task-content { font-size: 1rem; line-height: 1.4; color: #333; margin-bottom: 10px; }
+
+  /* 진행상태 컨트롤 */
+  .status-control { margin-top: 15px; border-top: 1px solid #eee; padding-top: 15px; }
+  .status-options { display: flex; gap: 5px; margin-bottom: 10px; }
+  .status-radio { display: none; }
+  .status-label {
+    flex: 1; text-align: center; padding: 8px; border-radius: 6px; cursor: pointer;
+    font-size: 13px; font-weight: bold; color: #777; background: #eee; border: 1px solid #ddd;
+  }
+  /* 라디오 버튼 선택 시 스타일 */
+  input[type="radio"]:checked + .status-label.lbl-todo { background: #9e9e9e; color: white; border-color: #9e9e9e; }
+  input[type="radio"]:checked + .status-label.lbl-partial { background: #ff9800; color: white; border-color: #ff9800; }
+  input[type="radio"]:checked + .status-label.lbl-done { background: #4caf50; color: white; border-color: #4caf50; }
+
+  /* 메모 입력창 */
+  .memo-input {
+    width: 100%; box-sizing: border-box; padding: 10px; border: 1px solid #ddd; border-radius: 6px;
+    font-size: 14px; resize: vertical; min-height: 60px; margin-bottom: 10px;
+  }
+
+  /* 버튼 그룹 */
+  .btn-group { display: flex; gap: 10px; }
+  .btn-save {
+    flex: 1; background-color: #333; color: white; border: none; padding: 12px;
+    border-radius: 8px; font-weight: bold; cursor: pointer;
+  }
+  .btn-soop {
+    flex: 1; background-color: #00a1ff; color: white; border: none; padding: 12px;
+    border-radius: 8px; text-decoration: none; font-weight: bold; cursor: pointer; text-align: center; font-size: 14px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .btn-soop:hover { background-color: #008ecc; }
+
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes slideUp { from { transform: translateY(10px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="calendar-header">
+    <button class="nav-btn" onclick="changeMonth(-1)">◀</button>
+    <h2 id="current-month">2026년 1월</h2>
+    <button class="nav-btn" onclick="changeMonth(1)">▶</button>
+  </div>
+  
+  <div class="calendar-grid" id="calendar"></div>
+
+  <div id="nickname-view">
+    <div class="section-title" id="selected-date-text">숙제 대상자</div>
+    <div class="nick-list" id="nick-list-container"></div>
+  </div>
+
+  <div id="detail-card">
+    <div class="card-header">
+      <div class="user-info">
+        <h3 id="detail-nick">닉네임</h3>
+        <span class="user-id" id="detail-id">id_placeholder</span>
+      </div>
+      <button class="nav-btn" onclick="closeDetail()">X</button>
+    </div>
+
+    <div class="stat-grid">
+      <div class="stat-box">
+        <span class="stat-label">총 후원</span>
+        <span class="stat-value money" id="detail-amount">0</span>
+      </div>
+      <div class="stat-box">
+        <span class="stat-label">역팬(3%)</span>
+        <span class="stat-value reverse" id="detail-reverse">0</span>
+      </div>
+    </div>
+
+    <div class="task-box">
+      <span class="task-label">📝 숙제 내용</span>
+      <div class="task-content" id="detail-content">내용</div>
+      
+      <div class="status-control">
+        <span class="task-label">상태 및 메모</span>
+        <div class="status-options">
+          <input type="radio" name="status" id="st-todo" value="todo" class="status-radio">
+          <label for="st-todo" class="status-label lbl-todo">대기중</label>
+
+          <input type="radio" name="status" id="st-partial" value="partial" class="status-radio">
+          <label for="st-partial" class="status-label lbl-partial">일부 완료</label>
+
+          <input type="radio" name="status" id="st-done" value="done" class="status-radio">
+          <label for="st-done" class="status-label lbl-done">완전 완료</label>
+        </div>
+        
+        <textarea id="detail-memo" class="memo-input" placeholder="여기에 진행상황을 입력하세요 (예: 사진만 전송함)"></textarea>
+      </div>
+    </div>
+
+    <div class="btn-group">
+      <button class="btn-save" onclick="saveTaskStatus()">💾 저장</button>
+      <a href="#" target="_blank" class="btn-soop" id="detail-link">SOOP 방송국 ▶</a>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // 1. 샘플 데이터 (status: todo/partial/done, memo 추가)
+  // 실제 사용 시엔 DB나 로컬스토리지에 저장 필요
+  const homeworkData = {
+    "2026-01-20": [
+      { nick: "큰손회장", id: "ceo123", amount: 10000, reverse: 300, content: "정성방셀 + 사진4 + 움짤4", status: "partial", memo: "사진만 먼저 드림" },
+      { nick: "열혈팬1", id: "hotfan1", amount: 5000, reverse: 150, content: "방셀 + 사진2 + 움짤1", status: "todo", memo: "" },
+      { nick: "구독자A", id: "sub_a", amount: 1000, reverse: 30, content: "고정사진 방셀", status: "done", memo: "완료했습니다!" }
+    ],
+    "2026-01-22": [
+      { nick: "개굴", id: "frog", amount: 3000, reverse: 90, content: "방셀 + 사진2", status: "todo", memo: "" }
+    ]
+  };
+
+  let currentDate = new Date();
+  let selectedDateKey = null;
+  let currentTaskIndex = null; // 현재 보고 있는 상세 숙제의 인덱스
+
+  function renderCalendar() {
+    const year = currentDate.getFullYear();
+    const month = currentDate.getMonth();
+    
+    document.getElementById('current-month').innerText = `${year}년 ${month + 1}월`;
+    const calendarEl = document.getElementById('calendar');
+    calendarEl.innerHTML = '';
+    
+    // 뷰 초기화
+    document.getElementById('nickname-view').style.display = 'none';
+    document.getElementById('detail-card').style.display = 'none';
+
+    ['일','월','화','수','목','금','토'].forEach(d => 
+      calendarEl.innerHTML += `<div class="day-name">${d}</div>`
+    );
+
+    const firstDay = new Date(year, month, 1).getDay();
+    const lastDate = new Date(year, month + 1, 0).getDate();
+
+    for(let i=0; i<firstDay; i++) calendarEl.innerHTML += `<div></div>`;
+
+    for(let i=1; i<=lastDate; i++) {
+      const dateKey = `${year}-${String(month+1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
+      const tasks = homeworkData[dateKey] || [];
+      const hasTask = tasks.length > 0;
+      
+      // 숙제 안한 것(todo, partial)이 하나라도 있으면 표시해줄 수도 있음
+      // 여기선 단순히 갯수만 표시
+      
+      calendarEl.innerHTML += `
+        <div class="day-cell ${hasTask ? 'has-homework' : ''}" onclick="selectDate('${dateKey}')">
+          <div class="day-number">${i}</div>
+          ${hasTask ? `<div class="hw-badge">${tasks.length}</div>` : ''}
+        </div>
+      `;
+    }
+  }
+
+  function changeMonth(step) {
+    currentDate.setMonth(currentDate.getMonth() + step);
+    renderCalendar();
+  }
+
+  // --- 날짜 선택 ---
+  function selectDate(dateKey) {
+    selectedDateKey = dateKey;
+    const tasks = homeworkData[dateKey];
+    const nickView = document.getElementById('nickname-view');
+    const nickList = document.getElementById('nick-list-container');
+    
+    document.getElementById('detail-card').style.display = 'none';
+    document.getElementById('selected-date-text').innerText = `${dateKey} 숙제 대상자`;
+    nickList.innerHTML = '';
+
+    if (!tasks || tasks.length === 0) {
+      nickList.innerHTML = `<div style="grid-column: span 3; text-align:center; color:#999;">숙제 없음</div>`;
+      nickView.style.display = 'block';
+      return;
+    }
+
+    // 닉네임 버튼 생성
+    tasks.forEach((task, index) => {
+      const btn = document.createElement('button');
+      
+      // 상태에 따른 클래스 부여
+      let statusClass = 'status-todo';
+      if(task.status === 'partial') statusClass = 'status-partial';
+      if(task.status === 'done') statusClass = 'status-done';
+      
+      btn.className = `nick-btn ${statusClass}`;
+      btn.innerText = task.nick;
+      btn.dataset.index = index; // 인덱스 저장
+
+      btn.onclick = () => {
+        document.querySelectorAll('.nick-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        showMemberDetail(task, index);
+      };
+      nickList.appendChild(btn);
+    });
+
+    nickView.style.display = 'block';
+  }
+
+  // --- 상세 정보 표시 ---
+  function showMemberDetail(task, index) {
+    currentTaskIndex = index;
+    const card = document.getElementById('detail-card');
+    
+    // 기본 정보 채우기
+    document.getElementById('detail-nick').innerText = task.nick;
+    document.getElementById('detail-id').innerText = `@${task.id}`;
+    document.getElementById('detail-amount').innerText = task.amount.toLocaleString();
+    document.getElementById('detail-reverse').innerText = task.reverse.toLocaleString();
+    document.getElementById('detail-content').innerText = task.content;
+    
+    // 상태 및 메모 불러오기
+    document.getElementById('detail-memo').value = task.memo || '';
+    
+    // 라디오 버튼 체크
+    const status = task.status || 'todo';
+    document.querySelector(`input[name="status"][value="${status}"]`).checked = true;
+
+    // SOOP 방송국 링크 (수정된 주소)
+    document.getElementById('detail-link').href = `https://www.sooplive.co.kr/station/${task.id}`;
+    
+    card.style.display = 'block';
+    card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  // --- 상태 저장 기능 ---
+  function saveTaskStatus() {
+    if (!selectedDateKey || currentTaskIndex === null) return;
+
+    // 입력된 값 가져오기
+    const newMemo = document.getElementById('detail-memo').value;
+    const newStatus = document.querySelector('input[name="status"]:checked').value;
+
+    // 데이터 업데이트
+    const task = homeworkData[selectedDateKey][currentTaskIndex];
+    task.memo = newMemo;
+    task.status = newStatus;
+
+    alert('저장되었습니다.');
+
+    // 리스트 화면 갱신 (버튼 색상 변경을 위해)
+    selectDate(selectedDateKey);
+    
+    // 저장 후 다시 상세창을 띄우고 싶다면 아래 주석 해제
+    // const btns = document.querySelectorAll('.nick-btn');
+    // btns[currentTaskIndex].click();
+  }
+
+  function closeDetail() {
+    document.getElementById('detail-card').style.display = 'none';
+    document.querySelectorAll('.nick-btn').forEach(b => b.classList.remove('active'));
+    currentTaskIndex = null;
+  }
+
+  renderCalendar();
+</script>
+
+</body>
+</html>
