@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>C9 숙제 캘린더 (자동저장)</title>
+<title>C9 숙제 캘린더 (완료삭제)</title>
 <style>
   /* --- 공통 스타일 --- */
   body { 
@@ -84,7 +84,7 @@
   .nick-btn:hover { transform: scale(1.02); }
   .nick-btn.active { border-color: #333; box-shadow: 0 0 0 2px #ddd; }
   
-  /* [수정] 상태별 색상 (대기=빨강) */
+  /* 상태별 색상 */
   .status-todo { border-color: #ff5252; color: #ff5252; background-color: #fff0f0; } /* 대기(빨강) */
   .status-partial { background-color: #fff8e1; border-color: #ffb74d; color: #f57c00; } /* 일부(주황) */
   .status-done { background-color: #e8f5e9; border-color: #81c784; color: #2e7d32; } /* 완료(초록) */
@@ -121,7 +121,7 @@
   .task-label { font-size: 0.9rem; font-weight: bold; margin-bottom: 8px; display: block; color: #555; }
   .task-content { font-size: 1rem; line-height: 1.4; color: #333; margin-bottom: 10px; word-break: keep-all; }
 
-  /* [수정] 상태 컨트롤 스타일 */
+  /* 상태 컨트롤 */
   .status-control { margin-top: 15px; border-top: 1px solid #eee; padding-top: 15px; }
   .status-options { display: flex; gap: 5px; margin-bottom: 10px; }
   .status-radio { display: none; }
@@ -132,7 +132,7 @@
   }
   .status-label:hover { opacity: 0.8; }
 
-  /* [수정] 라디오 버튼 선택 시 색상 (대기=빨강) */
+  /* 상태 라디오 버튼 선택 시 색상 */
   input[type="radio"]:checked + .status-label.lbl-todo { background: #ff5252; color: white; border-color: #ff5252; }
   input[type="radio"]:checked + .status-label.lbl-partial { background: #ff9800; color: white; border-color: #ff9800; }
   input[type="radio"]:checked + .status-label.lbl-done { background: #4caf50; color: white; border-color: #4caf50; }
@@ -145,8 +145,9 @@
     border-radius: 8px; text-decoration: none; font-weight: bold; cursor: pointer; text-align: center; font-size: 14px; display: flex; align-items: center; justify-content: center;
   }
   
-  .btn-complete { margin-top: 10px; width: 100%; background: #4caf50; border: none; color: white; padding: 12px; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: bold; }
-  .btn-complete:hover { background-color: #43a047; }
+  /* [수정] 완료 삭제 버튼 스타일 */
+  .btn-complete { margin-top: 10px; width: 100%; background: #333; border: none; color: white; padding: 12px; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: bold; }
+  .btn-complete:hover { background-color: #111; }
 
   @media (max-width: 768px) {
     .wrapper { flex-direction: column; }
@@ -272,7 +273,7 @@
         <a href="#" target="_blank" class="btn-soop" id="detail-link">SOOP 방송국 ▶</a>
       </div>
       
-      <button class="btn-complete" onclick="markAsDone()">🎉 이 숙제 완전 완료 (역팬까지 끝)</button>
+      <button class="btn-complete" onclick="completeAndDelete()">🎉 완료 삭제</button>
     </div>
   </div>
 </div>
@@ -463,7 +464,6 @@
     card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   }
 
-  // [수정] showMsg 파라미터 추가 (버튼 클릭시엔 경고창 X, 완료버튼 등 필요할때만 띄움)
   function saveTaskStatus(showMsg = false) {
     if (!selectedDateKey || currentTaskIndex === null) return;
     const newMemo = document.getElementById('detail-memo').value;
@@ -475,16 +475,26 @@
     saveDataToLocal();
     if(showMsg) alert('저장되었습니다.');
     
-    // 리스트 갱신 (색상 반영)
     renderNickList(homeworkData[selectedDateKey]);
     const btns = document.querySelectorAll('.nick-btn');
     if(btns[currentTaskIndex]) btns[currentTaskIndex].classList.add('active');
   }
 
-  function markAsDone() {
-    const doneRadio = document.querySelector('input[name="status"][value="done"]');
-    if(doneRadio) doneRadio.checked = true;
-    saveTaskStatus(true); // 완료 버튼은 확인 차원에서 알림 띄움
+  // [신규] 완료 삭제 기능 (기존 삭제와 동일 기능)
+  function completeAndDelete() {
+    if (!confirm('숙제를 완료하고 목록에서 삭제하시겠습니까?')) return;
+    
+    // 배열에서 삭제
+    homeworkData[selectedDateKey].splice(currentTaskIndex, 1);
+    
+    saveDataToLocal();
+    closeDetail();
+    
+    // 화면 갱신
+    renderNickList(homeworkData[selectedDateKey]);
+    renderCalendar();
+    renderSidebar();
+    document.getElementById('nickname-view').style.display = 'block';
   }
 
   function deleteTask() {
