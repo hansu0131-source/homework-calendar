@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>C9 숙제 캘린더 (최종)</title>
+<title>C9 숙제 캘린더 (완성본)</title>
 <style>
   /* --- 공통 스타일 --- */
   body { 
@@ -46,6 +46,7 @@
   .calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
   .calendar-header h2 { margin: 0; color: #333; font-size: 1.2rem; }
   .nav-btn { background: white; border: 1px solid #ddd; border-radius: 5px; padding: 8px 12px; cursor: pointer; }
+  .nav-btn.del-icon { color: #ff5252; border-color: #ffcdd2; margin-right: 5px; } /* 삭제 아이콘 스타일 */
   
   .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; margin-bottom: 20px;}
   .day-name { text-align: center; font-size: 0.8rem; color: #888; padding-bottom: 5px; }
@@ -87,7 +88,7 @@
   .status-partial { background-color: #fff8e1; border-color: #ffb74d; color: #f57c00; }
   .status-done { background-color: #e8f5e9; border-color: #81c784; color: #2e7d32; }
 
-  /* --- 등록 폼 (수정됨) --- */
+  /* 등록 폼 */
   #add-form { 
     display: none; background: #fff; border: 2px dashed #bbb; padding: 15px; border-radius: 10px; margin-bottom: 20px; 
     animation: slideUp 0.2s;
@@ -97,7 +98,6 @@
   .form-label { font-size: 12px; color: #777; margin-bottom: 4px; display: block; }
   .form-input { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; }
   
-  /* 라디오 버튼 그룹 (3%, 10%) */
   .radio-group { display: flex; gap: 15px; margin-bottom: 5px; }
   .radio-label { display: flex; align-items: center; gap: 5px; font-size: 13px; cursor: pointer; font-weight: bold; }
   
@@ -120,12 +120,14 @@
   .task-label { font-size: 0.9rem; font-weight: bold; margin-bottom: 8px; display: block; color: #555; }
   .task-content { font-size: 1rem; line-height: 1.4; color: #333; margin-bottom: 10px; word-break: keep-all; }
 
+  /* [수정] 상태 컨트롤 스타일 */
   .status-control { margin-top: 15px; border-top: 1px solid #eee; padding-top: 15px; }
   .status-options { display: flex; gap: 5px; margin-bottom: 10px; }
   .status-radio { display: none; }
   .status-label {
     flex: 1; text-align: center; padding: 10px; border-radius: 6px; cursor: pointer;
-    font-size: 13px; font-weight: bold; color: #777; background: #eee; border: 1px solid #ddd;
+    font-size: 12px; font-weight: bold; color: #777; background: #eee; border: 1px solid #ddd;
+    display: flex; align-items: center; justify-content: center;
   }
   input[type="radio"]:checked + .status-label.lbl-todo { background: #9e9e9e; color: white; border-color: #9e9e9e; }
   input[type="radio"]:checked + .status-label.lbl-partial { background: #ff9800; color: white; border-color: #ff9800; }
@@ -139,7 +141,10 @@
     flex: 1; background-color: #00a1ff; color: white; border: none; padding: 12px;
     border-radius: 8px; text-decoration: none; font-weight: bold; cursor: pointer; text-align: center; font-size: 14px; display: flex; align-items: center; justify-content: center;
   }
-  .btn-del { margin-top: 10px; width: 100%; background: #fff; border: 1px solid #ff5252; color: #ff5252; padding: 8px; border-radius: 6px; cursor: pointer; font-size: 12px; }
+  
+  /* [수정] 숙제 완료 버튼 (구 삭제버튼 위치) */
+  .btn-complete { margin-top: 10px; width: 100%; background: #4caf50; border: none; color: white; padding: 12px; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: bold; }
+  .btn-complete:hover { background-color: #43a047; }
 
   @media (max-width: 768px) {
     .wrapper { flex-direction: column; }
@@ -153,11 +158,9 @@
 <body>
 
 <div class="wrapper">
-  
   <div class="sidebar">
     <div class="sidebar-title">📂 숙제 기록</div>
-    <div id="sidebar-list">
-      </div>
+    <div id="sidebar-list"></div>
   </div>
 
   <div class="container">
@@ -226,7 +229,10 @@
           <h3 id="detail-nick">닉네임</h3>
           <span class="user-id" id="detail-id">id_placeholder</span>
         </div>
-        <button class="nav-btn" onclick="closeDetail()">X</button>
+        <div>
+          <button class="nav-btn del-icon" onclick="deleteTask()" title="삭제">🗑</button>
+          <button class="nav-btn" onclick="closeDetail()">X</button>
+        </div>
       </div>
 
       <div class="stat-grid">
@@ -245,24 +251,27 @@
         <div class="task-content" id="detail-content">내용</div>
         
         <div class="status-control">
-          <span class="task-label">상태 및 메모</span>
+          <span class="task-label">진행 상태 선택</span>
           <div class="status-options">
             <input type="radio" name="status" id="st-todo" value="todo" class="status-radio">
             <label for="st-todo" class="status-label lbl-todo">대기</label>
+
             <input type="radio" name="status" id="st-partial" value="partial" class="status-radio">
-            <label for="st-partial" class="status-label lbl-partial">일부</label>
+            <label for="st-partial" class="status-label lbl-partial">방셀만 완료</label>
+
             <input type="radio" name="status" id="st-done" value="done" class="status-radio">
-            <label for="st-done" class="status-label lbl-done">완료</label>
+            <label for="st-done" class="status-label lbl-done">역팬까지 완료</label>
           </div>
           <textarea id="detail-memo" class="memo-input" placeholder="진행 상황 메모"></textarea>
         </div>
       </div>
 
       <div class="btn-group">
-        <button class="btn-save" onclick="saveTaskStatus()">💾 저장</button>
+        <button class="btn-save" onclick="saveTaskStatus()">💾 상태 저장</button>
         <a href="#" target="_blank" class="btn-soop" id="detail-link">SOOP 방송국 ▶</a>
       </div>
-      <button class="btn-del" onclick="deleteTask()">🗑 이 숙제 삭제하기</button>
+      
+      <button class="btn-complete" onclick="markAsDone()">🎉 이 숙제 완전 완료 (역팬까지 끝)</button>
     </div>
   </div>
 </div>
@@ -390,19 +399,12 @@
     }
   }
 
-  // [수정됨] 자동 계산 로직 (숙제내용 자동채움 삭제, 비율 선택 적용)
   function autoCalculate() {
     const amount = parseInt(document.getElementById('new-amount').value) || 0;
     const reverseInput = document.getElementById('new-reverse');
-    
-    // 선택된 라디오 버튼의 비율 값 가져오기 (0.03 또는 0.10)
     const ratio = parseFloat(document.querySelector('input[name="calc-ratio"]:checked').value);
-
-    // 역팬 계산
     const reverse = Math.floor(amount * ratio);
     reverseInput.value = reverse;
-
-    // 숙제 내용 자동 배정 로직은 삭제됨 (직접 입력)
   }
 
   function addNewTask() {
@@ -448,7 +450,7 @@
     document.getElementById('detail-id').innerText = `@${task.id}`;
     document.getElementById('detail-amount').innerText = task.amount.toLocaleString();
     document.getElementById('detail-reverse').innerText = task.reverse.toLocaleString();
-    document.getElementById('detail-content').innerText = task.content; // 입력한 내용 그대로 표시
+    document.getElementById('detail-content').innerText = task.content; 
     document.getElementById('detail-memo').value = task.memo || '';
     
     const status = task.status || 'todo';
@@ -469,14 +471,25 @@
     task.status = newStatus;
 
     saveDataToLocal();
-    alert('저장되었습니다.');
+    // alert('저장되었습니다.'); // 귀찮으면 주석처리
     renderNickList(homeworkData[selectedDateKey]);
     const btns = document.querySelectorAll('.nick-btn');
     if(btns[currentTaskIndex]) btns[currentTaskIndex].classList.add('active');
   }
 
+  // [신규] 완료 버튼 클릭 시 실행
+  function markAsDone() {
+    // 1. 라디오 버튼을 'done'으로 체크
+    const doneRadio = document.querySelector('input[name="status"][value="done"]');
+    if(doneRadio) doneRadio.checked = true;
+
+    // 2. 저장 실행
+    saveTaskStatus();
+    alert("🎉 역팬까지 완전 완료되었습니다!");
+  }
+
   function deleteTask() {
-      if (!confirm('정말 이 숙제를 삭제하시겠습니까?')) return;
+      if (!confirm('정말 이 숙제를 리스트에서 삭제하시겠습니까? (되돌릴 수 없습니다)')) return;
       homeworkData[selectedDateKey].splice(currentTaskIndex, 1);
       saveDataToLocal();
       closeDetail();
