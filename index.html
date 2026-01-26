@@ -2,14 +2,68 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0"> <title>C9 숙제 캘린더</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>C9 숙제 캘린더 (사이드바 버전)</title>
 <style>
-  /* --- 스타일 (모바일 친화적으로 약간 조정) --- */
-  body { font-family: 'Pretendard', 'Malgun Gothic', sans-serif; background-color: #f0f2f5; display: flex; justify-content: center; padding: 20px; margin: 0; }
-  .container { width: 100%; max-width: 600px; background: white; padding: 25px; border-radius: 15px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+  /* --- 공통 스타일 --- */
+  body { 
+    font-family: 'Pretendard', 'Malgun Gothic', sans-serif; 
+    background-color: #f0f2f5; 
+    padding: 20px; margin: 0; 
+  }
   input, button, textarea { font-family: inherit; box-sizing: border-box; }
 
-  /* 헤더 & 그리드 */
+  /* --- 레이아웃 (좌측 사이드바 + 우측 메인) --- */
+  .wrapper {
+    display: flex;
+    gap: 20px;
+    max-width: 1000px; /* 전체 너비 넓힘 */
+    margin: 0 auto;
+    align-items: flex-start; /* 높이 달라도 상단 정렬 */
+  }
+
+  /* --- 좌측 사이드바 스타일 --- */
+  .sidebar {
+    width: 240px;
+    background: white;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    flex-shrink: 0; /* 너비 줄어들지 않음 */
+    max-height: 800px;
+    overflow-y: auto; /* 내용 많으면 스크롤 */
+  }
+  .sidebar-title { font-size: 1rem; font-weight: bold; margin: 0 0 15px 0; color: #333; border-bottom: 2px solid #eee; padding-bottom: 10px; }
+  
+  .shortcut-btn {
+    width: 100%;
+    background: #fff;
+    border: 1px solid #eee;
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    text-align: left;
+    transition: 0.2s;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .shortcut-btn:hover { background: #f9f9f9; border-color: #ccc; }
+  .shortcut-date { font-weight: bold; color: #555; font-size: 14px; }
+  .shortcut-count { background: #00a1ff; color: white; font-size: 11px; padding: 2px 6px; border-radius: 10px; }
+  .no-data-msg { font-size: 13px; color: #999; text-align: center; padding: 20px 0; }
+
+  /* --- 우측 메인 컨테이너 --- */
+  .container { 
+    flex: 1; /* 남은 공간 다 차지 */
+    background: white; 
+    padding: 25px; 
+    border-radius: 15px; 
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08); 
+  }
+
+  /* 캘린더 헤더 & 그리드 */
   .calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
   .calendar-header h2 { margin: 0; color: #333; font-size: 1.2rem; }
   .nav-btn { background: white; border: 1px solid #ddd; border-radius: 5px; padding: 8px 12px; cursor: pointer; }
@@ -31,7 +85,7 @@
     font-size: 10px; font-weight: bold; padding: 2px 5px; border-radius: 8px;
   }
 
-  /* 1단계: 리스트 */
+  /* 리스트 영역 */
   #nickname-view { display: none; border-top: 2px solid #eee; padding-top: 20px; animation: fadeIn 0.3s; }
   .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
   .section-title { font-size: 1rem; color: #555; font-weight: bold; margin: 0; }
@@ -50,6 +104,7 @@
   .nick-btn:hover { transform: scale(1.02); }
   .nick-btn.active { border-color: #333; box-shadow: 0 0 0 2px #ddd; }
 
+  /* 상태별 색상 */
   .status-todo { border-color: #ddd; color: #666; }
   .status-partial { background-color: #fff8e1; border-color: #ffb74d; color: #f57c00; }
   .status-done { background-color: #e8f5e9; border-color: #81c784; color: #2e7d32; }
@@ -63,14 +118,10 @@
   .form-group { flex: 1; }
   .form-label { font-size: 12px; color: #777; margin-bottom: 4px; display: block; }
   .form-input { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; }
-  .form-input:focus { border-color: #00a1ff; outline: none; }
   
-  .btn-register {
-    width: 100%; background-color: #00a1ff; color: white; border: none; padding: 12px;
-    border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 5px;
-  }
+  .btn-register { width: 100%; background-color: #00a1ff; color: white; border: none; padding: 12px; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 5px; }
 
-  /* 2단계: 상세 카드 */
+  /* 상세 카드 */
   #detail-card { display: none; margin-top: 20px; background: #f9f9f9; border-radius: 12px; padding: 20px; border: 1px solid #eee; animation: slideUp 0.3s; }
   .card-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 15px; }
   .user-info h3 { margin: 0; font-size: 1.1rem; color: #333; }
@@ -94,7 +145,6 @@
     flex: 1; text-align: center; padding: 10px; border-radius: 6px; cursor: pointer;
     font-size: 13px; font-weight: bold; color: #777; background: #eee; border: 1px solid #ddd;
   }
-  
   input[type="radio"]:checked + .status-label.lbl-todo { background: #9e9e9e; color: white; border-color: #9e9e9e; }
   input[type="radio"]:checked + .status-label.lbl-partial { background: #ff9800; color: white; border-color: #ff9800; }
   input[type="radio"]:checked + .status-label.lbl-done { background: #4caf50; color: white; border-color: #4caf50; }
@@ -107,8 +157,12 @@
     flex: 1; background-color: #00a1ff; color: white; border: none; padding: 12px;
     border-radius: 8px; text-decoration: none; font-weight: bold; cursor: pointer; text-align: center; font-size: 14px; display: flex; align-items: center; justify-content: center;
   }
-  .btn-del {
-      margin-top: 10px; width: 100%; background: #fff; border: 1px solid #ff5252; color: #ff5252; padding: 8px; border-radius: 6px; cursor: pointer; font-size: 12px;
+  .btn-del { margin-top: 10px; width: 100%; background: #fff; border: 1px solid #ff5252; color: #ff5252; padding: 8px; border-radius: 6px; cursor: pointer; font-size: 12px; }
+
+  /* 모바일 대응 */
+  @media (max-width: 768px) {
+    .wrapper { flex-direction: column; }
+    .sidebar { width: 100%; box-sizing: border-box; max-height: 200px; }
   }
 
   @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
@@ -117,112 +171,156 @@
 </head>
 <body>
 
-<div class="container">
-  <div class="calendar-header">
-    <button class="nav-btn" onclick="changeMonth(-1)">◀</button>
-    <h2 id="current-month">2026년 1월</h2>
-    <button class="nav-btn" onclick="changeMonth(1)">▶</button>
-  </div>
+<div class="wrapper">
   
-  <div class="calendar-grid" id="calendar"></div>
-
-  <div id="nickname-view">
-    <div class="section-header">
-      <h3 class="section-title" id="selected-date-text">숙제 대상자</h3>
-      <button class="btn-add-show" onclick="toggleAddForm()">+ 숙제 추가</button>
-    </div>
-
-    <div id="add-form">
-      <div class="form-row">
-        <div class="form-group">
-          <label class="form-label">닉네임</label>
-          <input type="text" id="new-nick" class="form-input" placeholder="팬닉네임">
-        </div>
-        <div class="form-group">
-          <label class="form-label">SOOP 아이디</label>
-          <input type="text" id="new-id" class="form-input" placeholder="영문ID">
-        </div>
+  <div class="sidebar">
+    <div class="sidebar-title">📂 숙제 기록</div>
+    <div id="sidebar-list">
       </div>
-      <div class="form-row">
-        <div class="form-group">
-          <label class="form-label">총합 금액 (숫자만)</label>
-          <input type="number" id="new-amount" class="form-input" placeholder="1000" oninput="autoCalculate()">
-        </div>
-      </div>
-      <div class="form-row">
-        <div class="form-group">
-          <label class="form-label">역팬(3%)</label>
-          <input type="number" id="new-reverse" class="form-input" readonly>
-        </div>
-      </div>
-      <div class="form-group">
-        <label class="form-label">숙제 내용 (자동)</label>
-        <input type="text" id="new-content" class="form-input">
-      </div>
-      <button class="btn-register" onclick="addNewTask()">등록 완료</button>
-    </div>
-
-    <div class="nick-list" id="nick-list-container"></div>
   </div>
 
-  <div id="detail-card">
-    <div class="card-header">
-      <div class="user-info">
-        <h3 id="detail-nick">닉네임</h3>
-        <span class="user-id" id="detail-id">id_placeholder</span>
-      </div>
-      <button class="nav-btn" onclick="closeDetail()">X</button>
+  <div class="container">
+    <div class="calendar-header">
+      <button class="nav-btn" onclick="changeMonth(-1)">◀</button>
+      <h2 id="current-month">2026년 1월</h2>
+      <button class="nav-btn" onclick="changeMonth(1)">▶</button>
     </div>
+    
+    <div class="calendar-grid" id="calendar"></div>
 
-    <div class="stat-grid">
-      <div class="stat-box">
-        <span class="stat-label">총 후원</span>
-        <span class="stat-value money" id="detail-amount">0</span>
+    <div id="nickname-view">
+      <div class="section-header">
+        <h3 class="section-title" id="selected-date-text">숙제 대상자</h3>
+        <button class="btn-add-show" onclick="toggleAddForm()">+ 숙제 추가</button>
       </div>
-      <div class="stat-box">
-        <span class="stat-label">역팬(3%)</span>
-        <span class="stat-value reverse" id="detail-reverse">0</span>
-      </div>
-    </div>
 
-    <div class="task-box">
-      <span class="task-label">📝 숙제 내용</span>
-      <div class="task-content" id="detail-content">내용</div>
-      
-      <div class="status-control">
-        <span class="task-label">상태 및 메모</span>
-        <div class="status-options">
-          <input type="radio" name="status" id="st-todo" value="todo" class="status-radio">
-          <label for="st-todo" class="status-label lbl-todo">대기</label>
-          <input type="radio" name="status" id="st-partial" value="partial" class="status-radio">
-          <label for="st-partial" class="status-label lbl-partial">일부</label>
-          <input type="radio" name="status" id="st-done" value="done" class="status-radio">
-          <label for="st-done" class="status-label lbl-done">완료</label>
+      <div id="add-form">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">닉네임</label>
+            <input type="text" id="new-nick" class="form-input" placeholder="팬닉네임">
+          </div>
+          <div class="form-group">
+            <label class="form-label">SOOP 아이디</label>
+            <input type="text" id="new-id" class="form-input" placeholder="영문ID">
+          </div>
         </div>
-        <textarea id="detail-memo" class="memo-input" placeholder="진행 상황 메모"></textarea>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">총합 금액 (숫자만)</label>
+            <input type="number" id="new-amount" class="form-input" placeholder="1000" oninput="autoCalculate()">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">역팬(3%)</label>
+            <input type="number" id="new-reverse" class="form-input" readonly>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">숙제 내용 (자동)</label>
+          <input type="text" id="new-content" class="form-input">
+        </div>
+        <button class="btn-register" onclick="addNewTask()">등록 완료</button>
       </div>
+
+      <div class="nick-list" id="nick-list-container"></div>
     </div>
 
-    <div class="btn-group">
-      <button class="btn-save" onclick="saveTaskStatus()">💾 저장</button>
-      <a href="#" target="_blank" class="btn-soop" id="detail-link">SOOP 방송국 ▶</a>
+    <div id="detail-card">
+      <div class="card-header">
+        <div class="user-info">
+          <h3 id="detail-nick">닉네임</h3>
+          <span class="user-id" id="detail-id">id_placeholder</span>
+        </div>
+        <button class="nav-btn" onclick="closeDetail()">X</button>
+      </div>
+
+      <div class="stat-grid">
+        <div class="stat-box">
+          <span class="stat-label">총 후원</span>
+          <span class="stat-value money" id="detail-amount">0</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-label">역팬(3%)</span>
+          <span class="stat-value reverse" id="detail-reverse">0</span>
+        </div>
+      </div>
+
+      <div class="task-box">
+        <span class="task-label">📝 숙제 내용</span>
+        <div class="task-content" id="detail-content">내용</div>
+        
+        <div class="status-control">
+          <span class="task-label">상태 및 메모</span>
+          <div class="status-options">
+            <input type="radio" name="status" id="st-todo" value="todo" class="status-radio">
+            <label for="st-todo" class="status-label lbl-todo">대기</label>
+            <input type="radio" name="status" id="st-partial" value="partial" class="status-radio">
+            <label for="st-partial" class="status-label lbl-partial">일부</label>
+            <input type="radio" name="status" id="st-done" value="done" class="status-radio">
+            <label for="st-done" class="status-label lbl-done">완료</label>
+          </div>
+          <textarea id="detail-memo" class="memo-input" placeholder="진행 상황 메모"></textarea>
+        </div>
+      </div>
+
+      <div class="btn-group">
+        <button class="btn-save" onclick="saveTaskStatus()">💾 저장</button>
+        <a href="#" target="_blank" class="btn-soop" id="detail-link">SOOP 방송국 ▶</a>
+      </div>
+      <button class="btn-del" onclick="deleteTask()">🗑 이 숙제 삭제하기</button>
     </div>
-    <button class="btn-del" onclick="deleteTask()">🗑 이 숙제 삭제하기</button>
   </div>
 </div>
 
 <script>
-  // --- 데이터 불러오기 (Local Storage 사용) ---
-  // 저장된 데이터가 없으면 빈 객체 {} 사용
+  // 로컬스토리지 데이터 로드
   let homeworkData = JSON.parse(localStorage.getItem('hwData_v1')) || {};
 
   let currentDate = new Date();
   let selectedDateKey = null;
   let currentTaskIndex = null;
 
-  // --- 데이터 저장 함수 ---
   function saveDataToLocal() {
     localStorage.setItem('hwData_v1', JSON.stringify(homeworkData));
+  }
+
+  // --- 사이드바 렌더링 (신규 기능) ---
+  function renderSidebar() {
+    const sidebarList = document.getElementById('sidebar-list');
+    sidebarList.innerHTML = '';
+
+    // 날짜 키만 추출해서 내림차순 정렬 (최신순)
+    const sortedKeys = Object.keys(homeworkData).sort().reverse();
+    
+    // 비어있는 날짜는 제외
+    const validKeys = sortedKeys.filter(key => homeworkData[key] && homeworkData[key].length > 0);
+
+    if (validKeys.length === 0) {
+      sidebarList.innerHTML = `<div class="no-data-msg">저장된 숙제가 없습니다.</div>`;
+      return;
+    }
+
+    validKeys.forEach(dateKey => {
+      const tasks = homeworkData[dateKey];
+      // 버튼 생성
+      const btn = document.createElement('div');
+      btn.className = 'shortcut-btn';
+      btn.innerHTML = `
+        <span class="shortcut-date">${dateKey}</span>
+        <span class="shortcut-count">${tasks.length}건</span>
+      `;
+      btn.onclick = () => {
+        // 1. 해당 날짜로 Date 객체 변경
+        currentDate = new Date(dateKey);
+        // 2. 캘린더 다시 그리기 (해당 월로 이동)
+        renderCalendar();
+        // 3. 해당 날짜 선택 효과
+        selectDate(dateKey);
+      };
+      sidebarList.appendChild(btn);
+    });
   }
 
   function renderCalendar() {
@@ -233,7 +331,7 @@
     const calendarEl = document.getElementById('calendar');
     calendarEl.innerHTML = '';
     
-    // 뷰 초기화
+    // 화면 초기화
     document.getElementById('nickname-view').style.display = 'none';
     document.getElementById('detail-card').style.display = 'none';
     document.getElementById('add-form').style.display = 'none';
@@ -251,9 +349,6 @@
       const dateKey = `${year}-${String(month+1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
       const tasks = homeworkData[dateKey] || [];
       const hasTask = tasks.length > 0;
-      
-      // 완료되지 않은 숙제 개수 카운트 (선택사항)
-      const notDoneCount = tasks.filter(t => t.status !== 'done').length;
       
       calendarEl.innerHTML += `
         <div class="day-cell ${hasTask ? 'has-homework' : ''}" onclick="selectDate('${dateKey}')">
@@ -279,6 +374,9 @@
     
     renderNickList(tasks);
     document.getElementById('nickname-view').style.display = 'block';
+    
+    // 모바일 등에서 날짜 클릭 시 해당 섹션으로 스크롤 이동
+    document.getElementById('nickname-view').scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
   function renderNickList(tasks) {
@@ -377,6 +475,7 @@
     document.getElementById('add-form').style.display = 'none';
     renderNickList(homeworkData[selectedDateKey]);
     renderCalendar();
+    renderSidebar(); // 사이드바 갱신
     document.getElementById('nickname-view').style.display = 'block';
   }
 
@@ -422,12 +521,14 @@
       if (!confirm('정말 이 숙제를 삭제하시겠습니까?')) return;
       
       homeworkData[selectedDateKey].splice(currentTaskIndex, 1);
-      // 만약 배열이 비었으면 키 삭제도 고려 가능하나, 빈 배열로 둬도 무방
+      
+      // 만약 숙제가 0개가 되면 해당 날짜 키 자체를 지울지 선택 (여기선 데이터 유지를 위해 빈배열은 둠, 하지만 사이드바에선 걸러짐)
       saveDataToLocal();
       
       closeDetail();
       renderNickList(homeworkData[selectedDateKey]);
       renderCalendar();
+      renderSidebar(); // 사이드바 갱신
       document.getElementById('nickname-view').style.display = 'block';
   }
 
@@ -437,7 +538,9 @@
     currentTaskIndex = null;
   }
 
+  // 초기 실행
   renderCalendar();
+  renderSidebar();
 </script>
 
 </body>
