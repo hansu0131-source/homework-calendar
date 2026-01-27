@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>C9 토끼 숙제 캘린더 🐰 (랭킹 추가)</title>
+<title>C9 토끼 숙제 캘린더 🐰 (수정 기능 추가)</title>
 <style>
   /* --- 🐰 파스텔 핑크 테마 설정 --- */
   :root {
@@ -95,6 +95,12 @@
   }
   .nav-btn:hover { background: var(--primary-pink); color: white; border-color: var(--primary-pink); }
   
+  /* 수정/삭제 아이콘 스타일 */
+  .nav-btn.del-icon { color: #ff8a80; border-color: #ffcdd2; margin-right: 5px; font-size: 1.1rem;} 
+  .nav-btn.del-icon:hover { background: #ff8a80; color: white; border-color: #ff8a80; }
+  .nav-btn.edit-icon { color: #81d4fa; border-color: #b3e5fc; margin-right: 5px; font-size: 1.1rem;} 
+  .nav-btn.edit-icon:hover { background: #81d4fa; color: white; border-color: #81d4fa; }
+  
   .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; margin-bottom: 25px;}
   .day-name { text-align: center; font-size: 0.9rem; color: var(--primary-pink); font-weight: bold; padding-bottom: 10px; }
   
@@ -162,6 +168,10 @@
     box-shadow: 0 4px 10px var(--shadow-color); transition: 0.2s;
   }
   .btn-register:hover { background-color: var(--dark-pink); transform: translateY(-2px); }
+  /* 수정 모드일 때 버튼 색상 변경용 클래스 */
+  .btn-register.edit-mode { background-color: #aed9e0; }
+  .btn-register.edit-mode:hover { background-color: #81d4fa; }
+
 
   /* 상세 카드 */
   #detail-card { display: none; margin-top: 25px; background: #fff9fb; border-radius: var(--radius-round); padding: 25px; border: 3px solid var(--border-pink); animation: slideUp 0.3s; box-shadow: 0 10px 25px rgba(255, 182, 193, 0.15); }
@@ -289,7 +299,7 @@
           <input type="text" id="new-content" class="form-input" placeholder="예: 정성방셀 + 움짤 1개">
         </div>
         
-        <button class="btn-register" onclick="addNewTask()">등록 완료 💖</button>
+        <button class="btn-register" id="btn-submit" onclick="handleTaskSubmit()">등록 완료 💖</button>
       </div>
 
       <div class="nick-list" id="nick-list-container"></div>
@@ -302,6 +312,7 @@
           <span class="user-id" id="detail-id">id_placeholder</span>
         </div>
         <div>
+          <button class="nav-btn edit-icon" onclick="openEditForm()" title="내용 수정하기">✏️</button>
           <button class="nav-btn del-icon" onclick="deleteTask()" title="삭제하기">🗑</button>
           <button class="nav-btn" onclick="closeDetail()">닫기 X</button>
         </div>
@@ -358,6 +369,7 @@
   let currentDate = new Date();
   let selectedDateKey = null;
   let currentTaskIndex = null;
+  let isEditMode = false; // 수정 모드 플래그
 
   function saveDataToLocal() {
     localStorage.setItem('hwData_v1', JSON.stringify(homeworkData));
@@ -394,7 +406,6 @@
     const rankListEl = document.getElementById('total-rank-list');
     rankListEl.innerHTML = '';
 
-    // 1. 데이터 집계
     const userCounts = {};
     
     Object.keys(homeworkData).forEach(date => {
@@ -407,10 +418,8 @@
       });
     });
 
-    // 2. 배열로 변환 및 정렬 (개수 내림차순)
     const sortedUsers = Object.values(userCounts).sort((a, b) => b.count - a.count);
 
-    // 3. 렌더링
     if (sortedUsers.length === 0) {
       rankListEl.innerHTML = `<div class="no-data-msg">집계된 데이터가 없습니다.</div>`;
       return;
@@ -420,7 +429,6 @@
       const item = document.createElement('div');
       item.className = 'rank-item';
       
-      // 순위 아이콘 (1~3위만)
       let icon = '';
       if(index === 0) icon = '👑 ';
       else if(index === 1) icon = '🥈 ';
@@ -512,20 +520,59 @@
     });
   }
 
+  // --- 등록 및 수정 폼 관련 ---
   function toggleAddForm() {
+    isEditMode = false; // 등록 모드로 초기화
+    
     const form = document.getElementById('add-form');
-    if(form.style.display === 'block') {
-      form.style.display = 'none';
+    // 폼 초기화
+    document.getElementById('new-nick').value = '';
+    document.getElementById('new-id').value = '';
+    document.getElementById('new-amount').value = '';
+    document.getElementById('new-reverse').value = '';
+    document.getElementById('new-content').value = '';
+    
+    // 버튼 텍스트 복구
+    const submitBtn = document.getElementById('btn-submit');
+    submitBtn.innerText = "등록 완료 💖";
+    submitBtn.classList.remove('edit-mode');
+
+    form.style.display = 'block';
+    document.getElementById('new-nick').focus();
+    form.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  // [신규] 수정 폼 열기
+  function openEditForm() {
+    if (!selectedDateKey || currentTaskIndex === null) return;
+    
+    isEditMode = true; // 수정 모드 설정
+    const task = homeworkData[selectedDateKey][currentTaskIndex];
+    
+    // 폼에 기존 데이터 채우기
+    document.getElementById('new-nick').value = task.nick;
+    document.getElementById('new-id').value = task.id;
+    document.getElementById('new-amount').value = task.amount;
+    document.getElementById('new-reverse').value = task.reverse;
+    document.getElementById('new-content').value = task.content;
+
+    // 역팬 비율 체크 (계산된 값이 10%에 가까우면 10% 선택, 아니면 3%)
+    const ratio = (task.amount > 0) ? (task.reverse / task.amount) : 0.03;
+    if(ratio >= 0.09) { // 대략 0.1
+        document.querySelector('input[name="calc-ratio"][value="0.10"]').checked = true;
     } else {
-      document.getElementById('new-nick').value = '';
-      document.getElementById('new-id').value = '';
-      document.getElementById('new-amount').value = '';
-      document.getElementById('new-reverse').value = '';
-      document.getElementById('new-content').value = '';
-      form.style.display = 'block';
-      document.getElementById('new-nick').focus();
-      form.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        document.querySelector('input[name="calc-ratio"][value="0.03"]').checked = true;
     }
+
+    // 버튼 텍스트 변경
+    const submitBtn = document.getElementById('btn-submit');
+    submitBtn.innerText = "수정 완료 🔄";
+    submitBtn.classList.add('edit-mode');
+
+    // 상세 카드는 닫고 폼 보여주기
+    document.getElementById('detail-card').style.display = 'none';
+    document.getElementById('add-form').style.display = 'block';
+    document.getElementById('add-form').scrollIntoView({ behavior: 'smooth', block: 'center' });
   }
 
   function autoCalculate() {
@@ -536,7 +583,8 @@
     reverseInput.value = reverse;
   }
 
-  function addNewTask() {
+  // [수정됨] 등록/수정 처리 통합
+  function handleTaskSubmit() {
     if(!selectedDateKey) return alert("달력에서 날짜를 먼저 선택해주세요! 📅");
     
     const nick = document.getElementById('new-nick').value;
@@ -547,26 +595,39 @@
 
     if(!nick || !id) return alert("닉네임과 아이디를 모두 입력해주세요! ✍️");
 
-    const newTask = {
+    const newTaskObj = {
       nick: nick,
       id: id,
       amount: amount,
       reverse: reverse,
       content: content,
-      status: "todo",
-      memo: ""
+      status: "todo", // 기본 상태
+      memo: ""        // 기본 메모
     };
 
     if(!homeworkData[selectedDateKey]) {
       homeworkData[selectedDateKey] = [];
     }
 
-    homeworkData[selectedDateKey].push(newTask);
+    if (isEditMode) {
+      // 수정 모드: 기존 데이터 덮어쓰기 (status와 memo는 유지)
+      const oldTask = homeworkData[selectedDateKey][currentTaskIndex];
+      newTaskObj.status = oldTask.status;
+      newTaskObj.memo = oldTask.memo;
+      
+      homeworkData[selectedDateKey][currentTaskIndex] = newTaskObj;
+      alert("숙제 내용이 수정되었습니다! 📝");
+      isEditMode = false; // 모드 리셋
+    } else {
+      // 등록 모드: 새로 추가
+      homeworkData[selectedDateKey].push(newTaskObj);
+    }
+
     saveDataToLocal();
 
     document.getElementById('add-form').style.display = 'none';
     
-    // UI 전체 갱신 (좌/중/우 모두)
+    // UI 전체 갱신
     renderNickList(homeworkData[selectedDateKey]);
     renderCalendar();
     renderSidebar();
@@ -645,6 +706,8 @@
     document.getElementById('detail-card').style.display = 'none';
     document.querySelectorAll('.nick-btn').forEach(b => b.classList.remove('active'));
     currentTaskIndex = null;
+    // 혹시 수정모드에서 그냥 닫았을 경우를 대비해 폼도 닫음
+    document.getElementById('add-form').style.display = 'none';
   }
 
   // 초기 실행
