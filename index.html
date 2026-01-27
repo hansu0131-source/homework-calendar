@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>C9 토끼 숙제 캘린더 🐰 (수정 기능 추가)</title>
+<title>C9 토끼 숙제 캘린더 🐰 (날짜이동 가능)</title>
 <style>
   /* --- 🐰 파스텔 핑크 테마 설정 --- */
   :root {
@@ -29,16 +29,16 @@
     background-size: 20px 20px;
     padding: 20px; margin: 0; color: var(--text-gray);
   }
-  input, button, textarea { font-family: inherit; box-sizing: border-box; outline: none; }
+  input, button, textarea, select { font-family: inherit; box-sizing: border-box; outline: none; }
   h2, h3 { color: var(--text-dark); }
 
-  /* --- 레이아웃 (3단 구성: 좌-중-우) --- */
+  /* --- 레이아웃 --- */
   .wrapper {
     display: flex; gap: 20px; max-width: 1400px; margin: 0 auto;
     align-items: flex-start;
   }
 
-  /* --- 사이드바 (좌/우 공통) --- */
+  /* --- 사이드바 --- */
   .sidebar, .sidebar-right {
     width: 260px; background: var(--container-bg); padding: 25px; border-radius: var(--radius-round);
     box-shadow: 0 8px 25px var(--shadow-color); flex-shrink: 0; max-height: 800px; overflow-y: auto;
@@ -50,7 +50,6 @@
     border-bottom: 3px dotted var(--border-pink); padding-bottom: 15px; text-align: center;
   }
   
-  /* 좌측 날짜 버튼 스타일 */
   .shortcut-btn {
     width: 100%; background: #fff; border: 2px solid var(--border-pink); padding: 12px 15px;
     border-radius: var(--radius-soft); margin-bottom: 10px; cursor: pointer; text-align: left;
@@ -60,7 +59,7 @@
   .shortcut-date { font-weight: bold; color: var(--text-gray); font-size: 14px; }
   .shortcut-count { background: var(--primary-pink); color: white; font-size: 12px; padding: 4px 8px; border-radius: 12px; font-weight: bold; }
 
-  /* 우측 랭킹 리스트 스타일 */
+  /* 랭킹 리스트 */
   .rank-item {
     display: flex; align-items: center; justify-content: space-between;
     background: #fff; border-bottom: 1px dashed var(--border-pink);
@@ -95,7 +94,6 @@
   }
   .nav-btn:hover { background: var(--primary-pink); color: white; border-color: var(--primary-pink); }
   
-  /* 수정/삭제 아이콘 스타일 */
   .nav-btn.del-icon { color: #ff8a80; border-color: #ffcdd2; margin-right: 5px; font-size: 1.1rem;} 
   .nav-btn.del-icon:hover { background: #ff8a80; color: white; border-color: #ff8a80; }
   .nav-btn.edit-icon { color: #81d4fa; border-color: #b3e5fc; margin-right: 5px; font-size: 1.1rem;} 
@@ -146,7 +144,7 @@
   .status-partial { background-color: #fff3e0; border-color: #ffe0b2; color: #ff9800; } 
   .status-done { background-color: #e8f5e9; border-color: #c8e6c9; color: #4caf50; } 
 
-  /* 등록 폼 */
+  /* 등록/수정 폼 */
   #add-form { 
     display: none; background: #fff5f8; border: 3px dashed var(--primary-pink); padding: 20px; border-radius: var(--radius-round); margin-bottom: 25px; 
     animation: slideUp 0.2s;
@@ -168,10 +166,8 @@
     box-shadow: 0 4px 10px var(--shadow-color); transition: 0.2s;
   }
   .btn-register:hover { background-color: var(--dark-pink); transform: translateY(-2px); }
-  /* 수정 모드일 때 버튼 색상 변경용 클래스 */
   .btn-register.edit-mode { background-color: #aed9e0; }
   .btn-register.edit-mode:hover { background-color: #81d4fa; }
-
 
   /* 상세 카드 */
   #detail-card { display: none; margin-top: 25px; background: #fff9fb; border-radius: var(--radius-round); padding: 25px; border: 3px solid var(--border-pink); animation: slideUp 0.3s; box-shadow: 0 10px 25px rgba(255, 182, 193, 0.15); }
@@ -225,7 +221,6 @@
   }
   .btn-complete:hover { background-color: #e67a8f; transform: translateY(-2px); }
 
-  /* 반응형 처리 */
   @media (max-width: 1024px) {
     .wrapper { flex-direction: column; }
     .sidebar, .sidebar-right { width: 100%; box-sizing: border-box; max-height: 250px; }
@@ -261,6 +256,13 @@
       </div>
 
       <div id="add-form">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">날짜 (이동 가능 📅)</label>
+            <input type="date" id="new-date" class="form-input">
+          </div>
+        </div>
+
         <div class="form-row">
           <div class="form-group">
             <label class="form-label">닉네임</label>
@@ -369,13 +371,12 @@
   let currentDate = new Date();
   let selectedDateKey = null;
   let currentTaskIndex = null;
-  let isEditMode = false; // 수정 모드 플래그
+  let isEditMode = false;
 
   function saveDataToLocal() {
     localStorage.setItem('hwData_v1', JSON.stringify(homeworkData));
   }
 
-  // --- [1] 좌측 사이드바 (날짜별) ---
   function renderSidebar() {
     const sidebarList = document.getElementById('sidebar-list');
     sidebarList.innerHTML = '';
@@ -401,7 +402,6 @@
     });
   }
 
-  // --- [2] 우측 사이드바 (누적 랭킹) ---
   function renderTotalRanking() {
     const rankListEl = document.getElementById('total-rank-list');
     rankListEl.innerHTML = '';
@@ -446,7 +446,6 @@
     });
   }
 
-  // --- 캘린더 로직 ---
   function renderCalendar() {
     const year = currentDate.getFullYear();
     const month = currentDate.getMonth();
@@ -520,19 +519,18 @@
     });
   }
 
-  // --- 등록 및 수정 폼 관련 ---
   function toggleAddForm() {
-    isEditMode = false; // 등록 모드로 초기화
+    isEditMode = false;
     
     const form = document.getElementById('add-form');
-    // 폼 초기화
+    // 초기화
+    document.getElementById('new-date').value = selectedDateKey || ''; // 현재 선택된 날짜 기본값
     document.getElementById('new-nick').value = '';
     document.getElementById('new-id').value = '';
     document.getElementById('new-amount').value = '';
     document.getElementById('new-reverse').value = '';
     document.getElementById('new-content').value = '';
     
-    // 버튼 텍스트 복구
     const submitBtn = document.getElementById('btn-submit');
     submitBtn.innerText = "등록 완료 💖";
     submitBtn.classList.remove('edit-mode');
@@ -542,34 +540,31 @@
     form.scrollIntoView({ behavior: 'smooth', block: 'center' });
   }
 
-  // [신규] 수정 폼 열기
   function openEditForm() {
     if (!selectedDateKey || currentTaskIndex === null) return;
     
-    isEditMode = true; // 수정 모드 설정
+    isEditMode = true;
     const task = homeworkData[selectedDateKey][currentTaskIndex];
     
-    // 폼에 기존 데이터 채우기
+    // 기존 데이터 채우기
+    document.getElementById('new-date').value = selectedDateKey; // 날짜 필드 채우기
     document.getElementById('new-nick').value = task.nick;
     document.getElementById('new-id').value = task.id;
     document.getElementById('new-amount').value = task.amount;
     document.getElementById('new-reverse').value = task.reverse;
     document.getElementById('new-content').value = task.content;
 
-    // 역팬 비율 체크 (계산된 값이 10%에 가까우면 10% 선택, 아니면 3%)
     const ratio = (task.amount > 0) ? (task.reverse / task.amount) : 0.03;
-    if(ratio >= 0.09) { // 대략 0.1
+    if(ratio >= 0.09) { 
         document.querySelector('input[name="calc-ratio"][value="0.10"]').checked = true;
     } else {
         document.querySelector('input[name="calc-ratio"][value="0.03"]').checked = true;
     }
 
-    // 버튼 텍스트 변경
     const submitBtn = document.getElementById('btn-submit');
     submitBtn.innerText = "수정 완료 🔄";
     submitBtn.classList.add('edit-mode');
 
-    // 상세 카드는 닫고 폼 보여주기
     document.getElementById('detail-card').style.display = 'none';
     document.getElementById('add-form').style.display = 'block';
     document.getElementById('add-form').scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -583,10 +578,11 @@
     reverseInput.value = reverse;
   }
 
-  // [수정됨] 등록/수정 처리 통합
   function handleTaskSubmit() {
-    if(!selectedDateKey) return alert("달력에서 날짜를 먼저 선택해주세요! 📅");
-    
+    // 1. 날짜 입력 확인
+    const newDateKey = document.getElementById('new-date').value;
+    if(!newDateKey) return alert("날짜를 선택해주세요!");
+
     const nick = document.getElementById('new-nick').value;
     const id = document.getElementById('new-id').value;
     const amount = parseInt(document.getElementById('new-amount').value) || 0;
@@ -601,39 +597,48 @@
       amount: amount,
       reverse: reverse,
       content: content,
-      status: "todo", // 기본 상태
-      memo: ""        // 기본 메모
+      status: "todo",
+      memo: ""
     };
 
-    if(!homeworkData[selectedDateKey]) {
-      homeworkData[selectedDateKey] = [];
-    }
-
     if (isEditMode) {
-      // 수정 모드: 기존 데이터 덮어쓰기 (status와 memo는 유지)
+      // [수정 모드]
       const oldTask = homeworkData[selectedDateKey][currentTaskIndex];
       newTaskObj.status = oldTask.status;
       newTaskObj.memo = oldTask.memo;
-      
-      homeworkData[selectedDateKey][currentTaskIndex] = newTaskObj;
-      alert("숙제 내용이 수정되었습니다! 📝");
-      isEditMode = false; // 모드 리셋
+
+      if (newDateKey === selectedDateKey) {
+          // 날짜 변동 없음 -> 제자리 수정
+          homeworkData[selectedDateKey][currentTaskIndex] = newTaskObj;
+          alert("숙제 내용이 수정되었습니다! 📝");
+      } else {
+          // 날짜 변경됨 -> 이동 (삭제 후 추가)
+          homeworkData[selectedDateKey].splice(currentTaskIndex, 1);
+          
+          if(!homeworkData[newDateKey]) homeworkData[newDateKey] = [];
+          homeworkData[newDateKey].push(newTaskObj);
+          
+          alert(`숙제가 ${newDateKey}로 이동되었습니다! 🚚`);
+      }
+      isEditMode = false;
     } else {
-      // 등록 모드: 새로 추가
-      homeworkData[selectedDateKey].push(newTaskObj);
+      // [신규 등록]
+      if(!homeworkData[newDateKey]) homeworkData[newDateKey] = [];
+      homeworkData[newDateKey].push(newTaskObj);
     }
 
     saveDataToLocal();
-
     document.getElementById('add-form').style.display = 'none';
     
-    // UI 전체 갱신
-    renderNickList(homeworkData[selectedDateKey]);
+    // 전체 갱신 (날짜가 바뀌었을 수도 있으므로)
     renderCalendar();
     renderSidebar();
     renderTotalRanking();
-    
-    document.getElementById('nickname-view').style.display = 'block';
+
+    // 원래 보고 있던 날짜 리스트 갱신 (이동했으면 사라진 거 확인)
+    if(selectedDateKey) {
+        selectDate(selectedDateKey);
+    }
   }
 
   function showMemberDetail(task, index) {
@@ -677,13 +682,10 @@
     homeworkData[selectedDateKey].splice(currentTaskIndex, 1);
     saveDataToLocal();
     closeDetail();
-    
-    // 전체 갱신
     renderNickList(homeworkData[selectedDateKey]);
     renderCalendar();
     renderSidebar();
     renderTotalRanking();
-
     document.getElementById('nickname-view').style.display = 'block';
   }
 
@@ -692,13 +694,10 @@
       homeworkData[selectedDateKey].splice(currentTaskIndex, 1);
       saveDataToLocal();
       closeDetail();
-      
-      // 전체 갱신
       renderNickList(homeworkData[selectedDateKey]);
       renderCalendar();
       renderSidebar();
       renderTotalRanking();
-      
       document.getElementById('nickname-view').style.display = 'block';
   }
 
@@ -706,7 +705,6 @@
     document.getElementById('detail-card').style.display = 'none';
     document.querySelectorAll('.nick-btn').forEach(b => b.classList.remove('active'));
     currentTaskIndex = null;
-    // 혹시 수정모드에서 그냥 닫았을 경우를 대비해 폼도 닫음
     document.getElementById('add-form').style.display = 'none';
   }
 
