@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>C9 토끼 숙제 캘린더 🐰 (날짜이동 가능)</title>
+<title>C9 토끼 숙제 캘린더 🐰 (실시간 연동)</title>
 <style>
   /* --- 🐰 파스텔 핑크 테마 설정 --- */
   :root {
@@ -32,111 +32,55 @@
   input, button, textarea, select { font-family: inherit; box-sizing: border-box; outline: none; }
   h2, h3 { color: var(--text-dark); }
 
-  /* --- 레이아웃 --- */
-  .wrapper {
-    display: flex; gap: 20px; max-width: 1400px; margin: 0 auto;
-    align-items: flex-start;
-  }
-
-  /* --- 사이드바 --- */
-  .sidebar, .sidebar-right {
-    width: 260px; background: var(--container-bg); padding: 25px; border-radius: var(--radius-round);
-    box-shadow: 0 8px 25px var(--shadow-color); flex-shrink: 0; max-height: 800px; overflow-y: auto;
-    border: 2px solid #fff;
-  }
-
-  .sidebar-title { 
-    font-size: 1.1rem; font-weight: bold; margin: 0 0 20px 0; color: var(--text-dark); 
-    border-bottom: 3px dotted var(--border-pink); padding-bottom: 15px; text-align: center;
-  }
+  /* 레이아웃 */
+  .wrapper { display: flex; gap: 20px; max-width: 1400px; margin: 0 auto; align-items: flex-start; }
+  .sidebar, .sidebar-right { width: 260px; background: var(--container-bg); padding: 25px; border-radius: var(--radius-round); box-shadow: 0 8px 25px var(--shadow-color); flex-shrink: 0; max-height: 800px; overflow-y: auto; border: 2px solid #fff; }
+  .sidebar-title { font-size: 1.1rem; font-weight: bold; margin: 0 0 20px 0; color: var(--text-dark); border-bottom: 3px dotted var(--border-pink); padding-bottom: 15px; text-align: center; }
+  .container { flex: 1; background: var(--container-bg); padding: 30px; border-radius: var(--radius-round); box-shadow: 0 8px 25px var(--shadow-color); border: 2px solid #fff; position: relative; }
   
-  .shortcut-btn {
-    width: 100%; background: #fff; border: 2px solid var(--border-pink); padding: 12px 15px;
-    border-radius: var(--radius-soft); margin-bottom: 10px; cursor: pointer; text-align: left;
-    transition: all 0.2s ease; display: flex; justify-content: space-between; align-items: center;
-  }
+  /* 로딩 표시 */
+  #loading-overlay { position: absolute; top:0; left:0; width:100%; height:100%; background:rgba(255,255,255,0.8); display: flex; justify-content: center; align-items: center; z-index: 999; border-radius: var(--radius-round); font-weight: bold; color: var(--dark-pink); }
+
+  /* 버튼 및 요소 스타일 (이전과 동일) */
+  .shortcut-btn { width: 100%; background: #fff; border: 2px solid var(--border-pink); padding: 12px 15px; border-radius: var(--radius-soft); margin-bottom: 10px; cursor: pointer; text-align: left; transition: all 0.2s ease; display: flex; justify-content: space-between; align-items: center; }
   .shortcut-btn:hover { background: var(--light-pink-hover); border-color: var(--primary-pink); transform: translateY(-2px); }
   .shortcut-date { font-weight: bold; color: var(--text-gray); font-size: 14px; }
   .shortcut-count { background: var(--primary-pink); color: white; font-size: 12px; padding: 4px 8px; border-radius: 12px; font-weight: bold; }
 
-  /* 랭킹 리스트 */
-  .rank-item {
-    display: flex; align-items: center; justify-content: space-between;
-    background: #fff; border-bottom: 1px dashed var(--border-pink);
-    padding: 12px 5px; margin-bottom: 5px;
-  }
+  .rank-item { display: flex; align-items: center; justify-content: space-between; background: #fff; border-bottom: 1px dashed var(--border-pink); padding: 12px 5px; margin-bottom: 5px; }
   .rank-info { display: flex; flex-direction: column; }
   .rank-nick { font-weight: bold; color: var(--text-dark); font-size: 14px; }
   .rank-id { font-size: 11px; color: var(--primary-pink); }
-  .rank-badge { 
-    background: var(--accent-blue); color: white; font-weight: bold; 
-    border-radius: 12px; padding: 5px 10px; font-size: 13px; 
-    box-shadow: 0 2px 5px rgba(174, 217, 224, 0.4);
-  }
+  .rank-badge { background: var(--accent-blue); color: white; font-weight: bold; border-radius: 12px; padding: 5px 10px; font-size: 13px; box-shadow: 0 2px 5px rgba(174, 217, 224, 0.4); }
   .rank-icon { margin-right: 5px; font-size: 14px; }
 
-  .no-data-msg { font-size: 14px; color: #aaa; text-align: center; padding: 30px 0; font-style: italic; }
-
-  /* --- 메인 컨테이너 --- */
-  .container { 
-    flex: 1; background: var(--container-bg); padding: 30px; border-radius: var(--radius-round); 
-    box-shadow: 0 8px 25px var(--shadow-color);
-    border: 2px solid #fff;
-  }
-
-  /* 캘린더 */
   .calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
   .calendar-header h2 { margin: 0; color: var(--text-dark); font-size: 1.4rem; font-weight: 800; }
   .calendar-header h2::before { content: "🐰 "; }
-  .nav-btn { 
-    background: white; border: 2px solid var(--border-pink); border-radius: 12px; 
-    padding: 8px 14px; cursor: pointer; color: var(--primary-pink); font-weight: bold; transition: 0.2s;
-  }
+  .nav-btn { background: white; border: 2px solid var(--border-pink); border-radius: 12px; padding: 8px 14px; cursor: pointer; color: var(--primary-pink); font-weight: bold; transition: 0.2s; }
   .nav-btn:hover { background: var(--primary-pink); color: white; border-color: var(--primary-pink); }
-  
   .nav-btn.del-icon { color: #ff8a80; border-color: #ffcdd2; margin-right: 5px; font-size: 1.1rem;} 
   .nav-btn.del-icon:hover { background: #ff8a80; color: white; border-color: #ff8a80; }
   .nav-btn.edit-icon { color: #81d4fa; border-color: #b3e5fc; margin-right: 5px; font-size: 1.1rem;} 
   .nav-btn.edit-icon:hover { background: #81d4fa; color: white; border-color: #81d4fa; }
-  
+
   .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; margin-bottom: 25px;}
   .day-name { text-align: center; font-size: 0.9rem; color: var(--primary-pink); font-weight: bold; padding-bottom: 10px; }
-  
-  .day-cell { 
-    height: 70px; background: #fff; border: 2px solid var(--border-pink); border-radius: var(--radius-soft); 
-    position: relative; cursor: pointer; transition: all 0.2s ease; padding: 6px;
-    display: flex; flex-direction: column; justify-content: space-between;
-  }
+  .day-cell { height: 70px; background: #fff; border: 2px solid var(--border-pink); border-radius: var(--radius-soft); position: relative; cursor: pointer; transition: all 0.2s ease; padding: 6px; display: flex; flex-direction: column; justify-content: space-between; }
   .day-cell:hover { border-color: var(--primary-pink); background: var(--light-pink-hover); transform: scale(1.03); z-index: 1;}
   .day-number { font-size: 14px; font-weight: bold; color: var(--text-gray); }
-  
   .has-homework { background-color: #fff0f3 !important; border: 2px solid var(--primary-pink) !important; }
-  .hw-badge {
-    align-self: flex-end; background-color: var(--dark-pink); color: white;
-    font-size: 11px; font-weight: bold; padding: 3px 7px; border-radius: 10px;
-    box-shadow: 1px 1px 3px rgba(255, 182, 193, 0.5);
-  }
+  .hw-badge { align-self: flex-end; background-color: var(--dark-pink); color: white; font-size: 11px; font-weight: bold; padding: 3px 7px; border-radius: 10px; box-shadow: 1px 1px 3px rgba(255, 182, 193, 0.5); }
 
-  /* 리스트 영역 */
   #nickname-view { display: none; border-top: 3px dotted var(--border-pink); padding-top: 25px; animation: fadeIn 0.3s; }
   .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
   .section-title { font-size: 1.1rem; color: var(--text-dark); font-weight: bold; margin: 0; }
   .section-title::before { content: "🥕 "; }
-  
-  .btn-add-show {
-    background-color: var(--primary-pink); color: white; border: none; padding: 10px 18px;
-    border-radius: var(--radius-soft); font-size: 13px; cursor: pointer; font-weight: bold;
-    box-shadow: 0 4px 10px var(--shadow-color); transition: 0.2s;
-  }
+  .btn-add-show { background-color: var(--primary-pink); color: white; border: none; padding: 10px 18px; border-radius: var(--radius-soft); font-size: 13px; cursor: pointer; font-weight: bold; box-shadow: 0 4px 10px var(--shadow-color); transition: 0.2s; }
   .btn-add-show:hover { background-color: var(--dark-pink); transform: translateY(-2px); }
 
   .nick-list { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 25px; }
-  .nick-btn {
-    background: #fff; border: 2px solid var(--border-pink); border-radius: var(--radius-soft); padding: 15px 5px;
-    font-size: 14px; font-weight: bold; color: var(--text-gray); cursor: pointer; transition: all 0.2s;
-    text-align: center; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-  }
+  .nick-btn { background: #fff; border: 2px solid var(--border-pink); border-radius: var(--radius-soft); padding: 15px 5px; font-size: 14px; font-weight: bold; color: var(--text-gray); cursor: pointer; transition: all 0.2s; text-align: center; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
   .nick-btn:hover { transform: translateY(-3px); box-shadow: 0 5px 10px var(--shadow-color); }
   .nick-btn.active { border-color: var(--primary-pink); background-color: var(--light-pink-hover); color: var(--text-dark); box-shadow: 0 0 0 2px var(--primary-pink) inset; }
   
@@ -144,89 +88,49 @@
   .status-partial { background-color: #fff3e0; border-color: #ffe0b2; color: #ff9800; } 
   .status-done { background-color: #e8f5e9; border-color: #c8e6c9; color: #4caf50; } 
 
-  /* 등록/수정 폼 */
-  #add-form { 
-    display: none; background: #fff5f8; border: 3px dashed var(--primary-pink); padding: 20px; border-radius: var(--radius-round); margin-bottom: 25px; 
-    animation: slideUp 0.2s;
-  }
+  #add-form { display: none; background: #fff5f8; border: 3px dashed var(--primary-pink); padding: 20px; border-radius: var(--radius-round); margin-bottom: 25px; animation: slideUp 0.2s; }
   .form-row { display: flex; gap: 15px; margin-bottom: 15px; }
   .form-group { flex: 1; }
   .form-label { font-size: 13px; color: var(--text-dark); margin-bottom: 6px; display: block; font-weight: bold; }
-  .form-input { 
-    width: 100%; padding: 12px; border: 2px solid var(--border-pink); border-radius: var(--radius-soft); font-size: 14px; background: #fff;
-  }
-  
+  .form-input { width: 100%; padding: 12px; border: 2px solid var(--border-pink); border-radius: var(--radius-soft); font-size: 14px; background: #fff; }
   .radio-group { display: flex; gap: 20px; margin-bottom: 5px; background: #fff; padding: 10px; border-radius: var(--radius-soft); border: 2px solid var(--border-pink); }
   .radio-label { display: flex; align-items: center; gap: 8px; font-size: 14px; cursor: pointer; font-weight: bold; color: var(--text-gray); }
   input[type="radio"] { accent-color: var(--primary-pink); transform: scale(1.2); }
-  
-  .btn-register { 
-    width: 100%; background-color: var(--primary-pink); color: white; border: none; padding: 15px; 
-    border-radius: var(--radius-soft); font-weight: bold; cursor: pointer; margin-top: 10px; font-size: 15px;
-    box-shadow: 0 4px 10px var(--shadow-color); transition: 0.2s;
-  }
+  .btn-register { width: 100%; background-color: var(--primary-pink); color: white; border: none; padding: 15px; border-radius: var(--radius-soft); font-weight: bold; cursor: pointer; margin-top: 10px; font-size: 15px; box-shadow: 0 4px 10px var(--shadow-color); transition: 0.2s; }
   .btn-register:hover { background-color: var(--dark-pink); transform: translateY(-2px); }
   .btn-register.edit-mode { background-color: #aed9e0; }
-  .btn-register.edit-mode:hover { background-color: #81d4fa; }
 
-  /* 상세 카드 */
   #detail-card { display: none; margin-top: 25px; background: #fff9fb; border-radius: var(--radius-round); padding: 25px; border: 3px solid var(--border-pink); animation: slideUp 0.3s; box-shadow: 0 10px 25px rgba(255, 182, 193, 0.15); }
   .card-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 3px dotted var(--border-pink); padding-bottom: 15px; margin-bottom: 20px; }
   .user-info h3 { margin: 0; font-size: 1.2rem; color: var(--text-dark); font-weight: 800; }
-  .user-info h3::before { content: "🎀 "; }
   .user-id { font-size: 0.9rem; color: var(--primary-pink); font-weight: bold; }
-  
   .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
   .stat-box { background: white; padding: 15px; border-radius: var(--radius-soft); text-align: center; border: 2px solid var(--border-pink); box-shadow: 0 4px 10px rgba(0,0,0,0.03); }
   .stat-label { font-size: 0.85rem; color: var(--text-gray); display: block; margin-bottom: 5px; }
   .stat-value { font-size: 1.3rem; font-weight: 900; color: var(--text-dark); }
-  .stat-value.money { color: var(--primary-pink); } 
-  .stat-value.reverse { color: var(--dark-pink); } 
-
+  .stat-value.money { color: var(--primary-pink); } .stat-value.reverse { color: var(--dark-pink); } 
   .task-box { background: white; padding: 20px; border-radius: var(--radius-soft); border: 2px solid var(--border-pink); margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.03); }
   .task-label { font-size: 0.95rem; font-weight: bold; margin-bottom: 10px; display: block; color: var(--text-dark); }
   .task-content { font-size: 1.05rem; line-height: 1.5; color: var(--text-dark); margin-bottom: 15px; word-break: keep-all; background: var(--light-pink-hover); padding: 15px; border-radius: 10px; }
-
   .status-control { margin-top: 20px; border-top: 3px dotted var(--border-pink); padding-top: 20px; }
   .status-options { display: flex; gap: 8px; margin-bottom: 15px; }
   .status-radio { display: none; }
-  .status-label {
-    flex: 1; text-align: center; padding: 12px; border-radius: var(--radius-soft); cursor: pointer;
-    font-size: 13px; font-weight: bold; color: var(--text-gray); background: #fff; border: 2px solid var(--border-pink);
-    display: flex; align-items: center; justify-content: center; transition: 0.2s;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-  }
-  
+  .status-label { flex: 1; text-align: center; padding: 12px; border-radius: var(--radius-soft); cursor: pointer; font-size: 13px; font-weight: bold; color: var(--text-gray); background: #fff; border: 2px solid var(--border-pink); display: flex; align-items: center; justify-content: center; transition: 0.2s; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
   input[type="radio"]:checked + .status-label.lbl-todo { background: #ff8a80; color: white; border-color: #ff8a80; }
   input[type="radio"]:checked + .status-label.lbl-partial { background: #ffb74d; color: white; border-color: #ffb74d; }
   input[type="radio"]:checked + .status-label.lbl-done { background: #81c784; color: white; border-color: #81c784; }
-
-  .memo-input { 
-    width: 100%; box-sizing: border-box; padding: 15px; border: 2px solid var(--border-pink); border-radius: var(--radius-soft); 
-    font-size: 14px; resize: vertical; min-height: 70px; margin-bottom: 10px; background: #fff; transition: 0.2s;
-  }
-  
+  .memo-input { width: 100%; box-sizing: border-box; padding: 15px; border: 2px solid var(--border-pink); border-radius: var(--radius-soft); font-size: 14px; resize: vertical; min-height: 70px; margin-bottom: 10px; background: #fff; transition: 0.2s; }
   .btn-group { display: flex; gap: 10px; margin-top: 20px; }
-  .btn-soop {
-    width: 100%; background-color: var(--accent-blue); color: white; border: none; padding: 15px;
-    border-radius: var(--radius-soft); text-decoration: none; font-weight: bold; cursor: pointer; text-align: center; font-size: 15px; display: flex; align-items: center; justify-content: center;
-    box-shadow: 0 4px 10px rgba(174, 217, 224, 0.4); transition: 0.2s;
-  }
-  .btn-soop:hover { background-color: #9ad0d8; transform: translateY(-2px); }
-  
-  .btn-complete { 
-    margin-top: 15px; width: 100%; background: var(--dark-pink); border: none; color: white; padding: 15px; 
-    border-radius: var(--radius-soft); cursor: pointer; font-size: 15px; font-weight: bold;
-    box-shadow: 0 4px 10px rgba(255, 141, 161, 0.4); transition: 0.2s;
-  }
+  .btn-soop { width: 100%; background-color: var(--accent-blue); color: white; border: none; padding: 15px; border-radius: var(--radius-soft); text-decoration: none; font-weight: bold; cursor: pointer; text-align: center; font-size: 15px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(174, 217, 224, 0.4); transition: 0.2s; }
+  .btn-complete { margin-top: 15px; width: 100%; background: var(--dark-pink); border: none; color: white; padding: 15px; border-radius: var(--radius-soft); cursor: pointer; font-size: 15px; font-weight: bold; box-shadow: 0 4px 10px rgba(255, 141, 161, 0.4); transition: 0.2s; }
   .btn-complete:hover { background-color: #e67a8f; transform: translateY(-2px); }
+  .no-data-msg { font-size: 14px; color: #aaa; text-align: center; padding: 30px 0; font-style: italic; }
 
   @media (max-width: 1024px) {
     .wrapper { flex-direction: column; }
     .sidebar, .sidebar-right { width: 100%; box-sizing: border-box; max-height: 250px; }
     .container { padding: 20px; width: 100%; box-sizing: border-box;}
   }
-
   @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
   @keyframes slideUp { from { transform: translateY(15px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 </style>
@@ -241,6 +145,7 @@
   </div>
 
   <div class="container">
+    <div id="loading-overlay">데이터를 불러오는 중... 🥕</div>
     <div class="calendar-header">
       <button class="nav-btn" onclick="changeMonth(-1)">◀ 이전</button>
       <h2 id="current-month">2026년 1월</h2>
@@ -366,22 +271,79 @@
 
 </div>
 
-<script>
-  let homeworkData = JSON.parse(localStorage.getItem('hwData_v1')) || {};
-  let currentDate = new Date();
-  let selectedDateKey = null;
-  let currentTaskIndex = null;
-  let isEditMode = false;
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+  import { getDatabase, ref, set, onValue, push } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-  function saveDataToLocal() {
-    localStorage.setItem('hwData_v1', JSON.stringify(homeworkData));
+  // -----------------------------------------------------------------------------------------
+  // 👇 여기에 아까 복사한 firebaseConfig 코드를 덮어씌우세요! 👇
+  // -----------------------------------------------------------------------------------------
+  const firebaseConfig = {
+    apiKey: "AIzaSyBhduAPQ_9IyEH1rnr9m9qtumgnIF90RII",
+    authDomain: "homework-c9.firebaseapp.com",
+    databaseURL: "https://homework-c9-default-rtdb.firebaseio.com",
+    projectId: "homework-c9",
+    storageBucket: "homework-c9.firebasestorage.app",
+    messagingSenderId: "293416059203",
+    appId: "1:293416059203:web:e962586275e2bd2b356ff6"
+  };
+
+  // -----------------------------------------------------------------------------------------
+
+  // Firebase 초기화
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
+  const dbRef = ref(db, 'homework_data');
+
+  let homeworkData = {}; // 전역 변수
+  window.homeworkData = homeworkData; // 윈도우 객체에 할당하여 일반 함수에서도 접근 가능하게 함
+
+  // --- 데이터 불러오기 (실시간 리스너) ---
+  onValue(dbRef, (snapshot) => {
+    const data = snapshot.val();
+    window.homeworkData = data || {}; // 데이터 없으면 빈 객체
+    homeworkData = window.homeworkData;
+
+    // 화면 갱신
+    renderCalendar();
+    renderSidebar();
+    renderTotalRanking();
+    
+    // 현재 보고 있는 상세 뷰가 있다면 갱신
+    if(window.selectedDateKey) {
+        renderNickList(window.homeworkData[window.selectedDateKey] || []);
+    }
+    
+    // 로딩 화면 제거
+    document.getElementById('loading-overlay').style.display = 'none';
+  });
+
+  // --- 데이터 저장 함수 (Firebase용) ---
+  window.saveToFirebase = function() {
+    set(dbRef, window.homeworkData)
+      .then(() => {
+        // 저장 성공 (별도 알림 없음, 실시간 반영됨)
+      })
+      .catch((error) => {
+        alert("데이터 저장 실패: " + error.message);
+      });
   }
 
-  function renderSidebar() {
+  // 기존 변수들 window 객체에 할당 (모듈 스코프 탈출용)
+  window.currentDate = new Date();
+  window.selectedDateKey = null;
+  window.currentTaskIndex = null;
+  window.isEditMode = false;
+
+  // ---------------------------------------------------------
+  // 아래는 기존 로직을 Firebase 저장 방식(saveToFirebase)으로 변경한 함수들입니다.
+  // ---------------------------------------------------------
+
+  window.renderSidebar = function() {
     const sidebarList = document.getElementById('sidebar-list');
     sidebarList.innerHTML = '';
-    const sortedKeys = Object.keys(homeworkData).sort().reverse();
-    const validKeys = sortedKeys.filter(key => homeworkData[key] && homeworkData[key].length > 0);
+    const sortedKeys = Object.keys(window.homeworkData).sort().reverse();
+    const validKeys = sortedKeys.filter(key => window.homeworkData[key] && window.homeworkData[key].length > 0);
 
     if (validKeys.length === 0) {
       sidebarList.innerHTML = `<div class="no-data-msg">아직 숙제가 없어요 깡총! 🐇</div>`;
@@ -389,27 +351,26 @@
     }
 
     validKeys.forEach(dateKey => {
-      const tasks = homeworkData[dateKey];
+      const tasks = window.homeworkData[dateKey];
       const btn = document.createElement('div');
       btn.className = 'shortcut-btn';
       btn.innerHTML = `<span class="shortcut-date">${dateKey}</span><span class="shortcut-count">${tasks.length}건</span>`;
       btn.onclick = () => {
-        currentDate = new Date(dateKey);
-        renderCalendar();
-        selectDate(dateKey);
+        window.currentDate = new Date(dateKey);
+        window.renderCalendar();
+        window.selectDate(dateKey);
       };
       sidebarList.appendChild(btn);
     });
   }
 
-  function renderTotalRanking() {
+  window.renderTotalRanking = function() {
     const rankListEl = document.getElementById('total-rank-list');
     rankListEl.innerHTML = '';
-
     const userCounts = {};
     
-    Object.keys(homeworkData).forEach(date => {
-      const tasks = homeworkData[date];
+    Object.keys(window.homeworkData).forEach(date => {
+      const tasks = window.homeworkData[date];
       tasks.forEach(task => {
         if (!userCounts[task.id]) {
           userCounts[task.id] = { nick: task.nick, id: task.id, count: 0 };
@@ -446,9 +407,9 @@
     });
   }
 
-  function renderCalendar() {
-    const year = currentDate.getFullYear();
-    const month = currentDate.getMonth();
+  window.renderCalendar = function() {
+    const year = window.currentDate.getFullYear();
+    const month = window.currentDate.getMonth();
     document.getElementById('current-month').innerText = `${year}년 ${month + 1}월`;
     const calendarEl = document.getElementById('calendar');
     calendarEl.innerHTML = '';
@@ -466,7 +427,7 @@
 
     for(let i=1; i<=lastDate; i++) {
       const dateKey = `${year}-${String(month+1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
-      const tasks = homeworkData[dateKey] || [];
+      const tasks = window.homeworkData[dateKey] || [];
       const hasTask = tasks.length > 0;
       calendarEl.innerHTML += `
         <div class="day-cell ${hasTask ? 'has-homework' : ''}" onclick="selectDate('${dateKey}')">
@@ -477,25 +438,25 @@
     }
   }
 
-  function changeMonth(step) {
-    currentDate.setMonth(currentDate.getMonth() + step);
-    renderCalendar();
+  window.changeMonth = function(step) {
+    window.currentDate.setMonth(window.currentDate.getMonth() + step);
+    window.renderCalendar();
   }
 
-  function selectDate(dateKey) {
-    selectedDateKey = dateKey;
-    const tasks = homeworkData[dateKey] || [];
+  window.selectDate = function(dateKey) {
+    window.selectedDateKey = dateKey;
+    const tasks = window.homeworkData[dateKey] || [];
     document.getElementById('detail-card').style.display = 'none';
     document.getElementById('add-form').style.display = 'none';
     document.getElementById('selected-date-text').innerText = `${dateKey} 숙제 리스트`;
-    renderNickList(tasks);
+    window.renderNickList(tasks);
     document.getElementById('nickname-view').style.display = 'block';
     if(window.innerWidth <= 1024) {
       document.getElementById('nickname-view').scrollIntoView({ behavior: 'smooth' });
     }
   }
 
-  function renderNickList(tasks) {
+  window.renderNickList = function(tasks) {
     const nickList = document.getElementById('nick-list-container');
     nickList.innerHTML = '';
     if (tasks.length === 0) {
@@ -513,18 +474,16 @@
       btn.onclick = () => {
         document.querySelectorAll('.nick-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
-        showMemberDetail(task, index);
+        window.showMemberDetail(task, index);
       };
       nickList.appendChild(btn);
     });
   }
 
-  function toggleAddForm() {
-    isEditMode = false;
-    
+  window.toggleAddForm = function() {
+    window.isEditMode = false;
     const form = document.getElementById('add-form');
-    // 초기화
-    document.getElementById('new-date').value = selectedDateKey || ''; // 현재 선택된 날짜 기본값
+    document.getElementById('new-date').value = window.selectedDateKey || '';
     document.getElementById('new-nick').value = '';
     document.getElementById('new-id').value = '';
     document.getElementById('new-amount').value = '';
@@ -540,14 +499,13 @@
     form.scrollIntoView({ behavior: 'smooth', block: 'center' });
   }
 
-  function openEditForm() {
-    if (!selectedDateKey || currentTaskIndex === null) return;
+  window.openEditForm = function() {
+    if (!window.selectedDateKey || window.currentTaskIndex === null) return;
     
-    isEditMode = true;
-    const task = homeworkData[selectedDateKey][currentTaskIndex];
+    window.isEditMode = true;
+    const task = window.homeworkData[window.selectedDateKey][window.currentTaskIndex];
     
-    // 기존 데이터 채우기
-    document.getElementById('new-date').value = selectedDateKey; // 날짜 필드 채우기
+    document.getElementById('new-date').value = window.selectedDateKey;
     document.getElementById('new-nick').value = task.nick;
     document.getElementById('new-id').value = task.id;
     document.getElementById('new-amount').value = task.amount;
@@ -570,7 +528,7 @@
     document.getElementById('add-form').scrollIntoView({ behavior: 'smooth', block: 'center' });
   }
 
-  function autoCalculate() {
+  window.autoCalculate = function() {
     const amount = parseInt(document.getElementById('new-amount').value) || 0;
     const reverseInput = document.getElementById('new-reverse');
     const ratio = parseFloat(document.querySelector('input[name="calc-ratio"]:checked').value);
@@ -578,8 +536,7 @@
     reverseInput.value = reverse;
   }
 
-  function handleTaskSubmit() {
-    // 1. 날짜 입력 확인
+  window.handleTaskSubmit = function() {
     const newDateKey = document.getElementById('new-date').value;
     if(!newDateKey) return alert("날짜를 선택해주세요!");
 
@@ -601,48 +558,39 @@
       memo: ""
     };
 
-    if (isEditMode) {
-      // [수정 모드]
-      const oldTask = homeworkData[selectedDateKey][currentTaskIndex];
+    if (window.isEditMode) {
+      const oldTask = window.homeworkData[window.selectedDateKey][window.currentTaskIndex];
       newTaskObj.status = oldTask.status;
       newTaskObj.memo = oldTask.memo;
 
-      if (newDateKey === selectedDateKey) {
-          // 날짜 변동 없음 -> 제자리 수정
-          homeworkData[selectedDateKey][currentTaskIndex] = newTaskObj;
+      if (newDateKey === window.selectedDateKey) {
+          window.homeworkData[window.selectedDateKey][window.currentTaskIndex] = newTaskObj;
           alert("숙제 내용이 수정되었습니다! 📝");
       } else {
-          // 날짜 변경됨 -> 이동 (삭제 후 추가)
-          homeworkData[selectedDateKey].splice(currentTaskIndex, 1);
-          
-          if(!homeworkData[newDateKey]) homeworkData[newDateKey] = [];
-          homeworkData[newDateKey].push(newTaskObj);
-          
+          window.homeworkData[window.selectedDateKey].splice(window.currentTaskIndex, 1);
+          if(!window.homeworkData[newDateKey]) window.homeworkData[newDateKey] = [];
+          window.homeworkData[newDateKey].push(newTaskObj);
           alert(`숙제가 ${newDateKey}로 이동되었습니다! 🚚`);
       }
-      isEditMode = false;
+      window.isEditMode = false;
     } else {
-      // [신규 등록]
-      if(!homeworkData[newDateKey]) homeworkData[newDateKey] = [];
-      homeworkData[newDateKey].push(newTaskObj);
+      if(!window.homeworkData[newDateKey]) window.homeworkData[newDateKey] = [];
+      window.homeworkData[newDateKey].push(newTaskObj);
     }
 
-    saveDataToLocal();
+    window.saveToFirebase(); // Firebase 저장 호출
     document.getElementById('add-form').style.display = 'none';
     
-    // 전체 갱신 (날짜가 바뀌었을 수도 있으므로)
-    renderCalendar();
-    renderSidebar();
-    renderTotalRanking();
-
-    // 원래 보고 있던 날짜 리스트 갱신 (이동했으면 사라진 거 확인)
-    if(selectedDateKey) {
-        selectDate(selectedDateKey);
+    // selectedDateKey가 있으면 갱신, 없으면 캘린더 리렌더링만
+    if(window.selectedDateKey) {
+       window.selectDate(window.selectedDateKey);
+    } else {
+       window.renderCalendar();
     }
   }
 
-  function showMemberDetail(task, index) {
-    currentTaskIndex = index;
+  window.showMemberDetail = function(task, index) {
+    window.currentTaskIndex = index;
     const card = document.getElementById('detail-card');
     
     document.getElementById('detail-nick').innerText = task.nick;
@@ -661,57 +609,46 @@
     card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   }
 
-  function saveTaskStatus(showMsg = false) {
-    if (!selectedDateKey || currentTaskIndex === null) return;
+  window.saveTaskStatus = function(showMsg = false) {
+    if (!window.selectedDateKey || window.currentTaskIndex === null) return;
     const newMemo = document.getElementById('detail-memo').value;
     const newStatus = document.querySelector('input[name="status"]:checked').value;
-    const task = homeworkData[selectedDateKey][currentTaskIndex];
+    const task = window.homeworkData[window.selectedDateKey][window.currentTaskIndex];
+    
+    // 변경사항 없으면 리턴 (불필요한 쓰기 방지)
+    if(task.memo === newMemo && task.status === newStatus) return;
+
     task.memo = newMemo;
     task.status = newStatus;
 
-    saveDataToLocal();
+    window.saveToFirebase();
     if(showMsg) alert('저장되었습니다! ✨');
     
-    renderNickList(homeworkData[selectedDateKey]);
+    window.renderNickList(window.homeworkData[window.selectedDateKey]);
     const btns = document.querySelectorAll('.nick-btn');
-    if(btns[currentTaskIndex]) btns[currentTaskIndex].classList.add('active');
+    if(btns[window.currentTaskIndex]) btns[window.currentTaskIndex].classList.add('active');
   }
 
-  function completeAndDelete() {
+  window.completeAndDelete = function() {
     if (!confirm('🎉 숙제를 완료하고 목록에서 삭제하시겠습니까?')) return;
-    homeworkData[selectedDateKey].splice(currentTaskIndex, 1);
-    saveDataToLocal();
-    closeDetail();
-    renderNickList(homeworkData[selectedDateKey]);
-    renderCalendar();
-    renderSidebar();
-    renderTotalRanking();
-    document.getElementById('nickname-view').style.display = 'block';
+    window.homeworkData[window.selectedDateKey].splice(window.currentTaskIndex, 1);
+    window.saveToFirebase();
+    window.closeDetail();
   }
 
-  function deleteTask() {
+  window.deleteTask = function() {
       if (!confirm('정말 이 숙제를 리스트에서 삭제하시겠습니까? (되돌릴 수 없습니다) 😥')) return;
-      homeworkData[selectedDateKey].splice(currentTaskIndex, 1);
-      saveDataToLocal();
-      closeDetail();
-      renderNickList(homeworkData[selectedDateKey]);
-      renderCalendar();
-      renderSidebar();
-      renderTotalRanking();
-      document.getElementById('nickname-view').style.display = 'block';
+      window.homeworkData[window.selectedDateKey].splice(window.currentTaskIndex, 1);
+      window.saveToFirebase();
+      window.closeDetail();
   }
 
-  function closeDetail() {
+  window.closeDetail = function() {
     document.getElementById('detail-card').style.display = 'none';
     document.querySelectorAll('.nick-btn').forEach(b => b.classList.remove('active'));
-    currentTaskIndex = null;
+    window.currentTaskIndex = null;
     document.getElementById('add-form').style.display = 'none';
   }
-
-  // 초기 실행
-  renderCalendar();
-  renderSidebar();
-  renderTotalRanking();
 </script>
 
 </body>
