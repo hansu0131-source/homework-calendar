@@ -96,4 +96,576 @@
     font-size: 14px; font-weight: bold; color: var(--text-gray); cursor: pointer; text-align: center; 
   }
   .nick-btn:hover { transform: translateY(-3px); box-shadow: 0 5px 10px var(--shadow-color); }
-  .nick-btn.active { border-color: var(--primary-pink); background-color: var(--light-
+  .nick-btn.active { border-color: var(--primary-pink); background-color: var(--light-pink-hover); color: var(--text-dark); }
+
+  /* 폼 & 상세 카드 */
+  #add-form { display: none; background: #fff5f8; border: 3px dashed var(--primary-pink); padding: 20px; border-radius: var(--radius-round); margin-bottom: 25px; }
+  .form-row { display: flex; gap: 15px; margin-bottom: 15px; }
+  .form-input { width: 100%; padding: 12px; border: 2px solid var(--border-pink); border-radius: var(--radius-soft); font-size: 14px; background: #fff; }
+  .btn-register { width: 100%; background-color: var(--primary-pink); color: white; border: none; padding: 15px; border-radius: var(--radius-soft); font-weight: bold; cursor: pointer; }
+  
+  #detail-card { display: none; margin-top: 25px; background: #fff9fb; border-radius: var(--radius-round); padding: 25px; border: 3px solid var(--border-pink); }
+  .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
+  .stat-box { background: white; padding: 15px; border-radius: var(--radius-soft); text-align: center; border: 2px solid var(--border-pink); }
+  .stat-value { font-size: 1.3rem; font-weight: 900; color: var(--text-dark); }
+  .btn-soop { width: 100%; background-color: var(--accent-blue); color: white; border: none; padding: 15px; border-radius: var(--radius-soft); text-decoration: none; font-weight: bold; display: flex; align-items: center; justify-content: center; }
+  .btn-complete { margin-top: 15px; width: 100%; background: var(--dark-pink); border: none; color: white; padding: 15px; border-radius: var(--radius-soft); cursor: pointer; font-weight: bold; }
+
+  /* --- [시즌 기록실] 깔끔한 테이블 스타일 (복구됨) --- */
+  .season-layout {
+    max-width: 1200px; margin: 0 auto; background: var(--container-bg);
+    border-radius: var(--radius-round); padding: 30px; box-shadow: 0 8px 25px var(--shadow-color);
+    border: 2px solid #fff;
+  }
+  .season-tabs { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 15px; margin-bottom: 20px; border-bottom: 2px dashed var(--border-pink); }
+  .season-tab-btn { white-space: nowrap; padding: 10px 20px; border-radius: 20px; border: 2px solid var(--border-pink); background: #fff; font-weight: bold; color: var(--text-gray); cursor: pointer; transition: 0.2s; }
+  .season-tab-btn.active { background: var(--primary-pink); color: white; border-color: var(--primary-pink); }
+  
+  .rank-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+  .rank-table th { background: var(--light-pink-hover); color: var(--text-dark); padding: 12px; font-size: 14px; border-bottom: 2px solid var(--border-pink); text-align: center; }
+  .rank-table td { padding: 12px; border-bottom: 1px solid #eee; color: var(--text-gray); font-size: 14px; text-align: center; }
+  .rank-table tr:hover { background: #fafafa; }
+  .rank-table input { width: 100%; border: none; background: transparent; text-align: center; font-size: 14px; outline: none; }
+  .rank-table input:focus { background: #fff; box-shadow: inset 0 0 0 2px var(--primary-pink); border-radius: 4px; }
+
+  .rank-num { font-weight: 900; }
+  .rank-1 { color: var(--gold); } .rank-2 { color: var(--silver); } .rank-3 { color: var(--bronze); }
+  .del-season-btn { color: #ff5252; background: none; border: 1px solid #ff5252; padding: 4px 8px; border-radius: 6px; cursor: pointer; font-size: 11px; }
+  
+  .season-footer { margin-top: 20px; display: flex; justify-content: space-between; align-items: center; }
+  .paste-guide { font-size: 12px; color: #888; background: #fff; padding: 5px 10px; border-radius: 8px; border: 1px solid #eee; }
+
+  /* 우측 랭킹 리스트 */
+  .rank-item { display: flex; align-items: center; justify-content: space-between; background: #fff; border-bottom: 1px dashed var(--border-pink); padding: 12px 5px; margin-bottom: 5px; }
+  .rank-info { display: flex; flex-direction: column; }
+  .rank-nick { font-weight: bold; color: var(--text-dark); font-size: 14px; }
+  .rank-id { font-size: 11px; color: var(--primary-pink); }
+  .rank-badge { background: var(--accent-blue); color: white; font-weight: bold; border-radius: 12px; padding: 5px 10px; font-size: 13px; }
+
+  #loading-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(255,255,255,0.9); display: flex; justify-content: center; align-items: center; z-index: 9999; font-weight: bold; color: var(--dark-pink); font-size: 1.5rem;}
+  
+  @media (max-width: 1024px) {
+    .wrapper { flex-direction: column; }
+    .sidebar, .sidebar-right { width: 100%; box-sizing: border-box; max-height: 250px; }
+    .container { padding: 20px; width: 100%; box-sizing: border-box;}
+  }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes slideUp { from { transform: translateY(15px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+</style>
+</head>
+<body>
+
+<div id="loading-overlay">🐰 데이터를 불러오는 중...</div>
+
+<nav class="main-nav">
+  <div class="nav-tab active" onclick="switchPage('calendar')">📅 숙제 캘린더</div>
+  <div class="nav-tab" onclick="switchPage('season')">🏆 낭플단 기록실</div>
+</nav>
+
+<div id="page-calendar" class="page-section active">
+  <div class="wrapper">
+    <div class="sidebar">
+      <div class="sidebar-title">🐰 날짜별 기록</div>
+      <div id="sidebar-list"></div>
+    </div>
+
+    <div class="container">
+      <div class="calendar-header">
+        <button class="nav-btn" onclick="changeMonth(-1)">◀ 이전</button>
+        <h2 id="current-month">2026년 1월</h2>
+        <button class="nav-btn" onclick="changeMonth(1)">다음 ▶</button>
+      </div>
+      
+      <div class="calendar-grid" id="calendar"></div>
+
+      <div id="nickname-view">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+          <h3 style="margin:0; font-size:18px;">숙제 대상자</h3>
+          <button class="btn-add-show" onclick="toggleAddForm()">+ 숙제 추가</button>
+        </div>
+
+        <div id="add-form">
+          <div class="form-row">
+            <input type="date" id="new-date" class="form-input">
+          </div>
+          <div class="form-row">
+            <input type="text" id="new-nick" class="form-input" placeholder="닉네임">
+            <input type="text" id="new-id" class="form-input" placeholder="아이디">
+          </div>
+          <div class="form-row">
+            <input type="number" id="new-amount" class="form-input" placeholder="풍선 개수" oninput="autoCalculate()">
+            <input type="number" id="new-reverse" class="form-input" placeholder="역팬(자동)" readonly>
+          </div>
+          <div class="form-row">
+             <div class="radio-group" style="display:flex; gap:10px; align-items:center;">
+                <label><input type="radio" name="calc-ratio" value="0.03" checked onchange="autoCalculate()"> 3%</label>
+                <label><input type="radio" name="calc-ratio" value="0.10" onchange="autoCalculate()"> 10%</label>
+             </div>
+          </div>
+          <input type="text" id="new-content" class="form-input" placeholder="숙제 내용 (직접 입력)" style="margin-bottom:10px;">
+          <button class="btn-register" id="btn-submit" onclick="handleTaskSubmit()">등록 완료 💖</button>
+        </div>
+
+        <div class="nick-list" id="nick-list-container"></div>
+      </div>
+
+      <div id="detail-card">
+        <div class="card-header">
+          <div class="user-info">
+            <h3 id="detail-nick">닉네임</h3>
+            <span class="user-id" id="detail-id">id_placeholder</span>
+          </div>
+          <div>
+            <button class="nav-btn edit-icon" onclick="openEditForm()" title="수정">✏️</button>
+            <button class="nav-btn del-icon" onclick="deleteTask()" title="삭제">🗑</button>
+            <button class="nav-btn" onclick="closeDetail()">X</button>
+          </div>
+        </div>
+
+        <div class="stat-grid">
+          <div class="stat-box">
+            <span class="stat-label">총 후원</span>
+            <span class="stat-value money" id="detail-amount">0</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-label">역팬</span>
+            <span class="stat-value reverse" id="detail-reverse">0</span>
+          </div>
+        </div>
+
+        <div style="background:white; padding:15px; border-radius:15px; border:2px solid var(--border-pink); margin-bottom:20px;">
+          <div style="font-weight:bold; margin-bottom:10px;">📝 숙제 내용</div>
+          <div id="detail-content" style="background:var(--light-pink-hover); padding:10px; border-radius:10px; margin-bottom:10px;"></div>
+          <textarea id="detail-memo" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:8px;" placeholder="메모 (자동저장)" onblur="saveTaskStatus()"></textarea>
+        </div>
+
+        <div class="btn-group">
+          <a href="#" target="_blank" class="btn-soop" id="detail-link">📺 SOOP 방송국</a>
+        </div>
+        <button class="btn-complete" onclick="completeAndDelete()">완료 처리 (삭제)</button>
+      </div>
+    </div>
+
+    <div class="sidebar-right">
+      <div class="sidebar-title">🥕 누적 숙제 랭킹</div>
+      <div id="total-rank-list"></div>
+    </div>
+  </div>
+</div>
+
+<div id="page-season" class="page-section">
+  <div class="season-layout">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+      <h2 style="margin:0;">🏆 시즌별 낭플단 차트</h2>
+      <button class="add-season-btn" style="background:#333; color:white; border:none; padding:8px 15px; border-radius:10px; cursor:pointer;" onclick="createNewSeasonTab()">+ 새 시즌 추가</button>
+    </div>
+
+    <div class="season-tabs" id="season-tabs-container"></div>
+
+    <div id="season-content-area" style="display:none;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+        <h3 id="current-season-title" style="margin:0;"></h3>
+        <span class="paste-guide">💡 엑셀 복사(Ctrl+C) → 여기에 붙여넣기(Ctrl+V)</span>
+      </div>
+      
+      <table class="rank-table">
+        <thead>
+          <tr>
+            <th width="8%">순위</th>
+            <th width="15%">아이디</th>
+            <th width="15%">닉네임</th>
+            <th width="15%">낭플</th>
+            <th width="10%">1+1</th>
+            <th width="27%">공약</th>
+            <th width="10%">관리</th>
+          </tr>
+        </thead>
+        <tbody id="season-rank-tbody"></tbody>
+        <tfoot>
+            <tr style="background:#fff9fd; font-weight:bold;">
+                <td>합계</td>
+                <td></td>
+                <td></td>
+                <td id="season-total-sum" style="color:var(--dark-pink);">0</td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+        </tfoot>
+      </table>
+      
+      <div class="season-footer">
+        <button class="nav-btn" onclick="addEmptyRow()">+ 빈 줄 추가</button>
+        <button class="del-season-btn" onclick="deleteCurrentSeason()">⚠️ 이 시즌 탭 삭제</button>
+      </div>
+    </div>
+    
+    <div id="no-season-msg" class="no-data-msg" style="text-align:center; padding:50px; color:#aaa;">
+      등록된 시즌/회차가 없습니다.<br>우측 상단 버튼을 눌러 회차를 만들어주세요!
+    </div>
+  </div>
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+  import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyBhduAPQ_9IyEH1rnr9m9qtumgnIF90RII",
+    authDomain: "homework-c9.firebaseapp.com",
+    databaseURL: "https://homework-c9-default-rtdb.firebaseio.com",
+    projectId: "homework-c9",
+    storageBucket: "homework-c9.firebasestorage.app",
+    messagingSenderId: "293416059203",
+    appId: "1:293416059203:web:e962586275e2bd2b356ff6"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
+  
+  const dbRefHome = ref(db, 'homework_data');
+  const dbRefSeason = ref(db, 'season_data');
+
+  window.homeworkData = {}; 
+  window.seasonData = {};
+  window.currentSeasonName = null;
+
+  // 데이터 로드
+  onValue(dbRefHome, (snapshot) => {
+    window.homeworkData = snapshot.val() || {};
+    refreshCalendarUI();
+    document.getElementById('loading-overlay').style.display = 'none';
+  });
+
+  onValue(dbRefSeason, (snapshot) => {
+    window.seasonData = snapshot.val() || {};
+    renderSeasonTabs();
+    if(window.currentSeasonName && window.seasonData[window.currentSeasonName]) {
+        renderRecordTable(window.currentSeasonName);
+    } else {
+        const keys = Object.keys(window.seasonData).sort();
+        if(keys.length > 0) switchSeasonTab(keys[0]);
+        else {
+            document.getElementById('season-content-area').style.display = 'none';
+            document.getElementById('no-season-msg').style.display = 'block';
+        }
+    }
+  });
+
+  window.saveHomework = () => set(dbRefHome, window.homeworkData);
+  window.saveSeason = () => set(dbRefSeason, window.seasonData);
+
+  window.switchPage = (page) => {
+    document.querySelectorAll('.page-section').forEach(e => e.classList.remove('active'));
+    document.querySelectorAll('.nav-tab').forEach(e => e.classList.remove('active'));
+    document.getElementById(`page-${page}`).classList.add('active');
+    
+    const tabs = document.querySelectorAll('.nav-tab');
+    if(page==='calendar') tabs[0].classList.add('active');
+    else tabs[1].classList.add('active');
+  };
+
+  // --- 기록실 로직 (깔끔한 테이블 버전) ---
+  window.createNewSeasonTab = () => {
+    const name = prompt("새 시즌 이름을 입력하세요");
+    if(!name) return;
+    if(window.seasonData[name]) return alert("이미 존재합니다.");
+    window.seasonData[name] = [];
+    window.saveSeason();
+    window.switchSeasonTab(name);
+  };
+
+  window.renderSeasonTabs = () => {
+    const container = document.getElementById('season-tabs-container');
+    container.innerHTML = '';
+    const keys = Object.keys(window.seasonData).sort();
+    if(keys.length === 0) {
+        document.getElementById('no-season-msg').style.display = 'block';
+        document.getElementById('season-content-area').style.display = 'none';
+        return;
+    }
+    document.getElementById('no-season-msg').style.display = 'none';
+    keys.forEach(key => {
+        const btn = document.createElement('button');
+        btn.className = `season-tab-btn ${key === window.currentSeasonName ? 'active' : ''}`;
+        btn.innerText = key;
+        btn.onclick = () => window.switchSeasonTab(key);
+        container.appendChild(btn);
+    });
+  };
+
+  window.switchSeasonTab = (name) => {
+    window.currentSeasonName = name;
+    renderSeasonTabs();
+    renderRecordTable(name);
+    document.getElementById('season-content-area').style.display = 'block';
+  };
+
+  window.renderRecordTable = (seasonName) => {
+    document.getElementById('current-season-title').innerText = seasonName;
+    const tbody = document.getElementById('season-rank-tbody');
+    tbody.innerHTML = '';
+    
+    const list = window.seasonData[seasonName] || [];
+    let totalSum = 0;
+
+    // 금액 내림차순 정렬 (원하면 주석 해제)
+    // list.sort((a, b) => (parseInt(b.amount)||0) - (parseInt(a.amount)||0));
+
+    list.forEach((item, index) => {
+        const amt = parseInt(item.amount || 0);
+        totalSum += amt;
+
+        let rankClass = '';
+        if(index === 0) rankClass = 'rank-1';
+        if(index === 1) rankClass = 'rank-2';
+        if(index === 2) rankClass = 'rank-3';
+
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td class="rank-num ${rankClass}">${index + 1}</td>
+            <td><input type="text" value="${item.id||''}" onblur="updateRecord('${seasonName}', ${index}, 'id', this)"></td>
+            <td><input type="text" value="${item.nick||''}" onblur="updateRecord('${seasonName}', ${index}, 'nick', this)"></td>
+            <td><input type="text" value="${item.amount||''}" onblur="updateRecord('${seasonName}', ${index}, 'amount', this)" style="font-weight:bold; color:var(--primary-pink);"></td>
+            <td><input type="text" value="${item.oneplus||''}" onblur="updateRecord('${seasonName}', ${index}, 'oneplus', this)"></td>
+            <td><input type="text" value="${item.promise||''}" onblur="updateRecord('${seasonName}', ${index}, 'promise', this)" style="text-align:left;"></td>
+            <td><button class="del-season-btn" onclick="deleteRecord('${seasonName}', ${index})">🗑</button></td>
+        `;
+        tbody.appendChild(tr);
+    });
+    
+    document.getElementById('season-total-sum').innerText = totalSum.toLocaleString();
+  };
+
+  window.updateRecord = (seasonName, index, field, element) => {
+    let val = element.value.trim();
+    if(field === 'amount') val = val.replace(/[^0-9]/g, '');
+    
+    if(!window.seasonData[seasonName][index]) return;
+    window.seasonData[seasonName][index][field] = val;
+    window.saveSeason();
+    
+    // 합계만 갱신
+    let sum = 0;
+    window.seasonData[seasonName].forEach(i => sum += parseInt(i.amount||0));
+    document.getElementById('season-total-sum').innerText = sum.toLocaleString();
+  };
+
+  window.addEmptyRow = () => {
+    if(!window.currentSeasonName) return;
+    window.seasonData[window.currentSeasonName].push({ id:'', nick:'', amount:'', oneplus:'', promise:'' });
+    window.saveSeason();
+    renderRecordTable(window.currentSeasonName);
+  };
+
+  window.deleteRecord = (seasonName, index) => {
+    if(!confirm("삭제합니까?")) return;
+    window.seasonData[seasonName].splice(index, 1);
+    window.saveSeason();
+    renderRecordTable(seasonName);
+  };
+
+  window.deleteCurrentSeason = () => {
+    if(!confirm("이 탭을 완전히 삭제하시겠습니까?")) return;
+    delete window.seasonData[window.currentSeasonName];
+    window.currentSeasonName = null;
+    window.saveSeason();
+  };
+
+  // 엑셀 붙여넣기
+  document.addEventListener('paste', (e) => {
+    if(!document.getElementById('page-record').classList.contains('active')) return;
+    if(!window.currentSeasonName) return;
+    if(e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+
+    e.preventDefault();
+    const clipboardData = (e.clipboardData || window.clipboardData).getData('text');
+    if(!clipboardData) return;
+
+    const rows = clipboardData.trim().split(/\r?\n/);
+    if(rows.length === 0) return;
+
+    if(!confirm(`${rows.length}행의 데이터를 붙여넣으시겠습니까?`)) return;
+
+    rows.forEach(rowStr => {
+        const cols = rowStr.split('\t');
+        if(cols.length < 1) return;
+        // 엑셀 열 순서 가정: 아이디, 닉네임, 낭플, 1+1, 공약
+        const newItem = {
+            id: cols[0] || '',
+            nick: cols[1] || '',
+            amount: (cols[2] || '').replace(/[^0-9]/g, ''),
+            oneplus: cols[3] || '',
+            promise: cols[4] || ''
+        };
+        window.seasonData[window.currentSeasonName].push(newItem);
+    });
+    window.saveSeason();
+    renderRecordTable(window.currentSeasonName);
+  });
+
+  // --- 캘린더 로직 (기존 유지) ---
+  window.currentDate = new Date();
+  window.selectedDateKey = null;
+  window.currentTaskIndex = null;
+  window.isEditMode = false;
+
+  function refreshCalendarUI() {
+    renderCalendar();
+    renderSidebar();
+    renderTotalRanking();
+    if(window.selectedDateKey) renderNickList(window.homeworkData[window.selectedDateKey] || []);
+  }
+
+  window.renderCalendar = () => {
+    const year = window.currentDate.getFullYear();
+    const month = window.currentDate.getMonth();
+    document.getElementById('current-month').innerText = `${year}년 ${month+1}월`;
+    const el = document.getElementById('calendar'); el.innerHTML = '';
+    const firstDay = new Date(year, month, 1).getDay();
+    const lastDate = new Date(year, month+1, 0).getDate();
+    ['일','월','화','수','목','금','토'].forEach(d => el.innerHTML+=`<div class="day-name">${d}</div>`);
+    for(let i=0; i<firstDay; i++) el.innerHTML+=`<div></div>`;
+    for(let i=1; i<=lastDate; i++) {
+        const dKey = `${year}-${String(month+1).padStart(2,'0')}-${String(i).padStart(2,'0')}`;
+        const count = (window.homeworkData[dKey]||[]).length;
+        const cls = count>0 ? 'has-homework' : '';
+        const badge = count>0 ? `<div class="hw-badge">${count}</div>` : '';
+        el.innerHTML += `<div class="day-cell ${cls}" onclick="selectDate('${dKey}')"><span class="day-number">${i}</span>${badge}</div>`;
+    }
+  };
+
+  window.changeMonth = (step) => { window.currentDate.setMonth(window.currentDate.getMonth()+step); window.renderCalendar(); };
+  window.selectDate = (key) => {
+    window.selectedDateKey = key;
+    document.getElementById('selected-date-text').innerText = `${key} 리스트`;
+    renderNickList(window.homeworkData[key]||[]);
+    document.getElementById('nickname-view').style.display='block';
+    document.getElementById('detail-card').style.display='none';
+    document.getElementById('add-form').style.display='none';
+  };
+  window.renderNickList = (list) => {
+    const con = document.getElementById('nick-list-container'); con.innerHTML = '';
+    if(!list.length) { con.innerHTML = '<div style="grid-column:span 3; text-align:center; color:#ccc;">없음</div>'; return; }
+    list.forEach((task, idx) => {
+        const btn = document.createElement('button');
+        btn.className = 'nick-btn';
+        if(task.status === 'done') btn.style.background = '#e8f5e9';
+        btn.innerText = task.nick;
+        btn.onclick = () => showMemberDetail(task, idx);
+        con.appendChild(btn);
+    });
+  };
+  window.renderSidebar = () => {
+    const con = document.getElementById('sidebar-list'); con.innerHTML = '';
+    Object.keys(window.homeworkData).sort().reverse().forEach(key => {
+        if(window.homeworkData[key].length > 0) {
+            const div = document.createElement('div');
+            div.className = 'shortcut-btn';
+            div.innerHTML = `<span>${key}</span><span style="background:var(--primary-pink); color:white; padding:2px 6px; border-radius:10px; font-size:11px;">${window.homeworkData[key].length}</span>`;
+            div.onclick = () => { window.currentDate = new Date(key); window.renderCalendar(); window.selectDate(key); };
+            con.appendChild(div);
+        }
+    });
+  };
+  window.renderTotalRanking = () => {
+    const con = document.getElementById('total-rank-list'); con.innerHTML = '';
+    const counts = {};
+    Object.keys(window.homeworkData).forEach(d => window.homeworkData[d].forEach(t => {
+        if(!counts[t.id]) counts[t.id] = {nick:t.nick, id:t.id, count:0};
+        counts[t.id].count++;
+    }));
+    const sorted = Object.values(counts).sort((a,b)=>b.count-a.count);
+    if(!sorted.length) { con.innerHTML='<div class="no-data-msg">데이터 없음</div>'; return; }
+    sorted.forEach((u,i) => {
+        let icon = i===0?'👑 ':i===1?'🥈 ':i===2?'🥉 ': `${i+1}. `;
+        const div = document.createElement('div');
+        div.className = 'rank-item';
+        div.innerHTML = `<div class="rank-info"><span class="rank-nick">${icon}${u.nick}</span><span class="rank-id">(${u.id})</span></div><div class="rank-badge">${u.count}개</div>`;
+        con.appendChild(div);
+    });
+  };
+
+  // 캘린더 등록/수정/삭제 등
+  window.toggleAddForm = () => {
+    window.isEditMode = false;
+    document.getElementById('add-form').style.display = 'block';
+    document.getElementById('new-date').value = window.selectedDateKey;
+    document.getElementById('new-nick').value = '';
+    document.getElementById('new-id').value = '';
+    document.getElementById('new-amount').value = '';
+    document.getElementById('new-reverse').value = '';
+    document.getElementById('new-content').value = '';
+    document.getElementById('btn-submit').innerText = '등록하기 💖';
+  };
+  window.openEditForm = () => {
+    window.isEditMode = true;
+    const task = window.homeworkData[window.selectedDateKey][window.currentTaskIndex];
+    document.getElementById('add-form').style.display = 'block';
+    document.getElementById('new-date').value = window.selectedDateKey;
+    document.getElementById('new-nick').value = task.nick;
+    document.getElementById('new-id').value = task.id;
+    document.getElementById('new-amount').value = task.amount;
+    document.getElementById('new-reverse').value = task.reverse;
+    document.getElementById('new-content').value = task.content;
+    document.getElementById('btn-submit').innerText = '수정하기 🔄';
+    document.getElementById('detail-card').style.display = 'none';
+  };
+  window.autoCalculate = () => {
+    const amt = document.getElementById('new-amount').value;
+    const ratio = document.querySelector('input[name="calc-ratio"]:checked').value;
+    document.getElementById('new-reverse').value = Math.floor(amt * ratio);
+  };
+  window.handleTaskSubmit = () => {
+    const dKey = document.getElementById('new-date').value;
+    if(!dKey) return alert("날짜 필수");
+    const newTask = {
+        nick: document.getElementById('new-nick').value,
+        id: document.getElementById('new-id').value,
+        amount: document.getElementById('new-amount').value,
+        reverse: document.getElementById('new-reverse').value,
+        content: document.getElementById('new-content').value,
+        status: 'todo', memo: ''
+    };
+    if(window.isEditMode) window.homeworkData[window.selectedDateKey].splice(window.currentTaskIndex, 1);
+    
+    if(!window.homeworkData[dKey]) window.homeworkData[dKey] = [];
+    window.homeworkData[dKey].push(newTask);
+    window.saveHomework();
+    document.getElementById('add-form').style.display = 'none';
+    if(dKey===window.selectedDateKey) window.selectDate(dKey);
+    else window.renderCalendar();
+  };
+  window.showMemberDetail = (task, idx) => {
+    window.currentTaskIndex = idx;
+    document.getElementById('detail-card').style.display = 'block';
+    document.getElementById('detail-nick').innerText = task.nick;
+    document.getElementById('detail-id').innerText = task.id;
+    document.getElementById('detail-amount').innerText = parseInt(task.amount).toLocaleString();
+    document.getElementById('detail-reverse').innerText = parseInt(task.reverse).toLocaleString();
+    document.getElementById('detail-content').innerText = task.content;
+    document.getElementById('detail-memo').value = task.memo || '';
+    document.getElementById('detail-link').href = `https://www.sooplive.co.kr/station/${task.id}`;
+  };
+  window.saveTaskStatus = () => {
+    if(!window.selectedDateKey) return;
+    const task = window.homeworkData[window.selectedDateKey][window.currentTaskIndex];
+    task.memo = document.getElementById('detail-memo').value;
+    window.saveHomework();
+  };
+  window.completeAndDelete = () => {
+    if(!confirm("완료 처리하시겠습니까? (삭제)")) return;
+    window.deleteTask();
+  };
+  window.deleteTask = () => {
+    window.homeworkData[window.selectedDateKey].splice(window.currentTaskIndex, 1);
+    window.saveHomework();
+    window.closeDetail();
+    window.selectDate(window.selectedDateKey);
+  };
+  window.closeDetail = () => document.getElementById('detail-card').style.display = 'none';
+
+</script>
+
+</body>
+</html>
