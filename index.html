@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>C9 토끼 숙제 & 낭플단 관리 🐰</title>
 <style>
-  /* --- 🐰 파스텔 핑크 테마 (이전 스타일 복구) --- */
+  /* --- 🐰 파스텔 핑크 테마 (기본) --- */
   :root {
     --bg-color: #fff0f5; 
     --container-bg: #ffffff;
@@ -47,7 +47,7 @@
   .page-section { display: none; animation: fadeIn 0.3s; }
   .page-section.active { display: block; }
 
-  /* --- 캘린더 & 사이드바 레이아웃 --- */
+  /* --- 레이아웃 --- */
   .wrapper { display: flex; gap: 20px; max-width: 1400px; margin: 0 auto; align-items: flex-start; }
   .sidebar, .sidebar-right { 
     width: 260px; background: var(--container-bg); padding: 25px; border-radius: var(--radius-round); 
@@ -57,13 +57,12 @@
     font-size: 1.1rem; font-weight: bold; margin: 0 0 20px 0; color: var(--text-dark); 
     border-bottom: 3px dotted var(--border-pink); padding-bottom: 15px; text-align: center; 
   }
-  
   .container { 
     flex: 1; background: var(--container-bg); padding: 30px; border-radius: var(--radius-round); 
     box-shadow: 0 8px 25px var(--shadow-color); border: 2px solid #fff; position: relative; 
   }
 
-  /* 캘린더 요소 */
+  /* --- 캘린더 관련 스타일 --- */
   .calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
   .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; margin-bottom: 25px;}
   .day-name { text-align: center; font-size: 0.9rem; color: var(--primary-pink); font-weight: bold; padding-bottom: 10px; }
@@ -89,7 +88,9 @@
     cursor: pointer; color: var(--primary-pink); font-weight: bold; transition: 0.2s; 
   }
   .nav-btn:hover { background: var(--primary-pink); color: white; border-color: var(--primary-pink); }
-  
+  .nav-btn.del-icon { color: #ff8a80; border-color: #ffcdd2; margin-right: 5px; font-size: 1.1rem;} 
+  .nav-btn.edit-icon { color: #81d4fa; border-color: #b3e5fc; margin-right: 5px; font-size: 1.1rem;} 
+
   .nick-list { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 25px; }
   .nick-btn { 
     background: #fff; border: 2px solid var(--border-pink); border-radius: var(--radius-soft); padding: 15px 5px; 
@@ -111,7 +112,7 @@
   .btn-soop { width: 100%; background-color: var(--accent-blue); color: white; border: none; padding: 15px; border-radius: var(--radius-soft); text-decoration: none; font-weight: bold; display: flex; align-items: center; justify-content: center; }
   .btn-complete { margin-top: 15px; width: 100%; background: var(--dark-pink); border: none; color: white; padding: 15px; border-radius: var(--radius-soft); cursor: pointer; font-weight: bold; }
 
-  /* --- [시즌 기록실] 깔끔한 테이블 스타일 (복구됨) --- */
+  /* --- [시즌 기록실] 깔끔한 원래 스타일 --- */
   .season-layout {
     max-width: 1200px; margin: 0 auto; background: var(--container-bg);
     border-radius: var(--radius-round); padding: 30px; box-shadow: 0 8px 25px var(--shadow-color);
@@ -121,21 +122,23 @@
   .season-tab-btn { white-space: nowrap; padding: 10px 20px; border-radius: 20px; border: 2px solid var(--border-pink); background: #fff; font-weight: bold; color: var(--text-gray); cursor: pointer; transition: 0.2s; }
   .season-tab-btn.active { background: var(--primary-pink); color: white; border-color: var(--primary-pink); }
   
+  .season-content-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+  .add-season-btn { background: #333; color: white; border: none; padding: 8px 15px; border-radius: 10px; cursor: pointer; font-size: 12px; }
+
+  .season-entry-form { background: #fff5f8; padding: 15px; border-radius: var(--radius-soft); border: 2px dashed var(--primary-pink); display: flex; gap: 10px; align-items: flex-end; margin-bottom: 20px; }
+  .season-entry-form input { flex: 1; padding: 10px; border: 1px solid var(--border-pink); border-radius: 8px; }
+  .season-entry-form button { background: var(--primary-pink); color: white; border: none; padding: 10px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; }
+
+  /* 심플한 테이블 */
   .rank-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
   .rank-table th { background: var(--light-pink-hover); color: var(--text-dark); padding: 12px; font-size: 14px; border-bottom: 2px solid var(--border-pink); text-align: center; }
   .rank-table td { padding: 12px; border-bottom: 1px solid #eee; color: var(--text-gray); font-size: 14px; text-align: center; }
   .rank-table tr:hover { background: #fafafa; }
-  .rank-table input { width: 100%; border: none; background: transparent; text-align: center; font-size: 14px; outline: none; }
-  .rank-table input:focus { background: #fff; box-shadow: inset 0 0 0 2px var(--primary-pink); border-radius: 4px; }
-
   .rank-num { font-weight: 900; }
   .rank-1 { color: var(--gold); } .rank-2 { color: var(--silver); } .rank-3 { color: var(--bronze); }
-  .del-season-btn { color: #ff5252; background: none; border: 1px solid #ff5252; padding: 4px 8px; border-radius: 6px; cursor: pointer; font-size: 11px; }
   
-  .season-footer { margin-top: 20px; display: flex; justify-content: space-between; align-items: center; }
-  .paste-guide { font-size: 12px; color: #888; background: #fff; padding: 5px 10px; border-radius: 8px; border: 1px solid #eee; }
+  .del-season-btn { color: #ff5252; background: none; border: 1px solid #ff5252; padding: 4px 8px; border-radius: 6px; cursor: pointer; font-size: 11px; }
 
-  /* 우측 랭킹 리스트 */
   .rank-item { display: flex; align-items: center; justify-content: space-between; background: #fff; border-bottom: 1px dashed var(--border-pink); padding: 12px 5px; margin-bottom: 5px; }
   .rank-info { display: flex; flex-direction: column; }
   .rank-nick { font-weight: bold; color: var(--text-dark); font-size: 14px; }
@@ -148,9 +151,9 @@
     .wrapper { flex-direction: column; }
     .sidebar, .sidebar-right { width: 100%; box-sizing: border-box; max-height: 250px; }
     .container { padding: 20px; width: 100%; box-sizing: border-box;}
+    .season-entry-form { flex-direction: column; align-items: stretch; }
   }
   @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-  @keyframes slideUp { from { transform: translateY(15px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 </style>
 </head>
 <body>
@@ -196,11 +199,9 @@
             <input type="number" id="new-amount" class="form-input" placeholder="풍선 개수" oninput="autoCalculate()">
             <input type="number" id="new-reverse" class="form-input" placeholder="역팬(자동)" readonly>
           </div>
-          <div class="form-row">
-             <div class="radio-group" style="display:flex; gap:10px; align-items:center;">
-                <label><input type="radio" name="calc-ratio" value="0.03" checked onchange="autoCalculate()"> 3%</label>
-                <label><input type="radio" name="calc-ratio" value="0.10" onchange="autoCalculate()"> 10%</label>
-             </div>
+          <div class="form-row" style="display:flex; gap:10px; align-items:center;">
+             <label><input type="radio" name="calc-ratio" value="0.03" checked onchange="autoCalculate()"> 3%</label>
+             <label><input type="radio" name="calc-ratio" value="0.10" onchange="autoCalculate()"> 10%</label>
           </div>
           <input type="text" id="new-content" class="form-input" placeholder="숙제 내용 (직접 입력)" style="margin-bottom:10px;">
           <button class="btn-register" id="btn-submit" onclick="handleTaskSubmit()">등록 완료 💖</button>
@@ -237,6 +238,12 @@
           <div style="font-weight:bold; margin-bottom:10px;">📝 숙제 내용</div>
           <div id="detail-content" style="background:var(--light-pink-hover); padding:10px; border-radius:10px; margin-bottom:10px;"></div>
           <textarea id="detail-memo" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:8px;" placeholder="메모 (자동저장)" onblur="saveTaskStatus()"></textarea>
+          
+          <div style="display:flex; gap:10px; margin-top:10px; justify-content:center;">
+             <label><input type="radio" name="status" value="todo" onchange="saveTaskStatus()"> 대기</label>
+             <label><input type="radio" name="status" value="partial" onchange="saveTaskStatus()"> 방셀만</label>
+             <label><input type="radio" name="status" value="done" onchange="saveTaskStatus()"> 완료</label>
+          </div>
         </div>
 
         <div class="btn-group">
@@ -255,48 +262,38 @@
 
 <div id="page-season" class="page-section">
   <div class="season-layout">
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+    <div class="season-content-header">
       <h2 style="margin:0;">🏆 시즌별 낭플단 차트</h2>
-      <button class="add-season-btn" style="background:#333; color:white; border:none; padding:8px 15px; border-radius:10px; cursor:pointer;" onclick="createNewSeasonTab()">+ 새 시즌 추가</button>
+      <button class="add-season-btn" onclick="createNewSeasonTab()">+ 새 시즌/회차 만들기</button>
     </div>
 
     <div class="season-tabs" id="season-tabs-container"></div>
 
     <div id="season-content-area" style="display:none;">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-        <h3 id="current-season-title" style="margin:0;"></h3>
-        <span class="paste-guide">💡 엑셀 복사(Ctrl+C) → 여기에 붙여넣기(Ctrl+V)</span>
-      </div>
+      <h3 id="current-season-title">시즌 제목</h3>
       
+      <div class="season-entry-form">
+        <input type="text" id="s-nick" placeholder="닉네임">
+        <input type="text" id="s-id" placeholder="아이디">
+        <input type="number" id="s-amount" placeholder="금액(풍선)">
+        <button onclick="addSeasonMember()">리스트에 추가</button>
+      </div>
+
       <table class="rank-table">
         <thead>
           <tr>
-            <th width="8%">순위</th>
-            <th width="15%">아이디</th>
-            <th width="15%">닉네임</th>
-            <th width="15%">낭플</th>
-            <th width="10%">1+1</th>
-            <th width="27%">공약</th>
-            <th width="10%">관리</th>
+            <th width="10%">순위</th>
+            <th width="25%">닉네임</th>
+            <th width="20%">아이디</th>
+            <th width="25%">금액(풍선)</th>
+            <th width="20%">관리</th>
           </tr>
         </thead>
         <tbody id="season-rank-tbody"></tbody>
-        <tfoot>
-            <tr style="background:#fff9fd; font-weight:bold;">
-                <td>합계</td>
-                <td></td>
-                <td></td>
-                <td id="season-total-sum" style="color:var(--dark-pink);">0</td>
-                <td></td>
-                <td></td>
-                <td></td>
-            </tr>
-        </tfoot>
       </table>
       
-      <div class="season-footer">
-        <button class="nav-btn" onclick="addEmptyRow()">+ 빈 줄 추가</button>
-        <button class="del-season-btn" onclick="deleteCurrentSeason()">⚠️ 이 시즌 탭 삭제</button>
+      <div style="margin-top:20px; text-align:right;">
+        <button class="del-season-btn" onclick="deleteCurrentSeason()">⚠️ 현재 시즌 탭 전체 삭제</button>
       </div>
     </div>
     
@@ -341,7 +338,7 @@
     window.seasonData = snapshot.val() || {};
     renderSeasonTabs();
     if(window.currentSeasonName && window.seasonData[window.currentSeasonName]) {
-        renderRecordTable(window.currentSeasonName);
+        renderSeasonTable(window.currentSeasonName);
     } else {
         const keys = Object.keys(window.seasonData).sort();
         if(keys.length > 0) switchSeasonTab(keys[0]);
@@ -365,9 +362,9 @@
     else tabs[1].classList.add('active');
   };
 
-  // --- 기록실 로직 (깔끔한 테이블 버전) ---
+  // --- 시즌 기록실 로직 (심플 버전) ---
   window.createNewSeasonTab = () => {
-    const name = prompt("새 시즌 이름을 입력하세요");
+    const name = prompt("새로운 시즌/회차 이름");
     if(!name) return;
     if(window.seasonData[name]) return alert("이미 존재합니다.");
     window.seasonData[name] = [];
@@ -397,25 +394,24 @@
   window.switchSeasonTab = (name) => {
     window.currentSeasonName = name;
     renderSeasonTabs();
-    renderRecordTable(name);
+    renderSeasonTable(name);
     document.getElementById('season-content-area').style.display = 'block';
   };
 
-  window.renderRecordTable = (seasonName) => {
+  window.renderSeasonTable = (seasonName) => {
     document.getElementById('current-season-title').innerText = seasonName;
     const tbody = document.getElementById('season-rank-tbody');
     tbody.innerHTML = '';
     
-    const list = window.seasonData[seasonName] || [];
-    let totalSum = 0;
+    let list = window.seasonData[seasonName] || [];
+    list.sort((a, b) => (parseInt(b.amount)||0) - (parseInt(a.amount)||0));
 
-    // 금액 내림차순 정렬 (원하면 주석 해제)
-    // list.sort((a, b) => (parseInt(b.amount)||0) - (parseInt(a.amount)||0));
+    if(list.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" style="padding:20px;">데이터가 없습니다.</td></tr>`;
+        return;
+    }
 
     list.forEach((item, index) => {
-        const amt = parseInt(item.amount || 0);
-        totalSum += amt;
-
         let rankClass = '';
         if(index === 0) rankClass = 'rank-1';
         if(index === 1) rankClass = 'rank-2';
@@ -424,45 +420,36 @@
         const tr = document.createElement('tr');
         tr.innerHTML = `
             <td class="rank-num ${rankClass}">${index + 1}</td>
-            <td><input type="text" value="${item.id||''}" onblur="updateRecord('${seasonName}', ${index}, 'id', this)"></td>
-            <td><input type="text" value="${item.nick||''}" onblur="updateRecord('${seasonName}', ${index}, 'nick', this)"></td>
-            <td><input type="text" value="${item.amount||''}" onblur="updateRecord('${seasonName}', ${index}, 'amount', this)" style="font-weight:bold; color:var(--primary-pink);"></td>
-            <td><input type="text" value="${item.oneplus||''}" onblur="updateRecord('${seasonName}', ${index}, 'oneplus', this)"></td>
-            <td><input type="text" value="${item.promise||''}" onblur="updateRecord('${seasonName}', ${index}, 'promise', this)" style="text-align:left;"></td>
-            <td><button class="del-season-btn" onclick="deleteRecord('${seasonName}', ${index})">🗑</button></td>
+            <td>${item.nick}</td>
+            <td style="color:#aaa; font-size:12px;">${item.id}</td>
+            <td style="font-weight:bold; color:var(--primary-pink);">${parseInt(item.amount).toLocaleString()}</td>
+            <td><button class="del-season-btn" onclick="deleteSeasonMember('${seasonName}', ${index})">삭제</button></td>
         `;
         tbody.appendChild(tr);
     });
-    
-    document.getElementById('season-total-sum').innerText = totalSum.toLocaleString();
   };
 
-  window.updateRecord = (seasonName, index, field, element) => {
-    let val = element.value.trim();
-    if(field === 'amount') val = val.replace(/[^0-9]/g, '');
-    
-    if(!window.seasonData[seasonName][index]) return;
-    window.seasonData[seasonName][index][field] = val;
+  window.addSeasonMember = () => {
+    const nick = document.getElementById('s-nick').value;
+    const id = document.getElementById('s-id').value;
+    const amount = parseInt(document.getElementById('s-amount').value);
+
+    if(!nick || !id || isNaN(amount)) return alert("정보를 모두 입력하세요.");
+    if(!window.currentSeasonName) return alert("시즌을 선택하세요.");
+
+    if(!window.seasonData[window.currentSeasonName]) window.seasonData[window.currentSeasonName] = [];
+    window.seasonData[window.currentSeasonName].push({ nick, id, amount });
     window.saveSeason();
     
-    // 합계만 갱신
-    let sum = 0;
-    window.seasonData[seasonName].forEach(i => sum += parseInt(i.amount||0));
-    document.getElementById('season-total-sum').innerText = sum.toLocaleString();
+    document.getElementById('s-nick').value = '';
+    document.getElementById('s-id').value = '';
+    document.getElementById('s-amount').value = '';
   };
 
-  window.addEmptyRow = () => {
-    if(!window.currentSeasonName) return;
-    window.seasonData[window.currentSeasonName].push({ id:'', nick:'', amount:'', oneplus:'', promise:'' });
-    window.saveSeason();
-    renderRecordTable(window.currentSeasonName);
-  };
-
-  window.deleteRecord = (seasonName, index) => {
+  window.deleteSeasonMember = (seasonName, index) => {
     if(!confirm("삭제합니까?")) return;
     window.seasonData[seasonName].splice(index, 1);
     window.saveSeason();
-    renderRecordTable(seasonName);
   };
 
   window.deleteCurrentSeason = () => {
@@ -471,38 +458,6 @@
     window.currentSeasonName = null;
     window.saveSeason();
   };
-
-  // 엑셀 붙여넣기
-  document.addEventListener('paste', (e) => {
-    if(!document.getElementById('page-record').classList.contains('active')) return;
-    if(!window.currentSeasonName) return;
-    if(e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
-
-    e.preventDefault();
-    const clipboardData = (e.clipboardData || window.clipboardData).getData('text');
-    if(!clipboardData) return;
-
-    const rows = clipboardData.trim().split(/\r?\n/);
-    if(rows.length === 0) return;
-
-    if(!confirm(`${rows.length}행의 데이터를 붙여넣으시겠습니까?`)) return;
-
-    rows.forEach(rowStr => {
-        const cols = rowStr.split('\t');
-        if(cols.length < 1) return;
-        // 엑셀 열 순서 가정: 아이디, 닉네임, 낭플, 1+1, 공약
-        const newItem = {
-            id: cols[0] || '',
-            nick: cols[1] || '',
-            amount: (cols[2] || '').replace(/[^0-9]/g, ''),
-            oneplus: cols[3] || '',
-            promise: cols[4] || ''
-        };
-        window.seasonData[window.currentSeasonName].push(newItem);
-    });
-    window.saveSeason();
-    renderRecordTable(window.currentSeasonName);
-  });
 
   // --- 캘린더 로직 (기존 유지) ---
   window.currentDate = new Date();
@@ -645,12 +600,19 @@
     document.getElementById('detail-reverse').innerText = parseInt(task.reverse).toLocaleString();
     document.getElementById('detail-content').innerText = task.content;
     document.getElementById('detail-memo').value = task.memo || '';
+    
+    // 라디오 체크
+    const radios = document.getElementsByName('status');
+    for(let r of radios) { r.checked = (r.value === task.status); }
+
     document.getElementById('detail-link').href = `https://www.sooplive.co.kr/station/${task.id}`;
   };
   window.saveTaskStatus = () => {
     if(!window.selectedDateKey) return;
     const task = window.homeworkData[window.selectedDateKey][window.currentTaskIndex];
     task.memo = document.getElementById('detail-memo').value;
+    const radios = document.getElementsByName('status');
+    for(let r of radios) { if(r.checked) task.status = r.value; }
     window.saveHomework();
   };
   window.completeAndDelete = () => {
