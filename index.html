@@ -41,7 +41,7 @@
   /* 로딩 표시 */
   #loading-overlay { position: absolute; top:0; left:0; width:100%; height:100%; background:rgba(255,255,255,0.8); display: flex; justify-content: center; align-items: center; z-index: 999; border-radius: var(--radius-round); font-weight: bold; color: var(--dark-pink); }
 
-  /* 버튼 및 요소 스타일 (이전과 동일) */
+  /* 버튼 및 요소 스타일 */
   .shortcut-btn { width: 100%; background: #fff; border: 2px solid var(--border-pink); padding: 12px 15px; border-radius: var(--radius-soft); margin-bottom: 10px; cursor: pointer; text-align: left; transition: all 0.2s ease; display: flex; justify-content: space-between; align-items: center; }
   .shortcut-btn:hover { background: var(--light-pink-hover); border-color: var(--primary-pink); transform: translateY(-2px); }
   .shortcut-date { font-weight: bold; color: var(--text-gray); font-size: 14px; }
@@ -276,7 +276,7 @@
   import { getDatabase, ref, set, onValue, push } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
   // -----------------------------------------------------------------------------------------
-  // 👇 여기에 아까 복사한 firebaseConfig 코드를 덮어씌우세요! 👇
+  // ✅ 사용자 Firebase 설정 적용됨
   // -----------------------------------------------------------------------------------------
   const firebaseConfig = {
     apiKey: "AIzaSyBhduAPQ_9IyEH1rnr9m9qtumgnIF90RII",
@@ -287,7 +287,6 @@
     messagingSenderId: "293416059203",
     appId: "1:293416059203:web:e962586275e2bd2b356ff6"
   };
-
   // -----------------------------------------------------------------------------------------
 
   // Firebase 초기화
@@ -296,22 +295,22 @@
   const dbRef = ref(db, 'homework_data');
 
   let homeworkData = {}; // 전역 변수
-  window.homeworkData = homeworkData; // 윈도우 객체에 할당하여 일반 함수에서도 접근 가능하게 함
+  window.homeworkData = homeworkData; 
 
   // --- 데이터 불러오기 (실시간 리스너) ---
   onValue(dbRef, (snapshot) => {
     const data = snapshot.val();
-    window.homeworkData = data || {}; // 데이터 없으면 빈 객체
+    window.homeworkData = data || {}; 
     homeworkData = window.homeworkData;
 
     // 화면 갱신
-    renderCalendar();
-    renderSidebar();
-    renderTotalRanking();
+    window.renderCalendar();
+    window.renderSidebar();
+    window.renderTotalRanking();
     
     // 현재 보고 있는 상세 뷰가 있다면 갱신
     if(window.selectedDateKey) {
-        renderNickList(window.homeworkData[window.selectedDateKey] || []);
+        window.renderNickList(window.homeworkData[window.selectedDateKey] || []);
     }
     
     // 로딩 화면 제거
@@ -322,21 +321,21 @@
   window.saveToFirebase = function() {
     set(dbRef, window.homeworkData)
       .then(() => {
-        // 저장 성공 (별도 알림 없음, 실시간 반영됨)
+        // console.log("저장 성공");
       })
       .catch((error) => {
         alert("데이터 저장 실패: " + error.message);
       });
   }
 
-  // 기존 변수들 window 객체에 할당 (모듈 스코프 탈출용)
+  // 전역 변수 할당
   window.currentDate = new Date();
   window.selectedDateKey = null;
   window.currentTaskIndex = null;
   window.isEditMode = false;
 
   // ---------------------------------------------------------
-  // 아래는 기존 로직을 Firebase 저장 방식(saveToFirebase)으로 변경한 함수들입니다.
+  // 로직 함수들
   // ---------------------------------------------------------
 
   window.renderSidebar = function() {
@@ -578,10 +577,9 @@
       window.homeworkData[newDateKey].push(newTaskObj);
     }
 
-    window.saveToFirebase(); // Firebase 저장 호출
+    window.saveToFirebase(); 
     document.getElementById('add-form').style.display = 'none';
     
-    // selectedDateKey가 있으면 갱신, 없으면 캘린더 리렌더링만
     if(window.selectedDateKey) {
        window.selectDate(window.selectedDateKey);
     } else {
@@ -615,7 +613,6 @@
     const newStatus = document.querySelector('input[name="status"]:checked').value;
     const task = window.homeworkData[window.selectedDateKey][window.currentTaskIndex];
     
-    // 변경사항 없으면 리턴 (불필요한 쓰기 방지)
     if(task.memo === newMemo && task.status === newStatus) return;
 
     task.memo = newMemo;
