@@ -10,11 +10,11 @@
     --bg-color: #fff0f5; 
     --container-bg: #ffffff;
     --primary-pink: #ffb6c1; 
-    --dark-pink: #d81b60; /* 진한 핑크 (가독성용) */
+    --dark-pink: #d81b60; 
     --light-pink-hover: #fff5f8;
     --border-pink: #ffe4e1; 
     --text-gray: #555;
-    --text-dark: #2c2c2c; /* 진한 검정 (가독성용) */
+    --text-dark: #2c2c2c; 
     --accent-blue: #aed9e0; 
     --shadow-color: rgba(255, 182, 193, 0.2);
     --radius-soft: 15px;
@@ -23,7 +23,7 @@
 
     /* 기록실 배경색 단계 */
     --lv0: #FFFFFF; --lv1: #FFF9FD; --lv2: #FFF3FA; --lv3: #FFE9F4; --lv4: #FFE0EF;
-    --lv5: #FFD7EB; --lv6: #FFCEE7; --lv7: #FFC6E3; --lv8: #FFBEDF; --lv9: #FFB6DA;
+    --lv5: #FFD7EB; --lv6: #FFCEE7; --lv7: #FFB3CC; --lv8: #FFA3C2; --lv9: #FF94B8;
   }
 
   body { 
@@ -58,10 +58,9 @@
   .container { 
     flex: 1; background: var(--container-bg); padding: 30px; border-radius: var(--radius-round); 
     box-shadow: 0 8px 25px var(--shadow-color); border: 2px solid #fff; position: relative; 
-    min-width: 0; /* Flex 자식 넘침 방지 */
   }
 
-  /* 캘린더 스타일 */
+  /* 캘린더 */
   .calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
   .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; margin-bottom: 25px;}
   .day-name { text-align: center; font-size: 0.9rem; color: var(--dark-pink); font-weight: bold; padding-bottom: 10px; }
@@ -83,24 +82,22 @@
   .shortcut-date { font-weight: bold; font-size: 14px; }
   .shortcut-count { background: var(--dark-pink); color: white; padding: 2px 8px; border-radius: 10px; font-size: 12px; }
 
-  /* 캘린더 하단 닉네임 버튼 (삐져나옴 방지 적용) */
+  /* 캘린더 하단 닉네임 버튼 */
   .nick-list { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 25px; }
   .nick-btn { 
     background: #fff; border: 2px solid var(--border-pink); border-radius: var(--radius-soft); padding: 15px 5px; 
     font-size: 14px; font-weight: bold; color: var(--text-gray); cursor: pointer; text-align: center; 
     transition: 0.2s; box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-    /* 🔥 [수정] 긴 닉네임 처리 (말줄임표) */
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-    width: 100%; display: block;
+    display: block; width: 100%;
   }
   .nick-btn:hover { transform: translateY(-3px); }
   .nick-btn.active { border-color: var(--dark-pink); box-shadow: 0 0 0 2px var(--dark-pink) inset; color: var(--dark-pink);}
-  
   .nick-btn.status-todo { background: #ffebee; color: #d32f2f; border-color: #ffcdd2; }
   .nick-btn.status-partial { background: #fff3e0; color: #f57c00; border-color: #ffe0b2; }
   .nick-btn.status-done { background: #e8f5e9; color: #388e3c; border-color: #c8e6c9; }
 
-  /* 폼 & 버튼 */
+  /* 폼 & 상세 카드 */
   #add-form { display: none; background: #fff5f8; border: 3px dashed var(--primary-pink); padding: 20px; border-radius: var(--radius-round); margin-bottom: 25px; }
   .form-row { display: flex; gap: 15px; margin-bottom: 15px; }
   .form-input { width: 100%; padding: 12px; border: 2px solid var(--border-pink); border-radius: var(--radius-soft); font-size: 14px; background: #fff; }
@@ -149,11 +146,21 @@
 
   .memo-input { width: 100%; box-sizing: border-box; padding: 15px; border: 2px solid var(--border-pink); border-radius: var(--radius-soft); font-size: 14px; resize: vertical; min-height: 70px; margin-bottom: 10px; background: #fff; transition: 0.2s; }
   
-  .btn-soop { display: block; width: 100%; background-color: var(--accent-blue); color: white; border: none; padding: 15px; border-radius: var(--radius-soft); text-decoration: none; font-weight: bold; text-align: center; font-size: 15px; box-shadow: 0 4px 10px rgba(174, 217, 224, 0.4); margin-bottom: 10px; transition: 0.2s; }
+  /* 🔥 [수정됨] 방송국 바로가기 버튼 (예쁜 디자인) */
+  .btn-soop { 
+    display: flex; justify-content: center; align-items: center; gap: 8px; /* 아이콘과 텍스트 간격 */
+    width: 100%; background-color: var(--accent-blue); color: white; 
+    border: none; padding: 15px; border-radius: var(--radius-soft); 
+    text-decoration: none; font-weight: bold; font-size: 15px; 
+    box-shadow: 0 4px 10px rgba(174, 217, 224, 0.4); margin-bottom: 10px; transition: 0.2s; 
+  }
+  .btn-soop:hover { background-color: #9ad0d8; transform: translateY(-2px); }
+  .soop-icon { width: 20px; height: 20px; fill: white; } /* 아이콘 스타일 */
+
   .btn-complete { width: 100%; background: var(--dark-pink); border: none; color: white; padding: 15px; border-radius: var(--radius-soft); cursor: pointer; font-size: 15px; font-weight: bold; box-shadow: 0 4px 10px rgba(255, 141, 161, 0.4); transition: 0.2s; }
 
   /* --------------------------------------------------------
-     [페이지 2] 낭플단 기록실 (가독성 개선) 
+     [페이지 2] 낭플단 기록실
      -------------------------------------------------------- */
   .season-layout { max-width: 1200px; margin: 0 auto; background: var(--container-bg); border-radius: var(--radius-round); padding: 30px; box-shadow: 0 8px 25px var(--shadow-color); border: 2px solid #fff; }
   .season-tabs { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 15px; margin-bottom: 20px; border-bottom: 2px dashed var(--border-pink); }
@@ -173,9 +180,9 @@
   }
   .row:hover { transform: translateY(-1px); box-shadow: 0 3px 8px rgba(255,150,180,0.15); z-index: 10; }
   
-  /* 헤더 가독성 UP */
+  /* 헤더 스타일 */
   .header-row { 
-    background: #FFD1E1; /* 진한 핑크 */
+    background: #FFD1E1; /* 진한 핑크 헤더 */
     pointer-events: none; margin-bottom: 5px; border-radius: 20px;
   }
   .header-row .cell { 
@@ -199,12 +206,12 @@
   .cell[contenteditable="true"] { cursor: text; }
   .cell[contenteditable="true"]:focus { background: #fff; box-shadow: inset 0 0 0 2px var(--dark-pink); border-radius: 4px; }
 
-  /* 공약 중앙 정렬 */
+  /* 열 너비 (공약 중앙정렬) */
   .col-id { width: 12%; }
   .col-nick { width: 12%; }
   .col-amt { width: 12%; font-weight: 800; color: #d81b60; font-size: 15px; }
   .col-one { width: 8%; }
-  .col-promise { width: 35%; text-align: center; } /* 중앙정렬 */
+  .col-promise { width: 35%; text-align: center; } 
   .col-note { width: 15%; color: #666; font-size: 13px; }
   .col-action { width: 6%; }
 
@@ -215,19 +222,12 @@
 
   .del-season-btn { color: #ff5252; background: none; border: 1px solid #ff5252; padding: 4px 8px; border-radius: 6px; cursor: pointer; font-size: 11px; margin-left: 10px;}
   
-  /* 공지 문구 (합계 하단) */
   .bottom-notice {
-    margin-top: 15px;
-    text-align: center;
-    font-size: 14px;
-    font-weight: bold;
-    color: var(--dark-pink);
-    background: #FFF0F5;
-    padding: 12px;
-    border-radius: 12px;
-    border: 2px dashed var(--primary-pink);
+    margin-top: 15px; text-align: center; font-size: 14px; font-weight: bold; color: var(--dark-pink);
+    background: #FFF0F5; padding: 12px; border-radius: 12px; border: 2px dashed var(--primary-pink);
   }
 
+  /* 우측 랭킹 리스트 */
   .rank-item { display: flex; align-items: center; justify-content: space-between; background: #fff; border-bottom: 1px dashed var(--border-pink); padding: 12px 5px; margin-bottom: 5px; }
   .rank-info { display: flex; flex-direction: column; }
   .rank-nick { font-weight: bold; color: var(--text-dark); font-size: 14px; }
@@ -241,7 +241,6 @@
     .wrapper { flex-direction: column; }
     .sidebar, .sidebar-right { width: 100%; max-height: 200px; }
     .table { min-width: 800px; }
-    .nick-list { grid-template-columns: repeat(2, 1fr); } /* 모바일에서 2열로 */
   }
   @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 </style>
@@ -249,6 +248,10 @@
 <body>
 
 <div id="loading-overlay">🐰 데이터를 불러오는 중...</div>
+
+<div class="top-notice" style="background:#FFF0F5; border:2px dashed var(--primary-pink); color:var(--dark-pink); padding:12px; text-align:center; border-radius:15px; margin-bottom:20px; font-weight:bold; font-size:14px; box-shadow:0 4px 10px var(--shadow-color); max-width:1400px; margin-left:auto; margin-right:auto;">
+  모든 공약은 요청시에 가고있습니다. 당군+(hansu0131)에게 쪽지 또는 댓들로 편하게 말씀해주세요 ❤
+</div>
 
 <nav class="main-nav">
   <button id="tab-btn-calendar" class="nav-tab active" onclick="switchPage('calendar')">📅 숙제 캘린더</button>
@@ -342,8 +345,11 @@
             <textarea id="detail-memo" class="memo-input" placeholder="메모를 입력하세요 (입력 후 밖을 클릭하면 자동 저장)" onblur="saveTaskStatus(false)"></textarea>
           </div>
         </div>
-
-        <a href="#" target="_blank" class="btn-soop" id="detail-link">📺 SOOP 방송국 바로가기</a>
+        
+        <a href="#" target="_blank" class="btn-soop" id="detail-link">
+          <svg class="soop-icon" viewBox="0 0 24 24"><path d="M21 3H3C1.89543 3 1 3.89543 1 5V17C1 18.1046 1.89543 19 3 19H8V21H16V19H21C22.1046 19 23 18.1046 23 17V5C23 3.89543 22.1046 3 21 3ZM21 17H3V5H21V17Z" /></svg>
+          SOOP 방송국 바로가기
+        </a>
         <button class="btn-complete" onclick="completeAndDelete()">완료 처리 (삭제)</button>
       </div>
     </div>
@@ -675,6 +681,7 @@
 
   window.changeMonth = (step) => { window.currentDate.setMonth(window.currentDate.getMonth()+step); window.renderCalendar(); };
   
+  // 🔥 [오류 수정] ID 확인 후 텍스트 변경
   window.selectDate = (key) => {
     window.selectedDateKey = key;
     const titleEl = document.getElementById('selected-date-text');
