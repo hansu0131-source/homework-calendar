@@ -10,30 +10,20 @@
     --bg-color: #fff0f5; 
     --container-bg: #ffffff;
     --primary-pink: #ffb6c1; 
-    --dark-pink: #d81b60; /* 더 진한 핑크로 변경 (가독성 UP) */
+    --dark-pink: #d81b60; /* 진한 핑크 (가독성용) */
     --light-pink-hover: #fff5f8;
     --border-pink: #ffe4e1; 
     --text-gray: #555;
-    --text-dark: #2c2c2c; /* 더 진한 검정 */
+    --text-dark: #2c2c2c; /* 진한 검정 (가독성용) */
     --accent-blue: #aed9e0; 
     --shadow-color: rgba(255, 182, 193, 0.2);
     --radius-soft: 15px;
     --radius-round: 25px;
-    --gold: #ffd700;
-    --silver: #c0c0c0;
-    --bronze: #cd7f32;
+    --gold: #ffd700; --silver: #c0c0c0; --bronze: #cd7f32;
 
-    /* 기록실 금액별 배경색 (가독성을 위해 연하게 조정) */
-    --lv0: #FFFFFF; 
-    --lv1: #FFF9FD; 
-    --lv2: #FFF0F5; 
-    --lv3: #FFEBF2; 
-    --lv4: #FFE0EB;
-    --lv5: #FFD1E1; 
-    --lv6: #FFC2D6; 
-    --lv7: #FFB3CC; 
-    --lv8: #FFA3C2; 
-    --lv9: #FF94B8;
+    /* 기록실 배경색 단계 */
+    --lv0: #FFFFFF; --lv1: #FFF9FD; --lv2: #FFF3FA; --lv3: #FFE9F4; --lv4: #FFE0EF;
+    --lv5: #FFD7EB; --lv6: #FFCEE7; --lv7: #FFC6E3; --lv8: #FFBEDF; --lv9: #FFB6DA;
   }
 
   body { 
@@ -68,6 +58,7 @@
   .container { 
     flex: 1; background: var(--container-bg); padding: 30px; border-radius: var(--radius-round); 
     box-shadow: 0 8px 25px var(--shadow-color); border: 2px solid #fff; position: relative; 
+    min-width: 0; /* Flex 자식 넘침 방지 */
   }
 
   /* 캘린더 스타일 */
@@ -92,12 +83,15 @@
   .shortcut-date { font-weight: bold; font-size: 14px; }
   .shortcut-count { background: var(--dark-pink); color: white; padding: 2px 8px; border-radius: 10px; font-size: 12px; }
 
-  /* 캘린더 하단 닉네임 버튼 */
-  .nick-list { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 25px; }
+  /* 캘린더 하단 닉네임 버튼 (삐져나옴 방지 적용) */
+  .nick-list { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 25px; }
   .nick-btn { 
     background: #fff; border: 2px solid var(--border-pink); border-radius: var(--radius-soft); padding: 15px 5px; 
     font-size: 14px; font-weight: bold; color: var(--text-gray); cursor: pointer; text-align: center; 
     transition: 0.2s; box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    /* 🔥 [수정] 긴 닉네임 처리 (말줄임표) */
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    width: 100%; display: block;
   }
   .nick-btn:hover { transform: translateY(-3px); }
   .nick-btn.active { border-color: var(--dark-pink); box-shadow: 0 0 0 2px var(--dark-pink) inset; color: var(--dark-pink);}
@@ -106,7 +100,7 @@
   .nick-btn.status-partial { background: #fff3e0; color: #f57c00; border-color: #ffe0b2; }
   .nick-btn.status-done { background: #e8f5e9; color: #388e3c; border-color: #c8e6c9; }
 
-  /* 폼 & 상세 카드 */
+  /* 폼 & 버튼 */
   #add-form { display: none; background: #fff5f8; border: 3px dashed var(--primary-pink); padding: 20px; border-radius: var(--radius-round); margin-bottom: 25px; }
   .form-row { display: flex; gap: 15px; margin-bottom: 15px; }
   .form-input { width: 100%; padding: 12px; border: 2px solid var(--border-pink); border-radius: var(--radius-soft); font-size: 14px; background: #fff; }
@@ -172,7 +166,6 @@
   .table-scroll { overflow-x: auto; padding-bottom: 10px; }
   .table { display: flex; flex-direction: column; gap: 4px; min-width: 1000px; }
   
-  /* 행 스타일 (세로 간격 축소) */
   .row {
     display: flex; background: white; border-radius: 20px; overflow: hidden;
     box-shadow: 0 1px 3px rgba(255,150,180,0.08); padding: 4px 0;
@@ -180,13 +173,13 @@
   }
   .row:hover { transform: translateY(-1px); box-shadow: 0 3px 8px rgba(255,150,180,0.15); z-index: 10; }
   
-  /* 헤더 스타일 개선 (가독성 UP) */
+  /* 헤더 가독성 UP */
   .header-row { 
-    background: #FFD1E1; /* 더 진한 핑크 배경 */
+    background: #FFD1E1; /* 진한 핑크 */
     pointer-events: none; margin-bottom: 5px; border-radius: 20px;
   }
   .header-row .cell { 
-    font-weight: 800; color: #880e4f; /* 진한 텍스트 */
+    font-weight: 800; color: #880e4f; 
     border-bottom: none; cursor: default; font-size: 15px;
   }
   .summary-row { 
@@ -194,26 +187,24 @@
     border: 2px solid #FFC2D6; border-radius: 20px;
   }
 
-  /* 셀 스타일 (중앙 정렬 + 한줄) */
   .cell {
     padding: 6px 4px;
-    font-size: 14px; text-align: center; /* 중앙정렬 */
-    border-right: 1px solid rgba(0,0,0,0.05); /* 경계선 연하게 */
-    outline: none; 
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; /* 한줄 표시 */
+    font-size: 14px; text-align: center;
+    border-right: 1px solid rgba(0,0,0,0.05); outline: none; 
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     display: flex; justify-content: center; align-items: center; min-height: 24px;
-    color: var(--text-dark); font-weight: 500; /* 글자색 진하게 */
+    color: var(--text-dark); font-weight: 500;
   }
   .cell:last-child { border-right: none; }
   .cell[contenteditable="true"] { cursor: text; }
   .cell[contenteditable="true"]:focus { background: #fff; box-shadow: inset 0 0 0 2px var(--dark-pink); border-radius: 4px; }
 
-  /* 열 너비 (공약 중앙정렬) */
+  /* 공약 중앙 정렬 */
   .col-id { width: 12%; }
   .col-nick { width: 12%; }
-  .col-amt { width: 12%; font-weight: 800; color: #d81b60; font-size: 15px; } /* 금액 강조 */
+  .col-amt { width: 12%; font-weight: 800; color: #d81b60; font-size: 15px; }
   .col-one { width: 8%; }
-  .col-promise { width: 35%; text-align: center; } 
+  .col-promise { width: 35%; text-align: center; } /* 중앙정렬 */
   .col-note { width: 15%; color: #666; font-size: 13px; }
   .col-action { width: 6%; }
 
@@ -224,7 +215,7 @@
 
   .del-season-btn { color: #ff5252; background: none; border: 1px solid #ff5252; padding: 4px 8px; border-radius: 6px; cursor: pointer; font-size: 11px; margin-left: 10px;}
   
-  /* 합계 하단 공지 문구 */
+  /* 공지 문구 (합계 하단) */
   .bottom-notice {
     margin-top: 15px;
     text-align: center;
@@ -250,6 +241,7 @@
     .wrapper { flex-direction: column; }
     .sidebar, .sidebar-right { width: 100%; max-height: 200px; }
     .table { min-width: 800px; }
+    .nick-list { grid-template-columns: repeat(2, 1fr); } /* 모바일에서 2열로 */
   }
   @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 </style>
@@ -467,17 +459,17 @@
   window.saveHomework = () => set(dbRefHome, window.homeworkData);
   window.saveSeason = () => set(dbRefSeason, window.seasonData);
 
-  // 탭 전환 에러 수정
   window.switchPage = (page) => {
     document.querySelectorAll('.page-section').forEach(e => e.classList.remove('active'));
     document.querySelectorAll('.nav-tab').forEach(e => e.classList.remove('active'));
-    
     document.getElementById(`page-${page}`).classList.add('active');
+    
     const btnId = `tab-btn-${page}`;
     const btn = document.getElementById(btnId);
     if(btn) btn.classList.add('active');
   };
 
+  // --- 시즌 기록실 로직 ---
   window.createNewSeason = () => {
     const name = prompt("새 시즌/회차 이름 (예: 1회차, 경쟁전)");
     if(!name) return;
