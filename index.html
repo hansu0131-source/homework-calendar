@@ -5,178 +5,161 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>C9 토끼 숙제 & 낭플단 관리 🐰</title>
 <style>
-  /* --- 🐰 파스텔 핑크 테마 --- */
+  /* --- 🐰 디자인 변수 --- */
   :root {
-    --bg-color: #fff0f5; 
+    --bg-color: #FFF6FA; 
     --container-bg: #ffffff;
-    --primary-pink: #ffb6c1; 
-    --dark-pink: #ff8da1; 
-    --light-pink-hover: #fff5f8;
-    --border-pink: #ffe4e1; 
-    --text-gray: #555;
+    --primary-pink: #FF8FB2; 
+    --dark-pink: #D04F7D; 
+    --light-pink-hover: #FFF9FD;
+    --border-pink: #FFE1EF; 
+    --text-gray: #4c2d3b;
     --text-dark: #333;
     --accent-blue: #aed9e0; 
-    --shadow-color: rgba(255, 182, 193, 0.2);
+    --shadow-color: rgba(255, 150, 180, 0.15);
     --radius-soft: 15px;
-    --radius-round: 25px;
-    --gold: #ffd700;
-    --silver: #c0c0c0;
-    --bronze: #cd7f32;
+    --radius-round: 24px;
+
+    /* 금액별 배경색 단계 (요청하신 기준) */
+    --lv0: #FFFFFF; /* 0 or Default */
+    --lv1: #FFF9FD; /* 100 ~ 298 */
+    --lv2: #FFF3FA; /* 299 ~ 999 */
+    --lv3: #FFE9F4; /* 1000 ~ 2999 */
+    --lv4: #FFE0EF; /* 3000 ~ 4999 */
+    --lv5: #FFD7EB; /* 5000 ~ 9999 */
+    --lv6: #FFCEE7; /* 10000 ~ 49999 */
+    --lv7: #FFC6E3; /* 50000 ~ 99999 */
+    --lv8: #FFBEDF; /* 100000 ~ 299999 */
+    --lv9: #FFB6DA; /* 300000 이상 */
   }
 
+  /* --- 공통 스타일 --- */
   body { 
-    font-family: 'Pretendard', 'Malgun Gothic', sans-serif; 
+    font-family: "Pretendard", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
     background-color: var(--bg-color);
-    background-image: radial-gradient(#ffe4e1 1px, transparent 1px);
-    background-size: 20px 20px;
     padding: 20px; margin: 0; color: var(--text-gray);
   }
   input, button, textarea, select { font-family: inherit; box-sizing: border-box; outline: none; }
-  h2, h3 { color: var(--text-dark); }
+  h2, h3 { color: var(--primary-pink); font-weight: 800; text-align: center; }
 
   /* 메인 네비게이션 */
-  .main-nav { display: flex; justify-content: center; gap: 15px; margin-bottom: 25px; }
+  .main-nav { display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; }
   .nav-tab {
-    padding: 12px 30px; border-radius: 30px; font-weight: bold; font-size: 16px;
-    background: white; border: 3px solid var(--border-pink); color: var(--text-gray);
-    cursor: pointer; transition: 0.2s; box-shadow: 0 4px 10px var(--shadow-color);
+    padding: 10px 24px; border-radius: 999px; font-weight: bold; font-size: 15px;
+    background: #FFD6EA; border: none; color: #C04270;
+    cursor: pointer; transition: 0.2s;
   }
-  .nav-tab:hover { transform: translateY(-3px); }
-  .nav-tab.active { background: var(--primary-pink); color: white; border-color: var(--primary-pink); }
+  .nav-tab:hover { background: #ffbfdc; }
+  .nav-tab.active { background: #FF8FB2; color: white; box-shadow: 0 4px 10px var(--shadow-color); }
 
   .page-section { display: none; animation: fadeIn 0.3s; }
   .page-section.active { display: block; }
 
-  /* 레이아웃 */
+  /* --------------------------------------------------------
+     [페이지 1] 캘린더 스타일 (기존 유지)
+     -------------------------------------------------------- */
   .wrapper { display: flex; gap: 20px; max-width: 1400px; margin: 0 auto; align-items: flex-start; }
-  .sidebar, .sidebar-right { 
-    width: 260px; background: var(--container-bg); padding: 25px; border-radius: var(--radius-round); 
-    box-shadow: 0 8px 25px var(--shadow-color); flex-shrink: 0; max-height: 800px; overflow-y: auto; border: 2px solid #fff; 
-  }
-  .sidebar-title { 
-    font-size: 1.1rem; font-weight: bold; margin: 0 0 20px 0; color: var(--text-dark); 
-    border-bottom: 3px dotted var(--border-pink); padding-bottom: 15px; text-align: center; 
-  }
-  .container { 
-    flex: 1; background: var(--container-bg); padding: 30px; border-radius: var(--radius-round); 
-    box-shadow: 0 8px 25px var(--shadow-color); border: 2px solid #fff; position: relative; 
-  }
-
-  /* 캘린더 스타일 */
-  .calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
-  .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; margin-bottom: 25px;}
-  .day-name { text-align: center; font-size: 0.9rem; color: var(--primary-pink); font-weight: bold; padding-bottom: 10px; }
+  .sidebar, .sidebar-right { width: 260px; background: var(--container-bg); padding: 25px; border-radius: var(--radius-round); box-shadow: 0 4px 12px var(--shadow-color); flex-shrink: 0; max-height: 800px; overflow-y: auto; }
+  .container { flex: 1; background: var(--container-bg); padding: 30px; border-radius: var(--radius-round); box-shadow: 0 4px 12px var(--shadow-color); position: relative; }
   
-  .day-cell { 
-    height: 70px; background: #fff; border: 2px solid var(--border-pink); border-radius: var(--radius-soft); 
-    position: relative; cursor: pointer; transition: all 0.2s ease; padding: 6px; display: flex; flex-direction: column; justify-content: space-between; 
-  }
-  .day-cell:hover { border-color: var(--primary-pink); background: var(--light-pink-hover); transform: scale(1.03); z-index: 1;}
-  .day-number { font-size: 14px; font-weight: bold; color: var(--text-gray); }
-  .has-homework { background-color: #fff0f3 !important; border: 2px solid var(--primary-pink) !important; }
-  .hw-badge { align-self: flex-end; background-color: var(--dark-pink); color: white; font-size: 11px; font-weight: bold; padding: 3px 7px; border-radius: 10px; }
-
-  /* 리스트 & 버튼 */
-  .shortcut-btn { 
-    width: 100%; background: #fff; border: 2px solid var(--border-pink); padding: 12px 15px; 
-    border-radius: var(--radius-soft); margin-bottom: 10px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; 
-  }
-  .shortcut-btn:hover { background: var(--light-pink-hover); border-color: var(--primary-pink); }
+  .calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+  .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; margin-bottom: 20px;}
+  .day-cell { height: 70px; background: #fff; border: 1px solid var(--border-pink); border-radius: 12px; position: relative; cursor: pointer; padding: 5px; }
+  .day-cell:hover { background: var(--light-pink-hover); border-color: var(--primary-pink); }
+  .has-homework { background-color: #FFF0F5 !important; border: 1px solid #FFB6DA !important; }
+  .hw-badge { position: absolute; bottom: 5px; right: 5px; background: var(--dark-pink); color: white; font-size: 10px; padding: 2px 6px; border-radius: 8px; }
   
-  .nav-btn { 
-    background: white; border: 2px solid var(--border-pink); border-radius: 12px; padding: 8px 14px; 
-    cursor: pointer; color: var(--primary-pink); font-weight: bold; transition: 0.2s; 
-  }
-  .nav-btn:hover { background: var(--primary-pink); color: white; border-color: var(--primary-pink); }
-  .nav-btn.del-icon { color: #ff8a80; border-color: #ffcdd2; margin-right: 5px; font-size: 1.1rem;} 
-  .nav-btn.edit-icon { color: #81d4fa; border-color: #b3e5fc; margin-right: 5px; font-size: 1.1rem;} 
+  .shortcut-btn { width: 100%; padding: 10px; border: 1px solid var(--border-pink); background: white; border-radius: 12px; margin-bottom: 5px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+  .shortcut-btn:hover { background: var(--light-pink-hover); }
+  .shortcut-date { font-weight: bold; font-size: 14px; }
+  .shortcut-count { background: var(--primary-pink); color: white; padding: 2px 8px; border-radius: 10px; font-size: 12px; }
 
-  .btn-add-show { background-color: var(--primary-pink); color: white; border: none; padding: 8px 16px; border-radius: var(--radius-soft); cursor: pointer; font-weight: bold; }
-  .btn-add-show:hover { background-color: var(--dark-pink); }
-
-  .nick-list { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 25px; }
-  .nick-btn { 
-    background: #fff; border: 2px solid var(--border-pink); border-radius: var(--radius-soft); padding: 15px 5px; 
-    font-size: 14px; font-weight: bold; color: var(--text-gray); cursor: pointer; text-align: center; 
-    transition: 0.2s; box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-  }
-  .nick-btn:hover { transform: translateY(-3px); }
+  #nickname-view { display: none; margin-top: 20px; border-top: 2px dashed var(--border-pink); padding-top: 20px; }
+  .nick-list { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .nick-btn { padding: 12px; border: 1px solid var(--border-pink); background: white; border-radius: 12px; cursor: pointer; font-weight: bold; color: var(--text-gray); transition: 0.2s; }
+  .nick-btn:hover { transform: translateY(-2px); }
   .nick-btn.active { border-color: var(--primary-pink); box-shadow: 0 0 0 2px var(--primary-pink) inset; }
-  
-  /* 상태별 버튼 색상 */
+  /* 상태별 색상 */
   .nick-btn.status-todo { background: #ffebee; color: #e57373; border-color: #ffcdd2; }
   .nick-btn.status-partial { background: #fff3e0; color: #ff9800; border-color: #ffe0b2; }
   .nick-btn.status-done { background: #e8f5e9; color: #4caf50; border-color: #c8e6c9; }
 
-  /* 폼 */
-  #add-form { display: none; background: #fff5f8; border: 3px dashed var(--primary-pink); padding: 20px; border-radius: var(--radius-round); margin-bottom: 25px; }
-  .form-row { display: flex; gap: 15px; margin-bottom: 15px; }
-  .form-input { width: 100%; padding: 12px; border: 2px solid var(--border-pink); border-radius: var(--radius-soft); font-size: 14px; background: #fff; }
-  .btn-register { width: 100%; background-color: var(--primary-pink); color: white; border: none; padding: 15px; border-radius: var(--radius-soft); font-weight: bold; cursor: pointer; }
+  #add-form { display: none; background: #FFF9FD; padding: 15px; border-radius: 15px; margin-bottom: 15px; border: 1px solid var(--border-pink); }
+  .form-row { display: flex; gap: 10px; margin-bottom: 10px; }
+  .form-input { width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 8px; }
+  .btn-register { width: 100%; padding: 10px; background: var(--primary-pink); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; }
   .btn-register.edit-mode { background-color: #aed9e0; }
+
+  #detail-card { display: none; margin-top: 20px; background: #FFF9FD; padding: 20px; border-radius: 15px; border: 1px solid var(--border-pink); }
+  .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+  .stat-box { background: white; padding: 10px; border-radius: 8px; text-align: center; border: 1px solid #eee; }
+  .btn-soop { display: block; width: 100%; padding: 10px; background: #AED9E0; color: white; text-align: center; border-radius: 8px; text-decoration: none; margin-top: 10px; font-weight: bold; }
+  .btn-complete { width: 100%; padding: 10px; background: var(--dark-pink); color: white; border: none; border-radius: 8px; margin-top: 10px; cursor: pointer; font-weight: bold; }
+
+  .nav-btn { background: white; border: 1px solid var(--border-pink); border-radius: 8px; padding: 6px 12px; cursor: pointer; font-weight: bold; color: var(--primary-pink); }
+  .nav-btn:hover { background: var(--primary-pink); color: white; }
+  .btn-add-show { background: var(--primary-pink); color: white; border: none; padding: 6px 12px; border-radius: 8px; cursor: pointer; }
+
+  /* --------------------------------------------------------
+     [페이지 2] 낭플단 기록실 (요청하신 기능 반영) 
+     -------------------------------------------------------- */
+  .record-layout { max-width: 1200px; margin: 0 auto; }
   
-  /* =========================================
-     🔥 [복구된 상세 카드 디자인] 🔥
-     ========================================= */
-  #detail-card { 
-    display: none; margin-top: 25px; background: #fff9fb; border-radius: var(--radius-round); 
-    padding: 25px; border: 3px solid var(--border-pink); box-shadow: 0 10px 25px rgba(255,182,193,0.15); 
+  /* 시즌 탭 */
+  .season-tabs { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 10px; margin-bottom: 15px; border-bottom: 1px solid var(--border-pink); }
+  .season-tab-btn { padding: 8px 16px; border-radius: 99px; background: white; border: 1px solid var(--border-pink); color: var(--text-gray); cursor: pointer; font-size: 13px; white-space: nowrap; }
+  .season-tab-btn.active { background: var(--dark-pink); color: white; border-color: var(--dark-pink); font-weight: bold; }
+  
+  .record-controls { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+  .paste-guide { font-size: 12px; color: #888; background: #fff; padding: 6px 12px; border-radius: 8px; border: 1px solid #eee; }
+
+  /* 테이블 컨테이너 */
+  .table-scroll { overflow-x: auto; padding-bottom: 10px; }
+  .table { display: flex; flex-direction: column; gap: 4px; min-width: 900px; }
+  
+  /* 행 스타일 */
+  .row {
+    display: flex; background: white; border-radius: 24px; overflow: hidden;
+    box-shadow: 0 1px 4px rgba(255,150,180,0.08); padding: 4px 0; align-items: center;
+    transition: 0.15s; border: 1px solid transparent;
   }
-  .card-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 3px dotted var(--border-pink); padding-bottom: 15px; margin-bottom: 20px; }
-  .user-info h3 { margin: 0; font-size: 1.2rem; color: var(--text-dark); font-weight: 800; }
-  .user-id { font-size: 0.9rem; color: var(--primary-pink); font-weight: bold; }
+  .row:hover { transform: translateY(-1px); box-shadow: 0 3px 8px rgba(255,150,180,0.15); z-index: 10; }
   
-  /* 데이터 표시 박스 (2분할) */
-  .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
-  .stat-box { background: white; padding: 15px; border-radius: var(--radius-soft); text-align: center; border: 2px solid var(--border-pink); box-shadow: 0 4px 10px rgba(0,0,0,0.03); }
-  .stat-label { font-size: 0.85rem; color: var(--text-gray); display: block; margin-bottom: 5px; }
-  .stat-value { font-size: 1.3rem; font-weight: 900; color: var(--text-dark); }
-  .stat-value.money { color: var(--primary-pink); } 
-  .stat-value.reverse { color: var(--dark-pink); } 
+  .header-row { background: #FFEFF7; border-radius: 24px; margin-bottom: 4px; box-shadow: none; pointer-events: none; }
+  .header-row .cell { font-weight: 700; color: var(--dark-pink); border-bottom: 2px solid #F8C7DB; cursor: default; }
+  
+  .summary-row { background: #FFF9FD; font-weight: 700; color: var(--dark-pink); margin-top: 10px; box-shadow: none; pointer-events: none;}
 
-  /* 숙제 내용 박스 */
-  .task-box { background: white; padding: 20px; border-radius: var(--radius-soft); border: 2px solid var(--border-pink); margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.03); }
-  .task-label { font-size: 0.95rem; font-weight: bold; margin-bottom: 10px; display: block; color: var(--text-dark); }
-  .task-content { font-size: 1.05rem; line-height: 1.5; color: var(--text-dark); margin-bottom: 15px; word-break: keep-all; background: var(--light-pink-hover); padding: 15px; border-radius: 10px; }
-
-  /* 상태 컨트롤 (버튼 형태 복구) */
-  .status-control { margin-top: 20px; border-top: 3px dotted var(--border-pink); padding-top: 20px; }
-  .status-options { display: flex; gap: 8px; margin-bottom: 15px; }
-  .status-radio { display: none; }
-  .status-label { 
-    flex: 1; text-align: center; padding: 12px; border-radius: var(--radius-soft); cursor: pointer; 
-    font-size: 13px; font-weight: bold; color: var(--text-gray); background: #fff; border: 2px solid var(--border-pink); 
-    display: flex; align-items: center; justify-content: center; transition: 0.2s; box-shadow: 0 2px 5px rgba(0,0,0,0.05); 
+  /* 셀 스타일 */
+  .cell {
+    padding: 8px; font-size: 14px; text-align: center;
+    border-right: 1px solid #FFE1EF; outline: none; white-space: normal; word-break: break-all; min-height: 24px;
+    display: flex; justify-content: center; align-items: center;
   }
-  .status-label:hover { transform: translateY(-2px); }
+  .cell:last-child { border-right: none; }
   
-  /* 선택된 상태 색상 */
-  input[type="radio"]:checked + .status-label.lbl-todo { background: #ff8a80; color: white; border-color: #ff8a80; }
-  input[type="radio"]:checked + .status-label.lbl-partial { background: #ffb74d; color: white; border-color: #ffb74d; }
-  input[type="radio"]:checked + .status-label.lbl-done { background: #81c784; color: white; border-color: #81c784; }
+  /* 편집 가능한 셀 스타일 */
+  .cell[contenteditable="true"] { cursor: text; }
+  .cell[contenteditable="true"]:focus { background: #fff; box-shadow: inset 0 0 0 2px var(--primary-pink); border-radius: 4px; }
 
-  .memo-input { width: 100%; box-sizing: border-box; padding: 15px; border: 2px solid var(--border-pink); border-radius: var(--radius-soft); font-size: 14px; resize: vertical; min-height: 70px; margin-bottom: 10px; background: #fff; transition: 0.2s; }
+  /* 열 너비 설정 (요청 항목: 아이디,닉네임,낭플,원플원,공약,비고) */
+  .col-id { width: 15%; }
+  .col-nick { width: 15%; }
+  .col-amt { width: 12%; font-weight: bold; color: var(--dark-pink); }
+  .col-one { width: 8%; }
+  .col-promise { width: 30%; text-align: left; justify-content: flex-start; padding-left: 10px; }
+  .col-note { width: 15%; font-size: 12px; color: #666; }
+  .col-action { width: 5%; position: relative; }
+
+  /* 액션 버튼 (호버 시 표시) */
+  .action-buttons { display: none; gap: 4px; justify-content: center; width: 100%; }
+  .row:hover .action-buttons { display: flex; }
   
-  .btn-group { display: flex; gap: 10px; margin-top: 20px; }
-  .btn-soop { width: 100%; background-color: var(--accent-blue); color: white; border: none; padding: 15px; border-radius: var(--radius-soft); text-decoration: none; font-weight: bold; cursor: pointer; text-align: center; font-size: 15px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(174, 217, 224, 0.4); transition: 0.2s; }
-  .btn-complete { margin-top: 15px; width: 100%; background: var(--dark-pink); border: none; color: white; padding: 15px; border-radius: var(--radius-soft); cursor: pointer; font-size: 15px; font-weight: bold; box-shadow: 0 4px 10px rgba(255, 141, 161, 0.4); transition: 0.2s; }
-  .btn-complete:hover { background-color: #e67a8f; transform: translateY(-2px); }
-
-  /* 시즌 기록실 테이블 (심플) */
-  .season-layout { max-width: 1200px; margin: 0 auto; background: var(--container-bg); border-radius: var(--radius-round); padding: 30px; box-shadow: 0 8px 25px var(--shadow-color); border: 2px solid #fff; }
-  .season-tabs { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 15px; margin-bottom: 20px; border-bottom: 2px dashed var(--border-pink); }
-  .season-tab-btn { white-space: nowrap; padding: 10px 20px; border-radius: 20px; border: 2px solid var(--border-pink); background: #fff; font-weight: bold; color: var(--text-gray); cursor: pointer; transition: 0.2s; }
-  .season-tab-btn.active { background: var(--primary-pink); color: white; border-color: var(--primary-pink); }
-  .season-content-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-  .add-season-btn { background: #333; color: white; border: none; padding: 8px 15px; border-radius: 10px; cursor: pointer; font-size: 12px; }
-  .season-entry-form { background: #fff5f8; padding: 15px; border-radius: var(--radius-soft); border: 2px dashed var(--primary-pink); display: flex; gap: 10px; align-items: flex-end; margin-bottom: 20px; }
-  .season-entry-form input { flex: 1; padding: 10px; border: 1px solid var(--border-pink); border-radius: 8px; }
-  .season-entry-form button { background: var(--primary-pink); color: white; border: none; padding: 10px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; }
-  .rank-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-  .rank-table th { background: var(--light-pink-hover); color: var(--text-dark); padding: 12px; font-size: 14px; border-bottom: 2px solid var(--border-pink); text-align: center; }
-  .rank-table td { padding: 12px; border-bottom: 1px solid #eee; color: var(--text-gray); font-size: 14px; text-align: center; }
-  .rank-table tr:hover { background: #fafafa; }
-  .del-season-btn { color: #ff5252; background: none; border: 1px solid #ff5252; padding: 4px 8px; border-radius: 6px; cursor: pointer; font-size: 11px; margin-left: 10px;}
+  .mini-btn {
+    background: #FFD8EA; border: none; border-radius: 999px; padding: 4px 10px;
+    font-size: 12px; cursor: pointer; color: #D24E78; transition: 0.15s; font-weight: bold;
+  }
+  .mini-btn:hover { background: #ffbddc; transform: translateY(-1px); }
 
   /* 우측 랭킹 리스트 */
   .rank-item { display: flex; align-items: center; justify-content: space-between; background: #fff; border-bottom: 1px dashed var(--border-pink); padding: 12px 5px; margin-bottom: 5px; }
@@ -185,15 +168,13 @@
   .rank-id { font-size: 11px; color: var(--primary-pink); }
   .rank-badge { background: var(--accent-blue); color: white; font-weight: bold; border-radius: 12px; padding: 5px 10px; font-size: 13px; }
 
-  #loading-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(255,255,255,0.9); display: flex; justify-content: center; align-items: center; z-index: 9999; font-weight: bold; color: var(--dark-pink); font-size: 1.5rem;}
-  .no-data-msg { font-size: 14px; color: #aaa; text-align: center; padding: 30px 0; font-style: italic; }
-
   @media (max-width: 1024px) {
     .wrapper { flex-direction: column; }
-    .sidebar, .sidebar-right { width: 100%; box-sizing: border-box; max-height: 250px; }
-    .container { padding: 20px; width: 100%; box-sizing: border-box;}
-    .season-entry-form { flex-direction: column; align-items: stretch; }
+    .sidebar, .sidebar-right { width: 100%; max-height: 200px; }
+    .table { min-width: 800px; }
   }
+  
+  #loading-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(255,255,255,0.9); display: flex; justify-content: center; align-items: center; z-index: 9999; font-weight: bold; color: var(--primary-pink); font-size: 1.2rem; }
   @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 </style>
 </head>
@@ -202,14 +183,14 @@
 <div id="loading-overlay">🐰 데이터를 불러오는 중...</div>
 
 <nav class="main-nav">
-  <div class="nav-tab active" onclick="switchPage('calendar')">📅 숙제 캘린더</div>
-  <div class="nav-tab" onclick="switchPage('season')">🏆 낭플단 기록실</div>
+  <button class="nav-tab active" onclick="switchPage('calendar')">📅 숙제 캘린더</button>
+  <button class="nav-tab" onclick="switchPage('record')">🏆 낭플단 기록실</button>
 </nav>
 
 <div id="page-calendar" class="page-section active">
   <div class="wrapper">
     <div class="sidebar">
-      <div class="sidebar-title">🐰 날짜별 기록</div>
+      <h3 style="margin-top:0; font-size:16px;">🐰 날짜별 기록</h3>
       <div id="sidebar-list"></div>
     </div>
 
@@ -222,9 +203,9 @@
       
       <div class="calendar-grid" id="calendar"></div>
 
-      <div id="nickname-view" style="display:none; margin-top:20px; border-top:3px dotted var(--border-pink); padding-top:20px;">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-          <h3 id="selected-date-text" style="margin:0; font-size:18px;">숙제 대상자</h3>
+      <div id="nickname-view">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+          <h3 id="selected-date-text" style="margin:0; font-size:18px;">숙제 리스트</h3>
           <button class="btn-add-show" onclick="toggleAddForm()">+ 숙제 추가</button>
         </div>
 
@@ -240,12 +221,12 @@
             <input type="number" id="new-amount" class="form-input" placeholder="풍선 개수" oninput="autoCalculate()">
             <input type="number" id="new-reverse" class="form-input" placeholder="역팬(자동)" readonly>
           </div>
-          <div style="margin-bottom:10px; display:flex; gap:10px; align-items:center;">
-             <label style="cursor:pointer;"><input type="radio" name="calc-ratio" value="0.03" checked onchange="autoCalculate()"> 3%</label>
-             <label style="cursor:pointer;"><input type="radio" name="calc-ratio" value="0.10" onchange="autoCalculate()"> 10%</label>
+          <div style="margin-bottom:10px;">
+             <label><input type="radio" name="calc-ratio" value="0.03" checked onchange="autoCalculate()"> 3%</label>
+             <label><input type="radio" name="calc-ratio" value="0.10" onchange="autoCalculate()"> 10%</label>
           </div>
           <input type="text" id="new-content" class="form-input" placeholder="숙제 내용 (직접 입력)" style="margin-bottom:10px;">
-          <button class="btn-register" id="btn-submit" onclick="handleTaskSubmit()">등록 완료 💖</button>
+          <button class="btn-register" id="btn-submit" onclick="handleTaskSubmit()">등록하기</button>
         </div>
 
         <div class="nick-list" id="nick-list-container"></div>
@@ -275,24 +256,16 @@
           </div>
         </div>
 
-        <div class="task-box">
-          <span class="task-label">숙제 내용</span>
-          <div class="task-content" id="detail-content">내용</div>
-          
-          <div class="status-control">
-            <span class="task-label">진행 상태 (클릭 시 자동 저장!)</span>
-            <div class="status-options">
-              <input type="radio" name="status" id="st-todo" value="todo" class="status-radio" onchange="saveTaskStatus(false)">
-              <label for="st-todo" class="status-label lbl-todo">대기</label>
-
-              <input type="radio" name="status" id="st-partial" value="partial" class="status-radio" onchange="saveTaskStatus(false)">
-              <label for="st-partial" class="status-label lbl-partial">방셀만</label>
-
-              <input type="radio" name="status" id="st-done" value="done" class="status-radio" onchange="saveTaskStatus(false)">
-              <label for="st-done" class="status-label lbl-done">완료</label>
-            </div>
-            <textarea id="detail-memo" class="memo-input" placeholder="메모를 입력하세요 (입력 후 밖을 클릭하면 자동 저장)" onblur="saveTaskStatus(false)"></textarea>
-          </div>
+        <div style="background:white; padding:10px; border-radius:8px; margin-bottom:10px;">
+          <div style="font-weight:bold; margin-bottom:5px;">📝 숙제 내용</div>
+          <div id="detail-content"></div>
+        </div>
+        <textarea id="detail-memo" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:8px;" placeholder="메모 (자동저장)" onblur="saveTaskStatus()"></textarea>
+        
+        <div style="display:flex; gap:10px; margin-top:10px; justify-content:center;">
+             <label><input type="radio" name="status" value="todo" onchange="saveTaskStatus()"> 대기</label>
+             <label><input type="radio" name="status" value="partial" onchange="saveTaskStatus()"> 방셀만</label>
+             <label><input type="radio" name="status" value="done" onchange="saveTaskStatus()"> 완료</label>
         </div>
 
         <div class="btn-group">
@@ -309,45 +282,54 @@
   </div>
 </div>
 
-<div id="page-season" class="page-section">
-  <div class="season-layout">
-    <div class="season-content-header">
-      <h2 style="margin:0;">🏆 시즌별 낭플단 차트</h2>
-      <button class="add-season-btn" onclick="createNewSeasonTab()">+ 새 시즌/회차 만들기</button>
+<div id="page-record" class="page-section">
+  <div class="record-layout">
+    <div class="record-controls">
+      <button class="nav-tab" style="font-size:12px; padding:8px 16px;" onclick="createNewSeason()">+ 새 시즌/회차 추가</button>
+      <span class="paste-guide">💡 엑셀 복사(Ctrl+C) → 화면 아무곳에 붙여넣기(Ctrl+V)</span>
     </div>
 
     <div class="season-tabs" id="season-tabs-container"></div>
 
     <div id="season-content-area" style="display:none;">
-      <h3 id="current-season-title">시즌 제목</h3>
-      
-      <div class="season-entry-form">
-        <input type="text" id="s-nick" placeholder="닉네임">
-        <input type="text" id="s-id" placeholder="아이디">
-        <input type="number" id="s-amount" placeholder="금액(풍선)">
-        <button onclick="addSeasonMember()">리스트에 추가</button>
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+        <h3 id="current-season-title" style="margin:0; font-size:18px;"></h3>
+        <button onclick="deleteCurrentSeason()" style="font-size:11px; color:#ff5252; border:1px solid #ff5252; background:none; border-radius:6px; padding:4px 8px; cursor:pointer;">이 시즌 삭제</button>
       </div>
 
-      <table class="rank-table">
-        <thead>
-          <tr>
-            <th width="10%">순위</th>
-            <th width="25%">닉네임</th>
-            <th width="20%">아이디</th>
-            <th width="25%">금액(풍선)</th>
-            <th width="20%">관리</th>
-          </tr>
-        </thead>
-        <tbody id="season-rank-tbody"></tbody>
-      </table>
+      <div class="table-scroll">
+        <div class="table" id="record-table-body">
+          <div class="row header-row">
+            <div class="cell col-id">아이디</div>
+            <div class="cell col-nick">닉네임</div>
+            <div class="cell col-amt">낭플</div>
+            <div class="cell col-one">원플원</div>
+            <div class="cell col-promise">공약</div>
+            <div class="cell col-note">비고</div>
+            <div class="cell col-action"></div>
+          </div>
+
+          <div id="record-data-rows"></div>
+
+          <div class="row summary-row">
+            <div class="cell col-id">합계</div>
+            <div class="cell col-nick"></div>
+            <div class="cell col-amt" id="season-total-sum">0</div>
+            <div class="cell col-one"></div>
+            <div class="cell col-promise"></div>
+            <div class="cell col-note"></div>
+            <div class="cell col-action"></div>
+          </div>
+        </div>
+      </div>
       
-      <div style="margin-top:20px; text-align:right;">
-        <button class="del-season-btn" onclick="deleteCurrentSeason()">⚠️ 현재 시즌 탭 전체 삭제</button>
+      <div style="text-align:center; margin-top:20px;">
+        <button class="nav-tab" onclick="addEmptyRowAtEnd()">+ 빈 줄 추가</button>
       </div>
     </div>
-    
-    <div id="no-season-msg" class="no-data-msg" style="text-align:center; padding:50px; color:#aaa;">
-      등록된 시즌/회차가 없습니다.<br>우측 상단 버튼을 눌러 회차를 만들어주세요!
+
+    <div id="no-season-msg" style="text-align:center; padding:50px; color:#aaa;">
+      등록된 회차가 없습니다. 상단 버튼을 눌러 추가해주세요!
     </div>
   </div>
 </div>
@@ -387,7 +369,7 @@
     window.seasonData = snapshot.val() || {};
     renderSeasonTabs();
     if(window.currentSeasonName && window.seasonData[window.currentSeasonName]) {
-        renderSeasonTable(window.currentSeasonName);
+        renderRecordTable(window.currentSeasonName);
     } else {
         const keys = Object.keys(window.seasonData).sort();
         if(keys.length > 0) switchSeasonTab(keys[0]);
@@ -401,21 +383,25 @@
   window.saveHomework = () => set(dbRefHome, window.homeworkData);
   window.saveSeason = () => set(dbRefSeason, window.seasonData);
 
+  // --- [탭 전환] ---
   window.switchPage = (page) => {
     document.querySelectorAll('.page-section').forEach(e => e.classList.remove('active'));
     document.querySelectorAll('.nav-tab').forEach(e => e.classList.remove('active'));
     document.getElementById(`page-${page}`).classList.add('active');
     
-    const tabs = document.querySelectorAll('.nav-tab');
+    const tabs = document.querySelectorAll('.main-nav .nav-tab');
     if(page==='calendar') tabs[0].classList.add('active');
     else tabs[1].classList.add('active');
   };
 
-  // --- 시즌 기록실 로직 ---
-  window.createNewSeasonTab = () => {
-    const name = prompt("새로운 시즌/회차 이름");
+  // =================================================================
+  // [기록실] 스마트 테이블 로직
+  // =================================================================
+  
+  window.createNewSeason = () => {
+    const name = prompt("새 시즌/회차 이름 (예: 1회차, 경쟁전)");
     if(!name) return;
-    if(window.seasonData[name]) return alert("이미 존재합니다.");
+    if(window.seasonData[name]) return alert("이미 있습니다.");
     window.seasonData[name] = [];
     window.saveSeason();
     window.switchSeasonTab(name);
@@ -425,12 +411,10 @@
     const container = document.getElementById('season-tabs-container');
     container.innerHTML = '';
     const keys = Object.keys(window.seasonData).sort();
-    if(keys.length === 0) {
-        document.getElementById('no-season-msg').style.display = 'block';
-        document.getElementById('season-content-area').style.display = 'none';
-        return;
-    }
+    
+    if(keys.length === 0) return;
     document.getElementById('no-season-msg').style.display = 'none';
+
     keys.forEach(key => {
         const btn = document.createElement('button');
         btn.className = `season-tab-btn ${key === window.currentSeasonName ? 'active' : ''}`;
@@ -443,72 +427,179 @@
   window.switchSeasonTab = (name) => {
     window.currentSeasonName = name;
     renderSeasonTabs();
-    renderSeasonTable(name);
+    renderRecordTable(name);
     document.getElementById('season-content-area').style.display = 'block';
   };
 
-  window.renderSeasonTable = (seasonName) => {
+  // 배경색 계산 함수
+  function getLevelColor(amount) {
+      const num = parseInt(amount) || 0;
+      if(num >= 300000) return 'var(--lv9)';
+      if(num >= 100000) return 'var(--lv8)';
+      if(num >= 50000) return 'var(--lv7)';
+      if(num >= 10000) return 'var(--lv6)';
+      if(num >= 5000) return 'var(--lv5)';
+      if(num >= 3000) return 'var(--lv4)';
+      if(num >= 1000) return 'var(--lv3)';
+      if(num >= 299) return 'var(--lv2)';
+      if(num >= 100) return 'var(--lv1)';
+      return 'var(--lv0)';
+  }
+
+  // 테이블 렌더링
+  window.renderRecordTable = (seasonName) => {
     document.getElementById('current-season-title').innerText = seasonName;
-    const tbody = document.getElementById('season-rank-tbody');
-    tbody.innerHTML = '';
+    const container = document.getElementById('record-data-rows');
+    container.innerHTML = '';
     
-    let list = window.seasonData[seasonName] || [];
-    list.sort((a, b) => (parseInt(b.amount)||0) - (parseInt(a.amount)||0));
+    const list = window.seasonData[seasonName] || [];
+    let totalSum = 0;
 
     if(list.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="5" style="padding:20px;">데이터가 없습니다.</td></tr>`;
-        return;
+       container.innerHTML = `<div style="text-align:center; padding:20px; color:#aaa;">데이터가 없습니다. 붙여넣기 하거나 추가하세요.</div>`;
     }
 
     list.forEach((item, index) => {
-        let rankClass = '';
-        if(index === 0) rankClass = 'rank-1';
-        if(index === 1) rankClass = 'rank-2';
-        if(index === 2) rankClass = 'rank-3';
+        const amt = parseInt(item.amount || 0);
+        totalSum += amt;
+        const bgColor = getLevelColor(amt);
 
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-            <td class="rank-num ${rankClass}">${index + 1}</td>
-            <td>${item.nick}</td>
-            <td style="color:#aaa; font-size:12px;">${item.id}</td>
-            <td style="font-weight:bold; color:var(--primary-pink);">${parseInt(item.amount).toLocaleString()}</td>
-            <td><button class="del-season-btn" style="color:#ff5252; background:none; border:none; cursor:pointer;" onclick="deleteSeasonMember('${seasonName}', ${index})">❌</button></td>
+        const row = document.createElement('div');
+        row.className = 'row data-row';
+        row.style.background = bgColor;
+        
+        row.innerHTML = `
+            <div class="cell col-id" contenteditable="true" oninput="handleInput('${seasonName}', ${index}, 'id', this)" onblur="handleBlur()">${item.id || ''}</div>
+            <div class="cell col-nick" contenteditable="true" oninput="handleInput('${seasonName}', ${index}, 'nick', this)" onblur="handleBlur()">${item.nick || ''}</div>
+            <div class="cell col-amt amount-cell" contenteditable="true" oninput="handleInput('${seasonName}', ${index}, 'amount', this)" onblur="handleBlur()">${item.amount || ''}</div>
+            <div class="cell col-one" contenteditable="true" oninput="handleInput('${seasonName}', ${index}, 'oneplus', this)" onblur="handleBlur()">${item.oneplus || ''}</div>
+            <div class="cell col-promise" contenteditable="true" oninput="handleInput('${seasonName}', ${index}, 'promise', this)" onblur="handleBlur()">${item.promise || ''}</div>
+            <div class="cell col-note" contenteditable="true" oninput="handleInput('${seasonName}', ${index}, 'note', this)" onblur="handleBlur()">${item.note || ''}</div>
+            <div class="cell col-action">
+                <div class="action-buttons">
+                    <button class="mini-btn" onclick="cloneRow(${index})">+</button>
+                    <button class="mini-btn" onclick="removeRow(${index})">🗑</button>
+                </div>
+            </div>
         `;
-        tbody.appendChild(tr);
+        container.appendChild(row);
     });
+
+    document.getElementById('season-total-sum').innerText = totalSum.toLocaleString();
   };
 
-  window.addSeasonMember = () => {
-    const nick = document.getElementById('s-nick').value;
-    const id = document.getElementById('s-id').value;
-    const amount = parseInt(document.getElementById('s-amount').value);
-
-    if(!nick || !id || isNaN(amount)) return alert("정보를 모두 입력하세요.");
-    if(!window.currentSeasonName) return alert("시즌을 선택하세요.");
-
-    if(!window.seasonData[window.currentSeasonName]) window.seasonData[window.currentSeasonName] = [];
-    window.seasonData[window.currentSeasonName].push({ nick, id, amount });
-    window.saveSeason();
+  // [기능 3] 수정 시 자동 갱신 (색상/합계) - DB 저장 X
+  window.handleInput = (seasonName, index, field, element) => {
+    let val = element.innerText.trim();
+    if(field === 'amount') val = val.replace(/[^0-9]/g, ''); 
     
-    document.getElementById('s-nick').value = '';
-    document.getElementById('s-id').value = '';
-    document.getElementById('s-amount').value = '';
+    // 로컬 데이터 임시 갱신 (저장 전)
+    if(!window.seasonData[seasonName][index]) return;
+    window.seasonData[seasonName][index][field] = val;
+
+    // 즉시 색상 및 합계 반영 (DOM 조작)
+    if(field === 'amount') {
+        const row = element.closest('.row');
+        row.style.background = getLevelColor(val);
+        updateLocalSummary();
+    }
   };
 
-  window.deleteSeasonMember = (seasonName, index) => {
-    if(!confirm("삭제합니까?")) return;
-    window.seasonData[seasonName].splice(index, 1);
+  // [기능 3] 수정 완료 시 DB 저장
+  window.handleBlur = () => {
+    window.saveSeason(); // Firebase 저장
+  };
+
+  function updateLocalSummary() {
+      let sum = 0;
+      // 현재 DOM에 있는 값들로 합계 계산 (빠른 반응 위해)
+      document.querySelectorAll('.amount-cell').forEach(cell => {
+          sum += parseInt(cell.innerText.replace(/[^0-9]/g,'') || 0);
+      });
+      document.getElementById('season-total-sum').innerText = sum.toLocaleString();
+  }
+
+  // [기능 5] 행 추가 (복제 후 초기화)
+  window.cloneRow = (index) => {
+    if(!window.currentSeasonName) return;
+    const newItem = { id:'', nick:'', amount:'', oneplus:'', promise:'', note:'' };
+    // 해당 인덱스 바로 뒤에 추가
+    window.seasonData[window.currentSeasonName].splice(index + 1, 0, newItem);
     window.saveSeason();
+    renderRecordTable(window.currentSeasonName);
+  };
+
+  window.addEmptyRowAtEnd = () => {
+    if(!window.currentSeasonName) return;
+    const newItem = { id:'', nick:'', amount:'', oneplus:'', promise:'', note:'' };
+    window.seasonData[window.currentSeasonName].push(newItem);
+    window.saveSeason();
+    renderRecordTable(window.currentSeasonName);
+  };
+
+  // [기능 6] 행 삭제
+  window.removeRow = (index) => {
+    if(!window.currentSeasonName) return;
+    const list = window.seasonData[window.currentSeasonName];
+    
+    if(list.length <= 1) {
+        alert("최소 1개의 행은 남아있어야 합니다.");
+        return;
+    }
+    
+    if(!confirm("이 행을 삭제하시겠습니까?")) return;
+    list.splice(index, 1);
+    window.saveSeason();
+    renderRecordTable(window.currentSeasonName);
   };
 
   window.deleteCurrentSeason = () => {
-    if(!confirm("이 탭을 완전히 삭제하시겠습니까?")) return;
+    if(!confirm("이 시즌 탭을 완전히 삭제하시겠습니까?")) return;
     delete window.seasonData[window.currentSeasonName];
     window.currentSeasonName = null;
     window.saveSeason();
   };
 
-  // --- 캘린더 로직 (에러 수정됨) ---
+  // [기능 2] 엑셀 붙여넣기
+  document.addEventListener('paste', (e) => {
+    if(!document.getElementById('page-record').classList.contains('active')) return;
+    if(!window.currentSeasonName) return;
+    
+    // 포커스가 입력 필드에 있으면 붙여넣기 기능 스킵 (기본동작 수행)
+    if(e.target.isContentEditable || e.target.tagName === 'INPUT') return;
+
+    e.preventDefault();
+    const clipboardData = (e.clipboardData || window.clipboardData).getData('text');
+    if(!clipboardData) return;
+
+    const rows = clipboardData.trim().split(/\r?\n/);
+    if(rows.length === 0) return;
+
+    if(!confirm(`${rows.length}행의 엑셀 데이터를 붙여넣으시겠습니까?`)) return;
+
+    rows.forEach(rowStr => {
+        const cols = rowStr.split('\t');
+        if(cols.length < 1) return;
+        // 열 순서: 아이디, 닉네임, 낭플, 1+1, 공약, 비고
+        const newItem = {
+            id: cols[0] || '',
+            nick: cols[1] || '',
+            amount: (cols[2] || '').replace(/[^0-9]/g, ''), 
+            oneplus: cols[3] || '',
+            promise: cols[4] || '',
+            note: cols[5] || ''
+        };
+        window.seasonData[window.currentSeasonName].push(newItem);
+    });
+
+    window.saveSeason();
+    renderRecordTable(window.currentSeasonName);
+  });
+
+
+  // =================================================================
+  // [캘린더 로직] (기존 유지)
+  // =================================================================
   window.currentDate = new Date();
   window.selectedDateKey = null;
   window.currentTaskIndex = null;
@@ -541,11 +632,11 @@
 
   window.changeMonth = (step) => { window.currentDate.setMonth(window.currentDate.getMonth()+step); window.renderCalendar(); };
   
-  // 🔥 [오류 수정] ID가 존재할 때만 텍스트 변경
+  // 🔥 [오류 수정] selected-date-text 요소가 존재하는지 확인 후 텍스트 변경
   window.selectDate = (key) => {
     window.selectedDateKey = key;
     const titleEl = document.getElementById('selected-date-text');
-    if(titleEl) titleEl.innerText = `${key} 리스트`;
+    if(titleEl) titleEl.innerText = `${key} 리스트`; // 안전장치 추가
     
     renderNickList(window.homeworkData[key]||[]);
     document.getElementById('nickname-view').style.display='block';
@@ -558,7 +649,7 @@
     if(!list.length) { con.innerHTML = '<div style="grid-column:span 3; text-align:center; color:#ccc;">없음</div>'; return; }
     list.forEach((task, idx) => {
         const btn = document.createElement('button');
-        btn.className = `nick-btn status-${task.status || 'todo'}`;
+        btn.className = `nick-btn status-${task.status || 'todo'}`; // 상태별 색상 클래스 적용
         btn.innerText = task.nick;
         btn.onclick = () => showMemberDetail(task, idx);
         con.appendChild(btn);
@@ -596,10 +687,11 @@
     });
   };
 
+  // 캘린더 등록/수정/삭제 등
   window.toggleAddForm = () => {
     window.isEditMode = false;
     document.getElementById('add-form').style.display = 'block';
-    document.getElementById('new-date').value = window.selectedDateKey || '';
+    document.getElementById('new-date').value = window.selectedDateKey;
     document.getElementById('new-nick').value = '';
     document.getElementById('new-id').value = '';
     document.getElementById('new-amount').value = '';
@@ -648,19 +740,21 @@
     };
 
     if(window.isEditMode) {
+        // 수정 모드: 날짜 변경 시 이동, 아니면 제자리 수정
         const oldTask = window.homeworkData[window.selectedDateKey][window.currentTaskIndex];
-        newTask.status = oldTask.status;
-        newTask.memo = oldTask.memo;
+        newTask.status = oldTask.status; // 상태 유지
+        newTask.memo = oldTask.memo;     // 메모 유지
 
         if(dKey !== window.selectedDateKey) {
             window.homeworkData[window.selectedDateKey].splice(window.currentTaskIndex, 1);
             if(!window.homeworkData[dKey]) window.homeworkData[dKey] = [];
             window.homeworkData[dKey].push(newTask);
-            alert("날짜 이동됨!");
+            alert(`날짜 이동됨! (${window.selectedDateKey} ➡️ ${dKey})`);
         } else {
             window.homeworkData[dKey][window.currentTaskIndex] = newTask;
         }
     } else {
+        // 신규 등록
         if(!window.homeworkData[dKey]) window.homeworkData[dKey] = [];
         window.homeworkData[dKey].push(newTask);
     }
@@ -675,12 +769,13 @@
     window.currentTaskIndex = idx;
     document.getElementById('detail-card').style.display = 'block';
     document.getElementById('detail-nick').innerText = task.nick;
-    document.getElementById('detail-id').innerText = `@${task.id}`;
+    document.getElementById('detail-id').innerText = task.id;
     document.getElementById('detail-amount').innerText = parseInt(task.amount).toLocaleString();
     document.getElementById('detail-reverse').innerText = parseInt(task.reverse).toLocaleString();
     document.getElementById('detail-content').innerText = task.content;
     document.getElementById('detail-memo').value = task.memo || '';
     
+    // 라디오 체크
     const radios = document.getElementsByName('status');
     for(let r of radios) { r.checked = (r.value === task.status); }
 
@@ -696,6 +791,7 @@
     
     window.saveHomework();
     if(showMsg) alert("저장됨!");
+    // 리스트 색상 갱신
     window.renderNickList(window.homeworkData[window.selectedDateKey]);
   };
 
