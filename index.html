@@ -58,9 +58,10 @@
   .container { 
     flex: 1; background: var(--container-bg); padding: 30px; border-radius: var(--radius-round); 
     box-shadow: 0 8px 25px var(--shadow-color); border: 2px solid #fff; position: relative; 
+    min-width: 0; /* 넘침 방지 */
   }
 
-  /* 캘린더 */
+  /* 캘린더 스타일 */
   .calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
   .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; margin-bottom: 25px;}
   .day-name { text-align: center; font-size: 0.9rem; color: var(--dark-pink); font-weight: bold; padding-bottom: 10px; }
@@ -146,18 +147,22 @@
 
   .memo-input { width: 100%; box-sizing: border-box; padding: 15px; border: 2px solid var(--border-pink); border-radius: var(--radius-soft); font-size: 14px; resize: vertical; min-height: 70px; margin-bottom: 10px; background: #fff; transition: 0.2s; }
   
-  /* 🔥 [수정됨] 방송국 바로가기 버튼 (예쁜 디자인) */
+  /* 🔥 [수정됨] 방송국 버튼 삐져나옴 방지 */
   .btn-soop { 
-    display: flex; justify-content: center; align-items: center; gap: 8px; /* 아이콘과 텍스트 간격 */
-    width: 100%; background-color: var(--accent-blue); color: white; 
+    display: flex; justify-content: center; align-items: center; gap: 8px;
+    width: 100%; box-sizing: border-box; /* 패딩 포함 너비 계산 */
+    background-color: var(--accent-blue); color: white; 
     border: none; padding: 15px; border-radius: var(--radius-soft); 
     text-decoration: none; font-weight: bold; font-size: 15px; 
     box-shadow: 0 4px 10px rgba(174, 217, 224, 0.4); margin-bottom: 10px; transition: 0.2s; 
   }
   .btn-soop:hover { background-color: #9ad0d8; transform: translateY(-2px); }
-  .soop-icon { width: 20px; height: 20px; fill: white; } /* 아이콘 스타일 */
+  .soop-icon { width: 20px; height: 20px; fill: white; }
 
-  .btn-complete { width: 100%; background: var(--dark-pink); border: none; color: white; padding: 15px; border-radius: var(--radius-soft); cursor: pointer; font-size: 15px; font-weight: bold; box-shadow: 0 4px 10px rgba(255, 141, 161, 0.4); transition: 0.2s; }
+  .btn-complete { 
+    width: 100%; box-sizing: border-box;
+    background: var(--dark-pink); border: none; color: white; padding: 15px; border-radius: var(--radius-soft); cursor: pointer; font-size: 15px; font-weight: bold; box-shadow: 0 4px 10px rgba(255, 141, 161, 0.4); transition: 0.2s; 
+  }
 
   /* --------------------------------------------------------
      [페이지 2] 낭플단 기록실
@@ -173,6 +178,7 @@
   .table-scroll { overflow-x: auto; padding-bottom: 10px; }
   .table { display: flex; flex-direction: column; gap: 4px; min-width: 1000px; }
   
+  /* 행 스타일 */
   .row {
     display: flex; background: white; border-radius: 20px; overflow: hidden;
     box-shadow: 0 1px 3px rgba(255,150,180,0.08); padding: 4px 0;
@@ -180,23 +186,12 @@
   }
   .row:hover { transform: translateY(-1px); box-shadow: 0 3px 8px rgba(255,150,180,0.15); z-index: 10; }
   
-  /* 헤더 스타일 */
-  .header-row { 
-    background: #FFD1E1; /* 진한 핑크 헤더 */
-    pointer-events: none; margin-bottom: 5px; border-radius: 20px;
-  }
-  .header-row .cell { 
-    font-weight: 800; color: #880e4f; 
-    border-bottom: none; cursor: default; font-size: 15px;
-  }
-  .summary-row { 
-    background: #FFF0F5; font-weight: 800; color: #d81b60; margin-top: 10px; 
-    border: 2px solid #FFC2D6; border-radius: 20px;
-  }
+  .header-row { background: #FFD1E1; pointer-events: none; margin-bottom: 5px; border-radius: 20px; }
+  .header-row .cell { font-weight: 800; color: #880e4f; border-bottom: none; cursor: default; font-size: 15px; }
+  .summary-row { background: #FFF0F5; font-weight: 800; color: #d81b60; margin-top: 10px; border: 2px solid #FFC2D6; border-radius: 20px; }
 
   .cell {
-    padding: 6px 4px;
-    font-size: 14px; text-align: center;
+    padding: 6px 4px; font-size: 14px; text-align: center;
     border-right: 1px solid rgba(0,0,0,0.05); outline: none; 
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     display: flex; justify-content: center; align-items: center; min-height: 24px;
@@ -206,7 +201,7 @@
   .cell[contenteditable="true"] { cursor: text; }
   .cell[contenteditable="true"]:focus { background: #fff; box-shadow: inset 0 0 0 2px var(--dark-pink); border-radius: 4px; }
 
-  /* 열 너비 (공약 중앙정렬) */
+  /* 열 너비 */
   .col-id { width: 12%; }
   .col-nick { width: 12%; }
   .col-amt { width: 12%; font-weight: 800; color: #d81b60; font-size: 15px; }
@@ -227,7 +222,6 @@
     background: #FFF0F5; padding: 12px; border-radius: 12px; border: 2px dashed var(--primary-pink);
   }
 
-  /* 우측 랭킹 리스트 */
   .rank-item { display: flex; align-items: center; justify-content: space-between; background: #fff; border-bottom: 1px dashed var(--border-pink); padding: 12px 5px; margin-bottom: 5px; }
   .rank-info { display: flex; flex-direction: column; }
   .rank-nick { font-weight: bold; color: var(--text-dark); font-size: 14px; }
@@ -345,7 +339,7 @@
             <textarea id="detail-memo" class="memo-input" placeholder="메모를 입력하세요 (입력 후 밖을 클릭하면 자동 저장)" onblur="saveTaskStatus(false)"></textarea>
           </div>
         </div>
-        
+
         <a href="#" target="_blank" class="btn-soop" id="detail-link">
           <svg class="soop-icon" viewBox="0 0 24 24"><path d="M21 3H3C1.89543 3 1 3.89543 1 5V17C1 18.1046 1.89543 19 3 19H8V21H16V19H21C22.1046 19 23 18.1046 23 17V5C23 3.89543 22.1046 3 21 3ZM21 17H3V5H21V17Z" /></svg>
           SOOP 방송국 바로가기
@@ -679,9 +673,13 @@
     }
   };
 
-  window.changeMonth = (step) => { window.currentDate.setMonth(window.currentDate.getMonth()+step); window.renderCalendar(); };
+  // 🔥 [2달 점프 버그 수정] 날짜를 1일로 고정 후 월 변경
+  window.changeMonth = (step) => { 
+      window.currentDate.setDate(1); 
+      window.currentDate.setMonth(window.currentDate.getMonth()+step); 
+      window.renderCalendar(); 
+  };
   
-  // 🔥 [오류 수정] ID 확인 후 텍스트 변경
   window.selectDate = (key) => {
     window.selectedDateKey = key;
     const titleEl = document.getElementById('selected-date-text');
