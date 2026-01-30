@@ -19,11 +19,9 @@
     --shadow-color: rgba(255, 182, 193, 0.2);
     --radius-soft: 15px;
     --radius-round: 25px;
-    --gold: #ffd700;
-    --silver: #c0c0c0;
-    --bronze: #cd7f32;
+    --gold: #ffd700; --silver: #c0c0c0; --bronze: #cd7f32;
 
-    /* 기록실 금액별 색상 단계 */
+    /* 기록실 금액별 배경색 단계 */
     --lv0: #FFFFFF; --lv1: #FFF9FD; --lv2: #FFF3FA; --lv3: #FFE9F4; --lv4: #FFE0EF;
     --lv5: #FFD7EB; --lv6: #FFCEE7; --lv7: #FFC6E3; --lv8: #FFBEDF; --lv9: #FFB6DA;
   }
@@ -38,7 +36,7 @@
   input, button, textarea, select { font-family: inherit; box-sizing: border-box; outline: none; }
   h2, h3 { color: var(--text-dark); }
 
-  /* 상단 공지 배너 */
+  /* 상단 공지 */
   .top-notice {
     background: #FFF0F5; border: 2px dashed var(--primary-pink); color: var(--dark-pink);
     padding: 12px; text-align: center; border-radius: 15px; margin-bottom: 20px;
@@ -59,7 +57,7 @@
   .page-section { display: none; animation: fadeIn 0.3s; }
   .page-section.active { display: block; }
 
-  /* 레이아웃 */
+  /* 레이아웃 (캘린더용) */
   .wrapper { display: flex; gap: 20px; max-width: 1400px; margin: 0 auto; align-items: flex-start; }
   .sidebar, .sidebar-right { 
     width: 260px; background: var(--container-bg); padding: 25px; border-radius: var(--radius-round); 
@@ -70,7 +68,7 @@
     box-shadow: 0 8px 25px var(--shadow-color); border: 2px solid #fff; position: relative; 
   }
 
-  /* 캘린더 */
+  /* 캘린더 스타일 */
   .calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
   .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; margin-bottom: 25px;}
   .day-name { text-align: center; font-size: 0.9rem; color: var(--primary-pink); font-weight: bold; padding-bottom: 10px; }
@@ -101,12 +99,11 @@
   }
   .nick-btn:hover { transform: translateY(-3px); }
   .nick-btn.active { border-color: var(--primary-pink); box-shadow: 0 0 0 2px var(--primary-pink) inset; }
-  
   .nick-btn.status-todo { background: #ffebee; color: #e57373; border-color: #ffcdd2; }
   .nick-btn.status-partial { background: #fff3e0; color: #ff9800; border-color: #ffe0b2; }
   .nick-btn.status-done { background: #e8f5e9; color: #4caf50; border-color: #c8e6c9; }
 
-  /* 폼 & 상세 카드 (복구된 예쁜 디자인) */
+  /* 폼 & 상세 카드 */
   #add-form { display: none; background: #fff5f8; border: 3px dashed var(--primary-pink); padding: 20px; border-radius: var(--radius-round); margin-bottom: 25px; }
   .form-row { display: flex; gap: 15px; margin-bottom: 15px; }
   .form-input { width: 100%; padding: 12px; border: 2px solid var(--border-pink); border-radius: var(--radius-soft); font-size: 14px; background: #fff; }
@@ -159,7 +156,7 @@
   .btn-complete { width: 100%; background: var(--dark-pink); border: none; color: white; padding: 15px; border-radius: var(--radius-soft); cursor: pointer; font-size: 15px; font-weight: bold; box-shadow: 0 4px 10px rgba(255, 141, 161, 0.4); transition: 0.2s; }
 
   /* --------------------------------------------------------
-     [페이지 2] 낭플단 기록실 (요청하신 중앙정렬 + 간격 축소) 
+     [페이지 2] 낭플단 기록실 (요청하신 디자인: 중앙정렬, 한줄, 비고 추가) 
      -------------------------------------------------------- */
   .season-layout { max-width: 1200px; margin: 0 auto; background: var(--container-bg); border-radius: var(--radius-round); padding: 30px; box-shadow: 0 8px 25px var(--shadow-color); border: 2px solid #fff; }
   .season-tabs { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 15px; margin-bottom: 20px; border-bottom: 2px dashed var(--border-pink); }
@@ -185,7 +182,7 @@
 
   /* 셀 스타일 (중앙 정렬 + 한줄) */
   .cell {
-    padding: 6px 4px; /* 셀 내부 여백도 축소 */
+    padding: 6px 4px;
     font-size: 14px; text-align: center; /* 중앙정렬 */
     border-right: 1px solid #FFE1EF; outline: none; 
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis; /* 한줄 표시 */
@@ -195,12 +192,12 @@
   .cell[contenteditable="true"] { cursor: text; }
   .cell[contenteditable="true"]:focus { background: #fff; box-shadow: inset 0 0 0 2px var(--primary-pink); border-radius: 4px; }
 
-  /* 열 너비 */
+  /* 열 너비 (비고란 포함) */
   .col-id { width: 12%; }
   .col-nick { width: 12%; }
   .col-amt { width: 12%; font-weight: bold; color: var(--dark-pink); }
   .col-one { width: 8%; }
-  .col-promise { width: 35%; }
+  .col-promise { width: 35%; text-align: left; justify-content: flex-start; padding-left: 10px; } /* 공약만 왼쪽 정렬 */
   .col-note { width: 15%; color: #666; font-size: 13px; }
   .col-action { width: 6%; }
 
@@ -211,7 +208,6 @@
 
   .del-season-btn { color: #ff5252; background: none; border: 1px solid #ff5252; padding: 4px 8px; border-radius: 6px; cursor: pointer; font-size: 11px; margin-left: 10px;}
   
-  /* 우측 랭킹 리스트 */
   .rank-item { display: flex; align-items: center; justify-content: space-between; background: #fff; border-bottom: 1px dashed var(--border-pink); padding: 12px 5px; margin-bottom: 5px; }
   .rank-info { display: flex; flex-direction: column; }
   .rank-nick { font-weight: bold; color: var(--text-dark); font-size: 14px; }
@@ -238,8 +234,8 @@
 </div>
 
 <nav class="main-nav">
-  <div class="nav-tab active" onclick="switchPage('calendar')">📅 숙제 캘린더</div>
-  <div class="nav-tab" onclick="switchPage('season')">🏆 낭플단 기록실</div>
+  <button id="tab-btn-calendar" class="nav-tab active" onclick="switchPage('calendar')">📅 숙제 캘린더</button>
+  <button id="tab-btn-record" class="nav-tab" onclick="switchPage('record')">🏆 낭플단 기록실</button>
 </nav>
 
 <div id="page-calendar" class="page-section active">
@@ -418,6 +414,7 @@
   window.seasonData = {};
   window.currentSeasonName = null;
 
+  // 데이터 로드
   onValue(dbRefHome, (snapshot) => {
     window.homeworkData = snapshot.val() || {};
     refreshCalendarUI();
@@ -442,17 +439,23 @@
   window.saveHomework = () => set(dbRefHome, window.homeworkData);
   window.saveSeason = () => set(dbRefSeason, window.seasonData);
 
+  // --- [탭 전환 Fix] ID로 직접 찾기 ---
   window.switchPage = (page) => {
     document.querySelectorAll('.page-section').forEach(e => e.classList.remove('active'));
     document.querySelectorAll('.nav-tab').forEach(e => e.classList.remove('active'));
+    
     document.getElementById(`page-${page}`).classList.add('active');
     
-    const tabs = document.querySelectorAll('.nav-tab');
-    if(page==='calendar') tabs[0].classList.add('active');
-    else tabs[1].classList.add('active');
+    // 버튼 ID로 확실하게 찾기
+    const btnId = `tab-btn-${page}`;
+    const btn = document.getElementById(btnId);
+    if(btn) btn.classList.add('active');
   };
 
-  // --- 시즌 기록실 로직 ---
+  // =================================================================
+  // [기록실] 스마트 테이블 로직
+  // =================================================================
+  
   window.createNewSeason = () => {
     const name = prompt("새 시즌/회차 이름 (예: 1회차, 경쟁전)");
     if(!name) return;
@@ -486,6 +489,7 @@
     document.getElementById('season-content-area').style.display = 'block';
   };
 
+  // 배경색 계산 함수
   function getLevelColor(amount) {
       const num = parseInt(amount) || 0;
       if(num >= 300000) return 'var(--lv9)';
@@ -500,6 +504,7 @@
       return 'var(--lv0)';
   }
 
+  // 테이블 렌더링
   window.renderRecordTable = (seasonName) => {
     document.getElementById('current-season-title').innerText = seasonName;
     const container = document.getElementById('record-data-rows');
@@ -526,7 +531,7 @@
             <div class="cell col-nick" contenteditable="true" oninput="handleInput('${seasonName}', ${index}, 'nick', this)" onblur="handleBlur()">${item.nick || ''}</div>
             <div class="cell col-amt amount-cell" contenteditable="true" oninput="handleInput('${seasonName}', ${index}, 'amount', this)" onblur="handleBlur()">${item.amount || ''}</div>
             <div class="cell col-one" contenteditable="true" oninput="handleInput('${seasonName}', ${index}, 'oneplus', this)" onblur="handleBlur()">${item.oneplus || ''}</div>
-            <div class="cell col-promise" contenteditable="true" oninput="handleInput('${seasonName}', ${index}, 'promise', this)" onblur="handleBlur()">${item.promise || ''}</div>
+            <div class="cell col-promise text-left" contenteditable="true" oninput="handleInput('${seasonName}', ${index}, 'promise', this)" onblur="handleBlur()">${item.promise || ''}</div>
             <div class="cell col-note" contenteditable="true" oninput="handleInput('${seasonName}', ${index}, 'note', this)" onblur="handleBlur()">${item.note || ''}</div>
             <div class="cell col-action">
                 <div class="action-buttons">
@@ -541,12 +546,16 @@
     document.getElementById('season-total-sum').innerText = totalSum.toLocaleString();
   };
 
+  // [기능 3] 수정 시 자동 갱신 (색상/합계) - DB 저장 X
   window.handleInput = (seasonName, index, field, element) => {
     let val = element.innerText.trim();
     if(field === 'amount') val = val.replace(/[^0-9]/g, ''); 
+    
+    // 로컬 데이터 임시 갱신 (저장 전)
     if(!window.seasonData[seasonName][index]) return;
     window.seasonData[seasonName][index][field] = val;
 
+    // 즉시 색상 및 합계 반영 (DOM 조작)
     if(field === 'amount') {
         const row = element.closest('.row');
         row.style.background = getLevelColor(val);
@@ -554,19 +563,25 @@
     }
   };
 
-  window.handleBlur = () => { window.saveSeason(); };
+  // [기능 3] 수정 완료 시 DB 저장
+  window.handleBlur = () => {
+    window.saveSeason(); // Firebase 저장
+  };
 
   function updateLocalSummary() {
       let sum = 0;
+      // 현재 DOM에 있는 값들로 합계 계산 (빠른 반응 위해)
       document.querySelectorAll('.amount-cell').forEach(cell => {
           sum += parseInt(cell.innerText.replace(/[^0-9]/g,'') || 0);
       });
       document.getElementById('season-total-sum').innerText = sum.toLocaleString();
   }
 
+  // [기능 5] 행 추가 (복제 후 초기화)
   window.cloneRow = (index) => {
     if(!window.currentSeasonName) return;
     const newItem = { id:'', nick:'', amount:'', oneplus:'', promise:'', note:'' };
+    // 해당 인덱스 바로 뒤에 추가
     window.seasonData[window.currentSeasonName].splice(index + 1, 0, newItem);
     window.saveSeason();
     renderRecordTable(window.currentSeasonName);
@@ -580,11 +595,17 @@
     renderRecordTable(window.currentSeasonName);
   };
 
+  // [기능 6] 행 삭제
   window.removeRow = (index) => {
     if(!window.currentSeasonName) return;
     const list = window.seasonData[window.currentSeasonName];
-    if(list.length <= 1) { alert("최소 1개의 행은 남아있어야 합니다."); return; }
-    if(!confirm("삭제하시겠습니까?")) return;
+    
+    if(list.length <= 1) {
+        alert("최소 1개의 행은 남아있어야 합니다.");
+        return;
+    }
+    
+    if(!confirm("이 행을 삭제하시겠습니까?")) return;
     list.splice(index, 1);
     window.saveSeason();
     renderRecordTable(window.currentSeasonName);
@@ -597,9 +618,11 @@
     window.saveSeason();
   };
 
+  // [기능 2] 엑셀 붙여넣기 (6열 지원: ID,닉,낭,1+1,공약,비고)
   document.addEventListener('paste', (e) => {
     if(!document.getElementById('page-record').classList.contains('active')) return;
     if(!window.currentSeasonName) return;
+    
     if(e.target.isContentEditable || e.target.tagName === 'INPUT') return;
 
     e.preventDefault();
@@ -614,6 +637,7 @@
     rows.forEach(rowStr => {
         const cols = rowStr.split('\t');
         if(cols.length < 1) return;
+        
         const newItem = {
             id: cols[0] || '',
             nick: cols[1] || '',
@@ -629,7 +653,10 @@
     renderRecordTable(window.currentSeasonName);
   });
 
-  // --- 캘린더 로직 ---
+
+  // =================================================================
+  // [캘린더 로직]
+  // =================================================================
   window.currentDate = new Date();
   window.selectedDateKey = null;
   window.currentTaskIndex = null;
