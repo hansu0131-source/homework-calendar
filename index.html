@@ -14,15 +14,23 @@
     --light-pink-hover: #ffe4e9; 
     --border-pink: #ffe0e6; 
     --text-gray: #777;
-    --text-dark: #444; 
+    --text-dark: #333; /* 글자색 조금 더 진하게 */
     --accent-blue: #b2ebf2; 
     --radius-soft: 15px;
     --radius-round: 25px;
     --shadow-soft: 0 8px 25px rgba(240, 98, 146, 0.15);
 
-    /* 기록실 전용 색상 */
-    --strawberry-milk-bg: #ffeef4;
-    --deep-pink-text: #e91e63;
+    /* 🔥 [복구] 기록실 금액별 배경색 단계 (가독성 위해 파스텔톤 유지) */
+    --lv0: #FFFFFF; 
+    --lv1: #FFF5F8; /* 아주 연한 핑크 */
+    --lv2: #FFF0F5; 
+    --lv3: #FFEBF2; 
+    --lv4: #FFE0EB;
+    --lv5: #FFD9E4; 
+    --lv6: #FFC9D9; 
+    --lv7: #FFB6CB; 
+    --lv8: #FFA3BE; 
+    --lv9: #FF80A6; /* 고액은 진하게 */
   }
 
   body { 
@@ -51,7 +59,7 @@
   /* ==========================================================================
      [페이지 1] 캘린더 스타일
      ========================================================================== */
-  .wrapper { display: flex; gap: 25px; max-width: 1400px; margin: 0 auto; align-items: flex-start; }
+  .wrapper { display: flex; gap: 25px; max-width: 1650px; margin: 0 auto; align-items: flex-start; }
   
   .sidebar, .sidebar-right { 
     width: 280px; background: var(--container-bg); padding: 30px; border-radius: var(--radius-round); 
@@ -150,7 +158,7 @@
   .rank-badge { background: var(--accent-blue); color: white; font-weight: bold; border-radius: 15px; padding: 6px 12px; font-size: 13px; box-shadow: 0 3px 8px rgba(174, 217, 224, 0.3); }
 
   /* ==========================================================================
-     [페이지 2] 낭플단 기록실 (딸기우유 테마)
+     [페이지 2] 낭플단 기록실 (가독성 개선: 글자크게, 칸작게, 색상추가)
      ========================================================================== */
   .season-layout { max-width: 1650px; margin: 0 auto; background: var(--container-bg); border-radius: var(--radius-round); padding: 35px; box-shadow: var(--shadow-soft); border: 3px solid #fff; }
   
@@ -174,53 +182,53 @@
   .table-scroll { overflow-x: auto; padding-bottom: 15px; }
   .table { display: flex; flex-direction: column; gap: 0; min-width: 1100px; border-radius: var(--radius-soft); overflow: hidden; border: 2px solid var(--border-pink); box-shadow: 0 5px 15px rgba(0,0,0,0.03); }
   
-  /* 🔥 [수정] 헤더 행 (파스텔 핑크 적용) */
+  /* 🔥 [수정] 헤더: 파스텔 핑크 */
   .header-row { 
     background: #ffcdd2; 
     padding: 15px 0; 
     border-bottom: 2px solid var(--border-pink); 
   }
-  .header-row .record-cell { font-weight: 800; color: #880e4f; border: none; font-size: 15px; }
+  .header-row .record-cell { font-weight: 800; color: #880e4f; border: none; font-size: 16px; } /* 헤더 글자도 키움 */
 
-  /* 🔥 [수정] 데이터 행 (높이 줄임) */
+  /* 🔥 [수정] 데이터 행: 높이 슬림하게 */
   .record-row {
     display: flex; background: white;
     border-bottom: 1px solid #eee; 
-    padding: 2px 0; 
+    padding: 2px 0; /* 높이 최소화 */
     transition: all 0.2s ease; align-items: center;
   }
-  .record-row.data-row:hover { background: #fff5f8; transform: scale(1.002); z-index: 5; box-shadow: 0 4px 12px rgba(0,0,0,0.05); } 
+  .record-row.data-row:hover { transform: scale(1.002); z-index: 5; box-shadow: 0 4px 12px rgba(0,0,0,0.05); } 
   
   /* 합계 행 (푸터) */
   .summary-row { 
     background: var(--strawberry-milk-bg); font-weight: 800; color: var(--deep-pink-text);
-    border-top: 2px solid var(--primary-pink); padding: 6px 0;
+    border-top: 2px solid var(--primary-pink); padding: 15px 0;
   }
 
-  /* 🔥 [수정] 셀 공통 (높이 줄임) */
+  /* 🔥 [수정] 셀: 글자 크게(15px), 칸은 작게(padding 축소) */
   .record-cell {
-    padding: 4px 6px;
-    font-size: 14px; text-align: center;
-    border-right: 1px solid #f0f0f0; outline: none; 
+    padding: 3px 4px; /* 세로 여백 최소화 */
+    font-size: 15px; /* 글자 크기 증가 */
+    text-align: center;
+    border-right: 1px solid rgba(0,0,0,0.05); outline: none; 
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     display: flex; justify-content: center; align-items: center; 
-    min-height: 28px;
-    color: var(--text-dark);
+    min-height: 30px; /* 칸 높이 확보 */
+    color: var(--text-dark); font-weight: 600; /* 글자 가독성 UP */
   }
   .record-cell:last-child { border-right: none; }
   .record-cell[contenteditable="true"]:focus { background: #fff; box-shadow: inset 0 0 0 2px var(--dark-pink); border-radius: 4px; }
 
-  /* 🔥 [수정] 열 너비 및 공약 중앙 정렬 */
+  /* 열 너비 및 정렬 */
   .col-id { width: 10%; }
-  .col-nick { width: 12%; font-weight: 600; }
-  .col-amt { width: 10%; font-weight: bold; color: var(--deep-pink-text); }
-  .col-one { width: 10%; font-weight: bold; color: var(--deep-pink-text); } 
+  .col-nick { width: 12%; font-weight: 700; }
+  .col-amt { width: 10%; font-weight: 800; color: #d81b60; font-size: 16px; } /* 금액 더 크게 */
+  .col-one { width: 10%; font-weight: 800; color: #d81b60; } 
   .col-promise { width: 35%; text-align: center; justify-content: center; } 
-  .col-reverse { width: 10%; font-weight: bold; color: var(--deep-pink-text); } 
+  .col-reverse { width: 10%; font-weight: 800; color: #d81b60; } 
   .col-note { width: 8%; color: #999; font-size: 13px; }
   .col-action { width: 5%; }
 
-  /* 관리 버튼 */
   .action-buttons { display: none; gap: 4px; }
   .record-row:hover .action-buttons { display: flex; }
   .mini-btn { background: #FFD8EA; border: none; border-radius: 8px; padding: 4px 8px; font-size: 11px; cursor: pointer; color: #D24E78; transition: all 0.2s; font-weight: bold; }
@@ -452,7 +460,6 @@
       const overlay = document.getElementById('loading-overlay');
       if(overlay && overlay.style.display !== 'none') {
           overlay.style.display = 'none';
-          console.warn("데이터 로딩 시간 초과 (강제 표시)");
       }
   }, 3000);
 
@@ -503,7 +510,20 @@
     document.getElementById('season-content-area').style.display = 'block';
   };
 
-  // 🔥 getLevelColor 삭제됨 (배경색 고정)
+  // 🔥 [복구] 금액별 색상 함수 (파스텔톤 적용)
+  function getLevelColor(amount) {
+      const num = parseInt(amount) || 0;
+      if(num >= 300000) return 'var(--lv9)';
+      if(num >= 100000) return 'var(--lv8)';
+      if(num >= 50000) return 'var(--lv7)';
+      if(num >= 10000) return 'var(--lv6)';
+      if(num >= 5000) return 'var(--lv5)';
+      if(num >= 3000) return 'var(--lv4)';
+      if(num >= 1000) return 'var(--lv3)';
+      if(num >= 299) return 'var(--lv2)';
+      if(num >= 100) return 'var(--lv1)';
+      return 'var(--lv0)';
+  }
 
   window.renderRecordTable = (seasonName) => {
     document.getElementById('current-season-title').innerText = seasonName;
@@ -524,8 +544,11 @@
         totalOne += one;
         totalReverse += rev;
         
+        // 🔥 [복구] 금액별 배경색 적용
+        const bgColor = getLevelColor(amt);
         const row = document.createElement('div');
         row.className = 'record-row data-row';
+        row.style.background = bgColor;
         
         row.innerHTML = `
             <div class="record-cell col-id" contenteditable="true" oninput="handleInput('${seasonName}', ${index}, 'id', this)" onblur="handleBlur()">${item.id || ''}</div>
@@ -570,6 +593,12 @@
     
     if(!window.seasonData[seasonName][index]) return;
     window.seasonData[seasonName][index][field] = val;
+
+    // 🔥 [복구] 입력 즉시 배경색 변경
+    if(field === 'amount') {
+        const row = element.closest('.record-row');
+        row.style.background = getLevelColor(val);
+    }
     
     if(['amount','oneplus','reverse','id','nick'].includes(field)) {
         recalculateSums(seasonName);
