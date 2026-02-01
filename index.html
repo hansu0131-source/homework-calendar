@@ -16,10 +16,8 @@
     --text-gray: #555;
     --text-dark: #2c2c2c; 
     --accent-blue: #aed9e0; 
-    --shadow-color: rgba(255, 182, 193, 0.2);
     --radius-soft: 15px;
     --radius-round: 25px;
-    --gold: #ffd700; --silver: #c0c0c0; --bronze: #cd7f32;
 
     /* 기록실 배경색 단계 */
     --lv0: #FFFFFF; --lv1: #FFF9FD; --lv2: #FFF3FA; --lv3: #FFE9F4; --lv4: #FFE0EF;
@@ -29,8 +27,6 @@
   body { 
     font-family: 'Pretendard', 'Malgun Gothic', sans-serif; 
     background-color: var(--bg-color);
-    background-image: radial-gradient(#ffe4e1 1px, transparent 1px);
-    background-size: 20px 20px;
     padding: 20px; margin: 0; color: var(--text-dark);
   }
   input, button, textarea, select { font-family: inherit; box-sizing: border-box; outline: none; }
@@ -41,7 +37,7 @@
   .nav-tab {
     padding: 12px 30px; border-radius: 30px; font-weight: bold; font-size: 16px;
     background: white; border: 3px solid var(--border-pink); color: var(--text-gray);
-    cursor: pointer; transition: 0.2s; box-shadow: 0 4px 10px var(--shadow-color);
+    cursor: pointer; transition: 0.2s; box-shadow: 0 4px 10px rgba(255, 182, 193, 0.2);
   }
   .nav-tab:hover { transform: translateY(-3px); }
   .nav-tab.active { background: var(--dark-pink); color: white; border-color: var(--dark-pink); }
@@ -49,18 +45,19 @@
   .page-section { display: none; animation: fadeIn 0.3s; }
   .page-section.active { display: block; }
 
-  /* 레이아웃 */
+  /* ==========================================================================
+     [페이지 1] 캘린더 스타일 (기존 유지)
+     ========================================================================== */
   .wrapper { display: flex; gap: 20px; max-width: 1400px; margin: 0 auto; align-items: flex-start; }
   .sidebar, .sidebar-right { 
     width: 260px; background: var(--container-bg); padding: 25px; border-radius: var(--radius-round); 
-    box-shadow: 0 8px 25px var(--shadow-color); flex-shrink: 0; max-height: 800px; overflow-y: auto; border: 2px solid #fff; 
+    box-shadow: 0 8px 25px rgba(255, 182, 193, 0.2); flex-shrink: 0; max-height: 800px; overflow-y: auto; border: 2px solid #fff; 
   }
   .container { 
     flex: 1; background: var(--container-bg); padding: 30px; border-radius: var(--radius-round); 
-    box-shadow: 0 8px 25px var(--shadow-color); border: 2px solid #fff; position: relative; 
+    box-shadow: 0 8px 25px rgba(255, 182, 193, 0.2); border: 2px solid #fff; position: relative; 
   }
 
-  /* 캘린더 */
   .calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
   .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; margin-bottom: 25px;}
   .day-name { text-align: center; font-size: 0.9rem; color: var(--dark-pink); font-weight: bold; padding-bottom: 10px; }
@@ -73,7 +70,6 @@
   .has-homework { background-color: #fff0f3 !important; border: 2px solid var(--primary-pink) !important; }
   .hw-badge { align-self: flex-end; background-color: var(--dark-pink); color: white; font-size: 11px; font-weight: bold; padding: 3px 7px; border-radius: 10px; }
 
-  /* 리스트 */
   .shortcut-btn { 
     width: 100%; background: #fff; border: 2px solid var(--border-pink); padding: 12px 15px; 
     border-radius: var(--radius-soft); margin-bottom: 10px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; 
@@ -82,13 +78,11 @@
   .shortcut-date { font-weight: bold; font-size: 14px; }
   .shortcut-count { background: var(--dark-pink); color: white; padding: 2px 8px; border-radius: 10px; font-size: 12px; }
 
-  /* 캘린더 하단 닉네임 버튼 */
   .nick-list { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 25px; }
   .nick-btn { 
     background: #fff; border: 2px solid var(--border-pink); border-radius: var(--radius-soft); padding: 15px 5px; 
     font-size: 14px; font-weight: bold; color: var(--text-gray); cursor: pointer; text-align: center; 
-    transition: 0.2s; box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; width: 100%;
+    transition: 0.2s; box-shadow: 0 2px 5px rgba(0,0,0,0.05); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; width: 100%;
   }
   .nick-btn:hover { transform: translateY(-3px); }
   .nick-btn.active { border-color: var(--dark-pink); box-shadow: 0 0 0 2px var(--dark-pink) inset; color: var(--dark-pink);}
@@ -96,7 +90,6 @@
   .nick-btn.status-partial { background: #fff3e0; color: #f57c00; border-color: #ffe0b2; }
   .nick-btn.status-done { background: #e8f5e9; color: #388e3c; border-color: #c8e6c9; }
 
-  /* 폼 & 버튼 */
   #add-form { display: none; background: #fff5f8; border: 3px dashed var(--primary-pink); padding: 20px; border-radius: var(--radius-round); margin-bottom: 25px; }
   .form-row { display: flex; gap: 15px; margin-bottom: 15px; }
   .form-input { width: 100%; padding: 12px; border: 2px solid var(--border-pink); border-radius: var(--radius-soft); font-size: 14px; background: #fff; }
@@ -104,20 +97,12 @@
   .btn-register.edit-mode { background-color: #aed9e0; }
   .btn-add-show { background-color: var(--dark-pink); color: white; border: none; padding: 8px 16px; border-radius: var(--radius-soft); cursor: pointer; font-weight: bold; }
 
-  /* 상세 카드 */
-  #detail-card { 
-    display: none; margin-top: 25px; background: #fff9fb; border-radius: var(--radius-round); 
-    padding: 25px; border: 3px solid var(--border-pink); box-shadow: 0 10px 25px rgba(255,182,193,0.15); 
-  }
+  #detail-card { display: none; margin-top: 25px; background: #fff9fb; border-radius: var(--radius-round); padding: 25px; border: 3px solid var(--border-pink); box-shadow: 0 10px 25px rgba(255,182,193,0.15); }
   .card-header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 3px dotted var(--border-pink); padding-bottom: 15px; margin-bottom: 20px; }
   .user-info h3 { margin: 0; font-size: 1.4rem; color: var(--text-dark); font-weight: 800; margin-bottom: 5px; }
   .user-id { font-size: 0.95rem; color: #888; display: block; }
-  
   .card-actions { display: flex; gap: 8px; }
-  .icon-btn { 
-    width: 32px; height: 32px; border-radius: 8px; border: 1px solid #ddd; background: white; 
-    cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 16px; transition: 0.2s;
-  }
+  .icon-btn { width: 32px; height: 32px; border-radius: 8px; border: 1px solid #ddd; background: white; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 16px; transition: 0.2s; }
   .icon-btn:hover { background: #f0f0f0; transform: translateY(-2px); }
   .icon-btn.edit { color: #2196f3; border-color: #bbdefb; }
   .icon-btn.del { color: #f44336; border-color: #ffcdd2; }
@@ -127,7 +112,6 @@
   .stat-box { background: white; padding: 15px; border-radius: var(--radius-soft); text-align: center; border: 2px solid var(--border-pink); box-shadow: 0 4px 10px rgba(0,0,0,0.03); }
   .stat-label { font-size: 0.85rem; color: var(--text-gray); display: block; margin-bottom: 5px; }
   .stat-value { font-size: 1.3rem; font-weight: 900; color: var(--text-dark); }
-  
   .task-box { background: white; padding: 20px; border-radius: var(--radius-soft); border: 2px solid var(--border-pink); margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.03); }
   .task-label { font-size: 0.95rem; font-weight: bold; margin-bottom: 10px; display: block; color: var(--text-dark); }
   .task-content { font-size: 1.1rem; line-height: 1.6; color: var(--text-dark); margin-bottom: 15px; word-break: keep-all; background: var(--light-pink-hover); padding: 15px; border-radius: 10px; }
@@ -135,93 +119,19 @@
   .status-control { margin-top: 20px; border-top: 3px dotted var(--border-pink); padding-top: 20px; }
   .status-options { display: flex; gap: 15px; justify-content: center; margin-bottom: 15px; }
   .status-radio { display: none; }
-  .status-label { 
-    padding: 8px 16px; border-radius: 20px; cursor: pointer; font-size: 14px; font-weight: bold; color: #777; background: #eee; 
-    transition: 0.2s; display: flex; align-items: center; gap: 6px;
-  }
+  .status-label { padding: 8px 16px; border-radius: 20px; cursor: pointer; font-size: 14px; font-weight: bold; color: #777; background: #eee; transition: 0.2s; display: flex; align-items: center; gap: 6px; }
   input[type="radio"]:checked + .status-label.lbl-todo { background: #ff8a80; color: white; box-shadow: 0 4px 10px rgba(255, 138, 128, 0.4); }
   input[type="radio"]:checked + .status-label.lbl-partial { background: #ffb74d; color: white; box-shadow: 0 4px 10px rgba(255, 183, 77, 0.4); }
   input[type="radio"]:checked + .status-label.lbl-done { background: #81c784; color: white; box-shadow: 0 4px 10px rgba(129, 199, 132, 0.4); }
-
   .memo-input { width: 100%; box-sizing: border-box; padding: 15px; border: 2px solid var(--border-pink); border-radius: var(--radius-soft); font-size: 14px; resize: vertical; min-height: 70px; margin-bottom: 10px; background: #fff; transition: 0.2s; }
   
-  .btn-soop { 
-    display: flex; justify-content: center; align-items: center; gap: 8px;
-    width: 100%; box-sizing: border-box; 
-    background-color: var(--accent-blue); color: white; 
-    border: none; padding: 15px; border-radius: var(--radius-soft); 
-    text-decoration: none; font-weight: bold; font-size: 15px; 
-    box-shadow: 0 4px 10px rgba(174, 217, 224, 0.4); margin-bottom: 10px; transition: 0.2s; 
-  }
+  .btn-soop { display: flex; justify-content: center; align-items: center; gap: 8px; width: 100%; box-sizing: border-box; background-color: var(--accent-blue); color: white; border: none; padding: 15px; border-radius: var(--radius-soft); text-decoration: none; font-weight: bold; font-size: 15px; box-shadow: 0 4px 10px rgba(174, 217, 224, 0.4); margin-bottom: 10px; transition: 0.2s; }
   .btn-soop:hover { background-color: #9ad0d8; transform: translateY(-2px); }
   .soop-icon { width: 20px; height: 20px; fill: white; }
-
   .btn-complete { width: 100%; box-sizing: border-box; background: var(--dark-pink); border: none; color: white; padding: 15px; border-radius: var(--radius-soft); cursor: pointer; font-size: 15px; font-weight: bold; box-shadow: 0 4px 10px rgba(255, 141, 161, 0.4); transition: 0.2s; }
-
-  /* --------------------------------------------------------
-     [페이지 2] 낭플단 기록실
-     -------------------------------------------------------- */
-  .season-layout { max-width: 1400px; margin: 0 auto; background: var(--container-bg); border-radius: var(--radius-round); padding: 30px; box-shadow: 0 8px 25px var(--shadow-color); border: 2px solid #fff; }
-  .season-tabs { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 15px; margin-bottom: 20px; border-bottom: 2px dashed var(--border-pink); }
-  .season-tab-btn { white-space: nowrap; padding: 10px 20px; border-radius: 20px; border: 2px solid var(--border-pink); background: #fff; font-weight: bold; color: var(--text-gray); cursor: pointer; transition: 0.2s; }
-  .season-tab-btn.active { background: var(--dark-pink); color: white; border-color: var(--dark-pink); }
   
-  .record-controls { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-  .paste-guide { font-size: 12px; color: #888; background: #fff; padding: 6px 12px; border-radius: 8px; border: 1px solid #eee; }
-
-  .table-scroll { overflow-x: auto; padding-bottom: 10px; }
-  .table { display: flex; flex-direction: column; gap: 4px; min-width: 1000px; }
-  
-  .row {
-    display: flex; background: white; border-radius: 20px; overflow: hidden;
-    box-shadow: 0 1px 3px rgba(255,150,180,0.08); padding: 2px 0;
-    transition: 0.15s; border: 1px solid transparent; align-items: center;
-  }
-  .row:hover { transform: translateY(-1px); box-shadow: 0 3px 8px rgba(255,150,180,0.15); z-index: 10; }
-  
-  .header-row { 
-    background: #FFD1E1; pointer-events: none; margin-bottom: 5px; border-radius: 20px;
-  }
-  .header-row .cell { 
-    font-weight: 800; color: #880e4f; border-bottom: none; cursor: default; font-size: 15px;
-  }
-  .summary-row { 
-    background: #FFF0F5; font-weight: 800; color: #d81b60; margin-top: 10px; 
-    border: 2px solid #FFC2D6; border-radius: 20px;
-  }
-
-  .cell {
-    padding: 4px 4px;
-    font-size: 14px; text-align: center;
-    border-right: 1px solid rgba(0,0,0,0.05); outline: none; 
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-    display: flex; justify-content: center; align-items: center; min-height: 20px;
-    color: var(--text-dark); font-weight: 500;
-  }
-  .cell:last-child { border-right: none; }
-  .cell[contenteditable="true"] { cursor: text; }
-  .cell[contenteditable="true"]:focus { background: #fff; box-shadow: inset 0 0 0 2px var(--dark-pink); border-radius: 4px; }
-
-  /* 열 너비 (공약 중앙정렬) */
-  .col-id { width: 12%; }
-  .col-nick { width: 12%; }
-  .col-amt { width: 12%; font-weight: 800; color: #d81b60; font-size: 15px; }
-  .col-one { width: 9%; font-weight: 800; color: #1e88e5; } /* 원플원 강조 */
-  .col-promise { width: 40%; text-align: center; font-weight: 900; color: #4a148c; } /* 총합계용, 공약은 중앙정렬 */
-  .col-note { width: 9%; color: #666; font-size: 13px; }
-  .col-action { width: 6%; }
-
-  .mini-btn { background: #FFD8EA; border: none; border-radius: 999px; padding: 2px 8px; font-size: 11px; cursor: pointer; color: #D24E78; transition: 0.15s; font-weight: bold; margin: 0 2px;}
-  .mini-btn:hover { background: #ffbddc; transform: translateY(-1px); }
-  .action-buttons { display: none; }
-  .row:hover .action-buttons { display: flex; }
-
-  .del-season-btn { color: #ff5252; background: none; border: 1px solid #ff5252; padding: 4px 8px; border-radius: 6px; cursor: pointer; font-size: 11px; margin-left: 10px;}
-  
-  .bottom-notice {
-    margin-top: 15px; text-align: center; font-size: 14px; font-weight: bold; color: var(--dark-pink);
-    background: #FFF0F5; padding: 12px; border-radius: 12px; border: 2px dashed var(--primary-pink);
-  }
+  .nav-btn { background: white; border: 2px solid var(--border-pink); border-radius: 12px; padding: 8px 14px; cursor: pointer; color: var(--primary-pink); font-weight: bold; transition: 0.2s; }
+  .nav-btn:hover { background: var(--primary-pink); color: white; border-color: var(--primary-pink); }
 
   .rank-item { display: flex; align-items: center; justify-content: space-between; background: #fff; border-bottom: 1px dashed var(--border-pink); padding: 12px 5px; margin-bottom: 5px; }
   .rank-info { display: flex; flex-direction: column; }
@@ -229,13 +139,83 @@
   .rank-id { font-size: 11px; color: var(--primary-pink); }
   .rank-badge { background: var(--accent-blue); color: white; font-weight: bold; border-radius: 12px; padding: 5px 10px; font-size: 13px; }
 
+  /* ==========================================================================
+     [페이지 2] 낭플단 기록실 (요청하신 디자인 적용)
+     ========================================================================== */
+  .season-layout { max-width: 1400px; margin: 0 auto; background: var(--container-bg); border-radius: var(--radius-round); padding: 30px; box-shadow: 0 8px 25px rgba(255, 182, 193, 0.2); border: 2px solid #fff; }
+  
+  /* 상단 헤더 영역 (타이틀, 공지, 검색) */
+  .record-header-area { text-align: center; margin-bottom: 20px; }
+  .record-header-area h2 { margin: 0 0 10px 0; font-size: 1.5rem; display: flex; align-items: center; justify-content: center; gap: 8px;}
+  .notice-text { font-size: 13px; color: #555; margin-bottom: 15px; }
+  .search-container input { padding: 8px 15px; width: 300px; border: 1px solid #ddd; border-radius: 20px; background: #f9f9f9; text-align: center; }
+  
+  .season-tabs { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px; margin-bottom: 15px; border-bottom: 2px dashed var(--border-pink); }
+  .season-tab-btn { white-space: nowrap; padding: 8px 16px; border-radius: 20px; border: 2px solid var(--border-pink); background: #fff; font-weight: bold; color: var(--text-gray); cursor: pointer; transition: 0.2s; font-size: 13px; }
+  .season-tab-btn.active { background: var(--dark-pink); color: white; border-color: var(--dark-pink); }
+  
+  .controls-row { display: flex; justify-content: flex-end; margin-bottom: 10px; gap: 10px; }
+  .paste-guide { font-size: 11px; color: #888; background: #fff; padding: 4px 10px; border-radius: 8px; border: 1px solid #eee; }
+  .btn-del-season { font-size: 11px; color: #ff5252; border: 1px solid #ff5252; background: none; border-radius: 6px; padding: 4px 8px; cursor: pointer; }
+
+  /* 테이블 스타일 */
+  .table-scroll { overflow-x: auto; padding-bottom: 10px; }
+  .table { display: flex; flex-direction: column; gap: 2px; min-width: 1100px; }
+  
+  .record-row {
+    display: flex; background: white; border-radius: 0; overflow: hidden; /* 둥근모서리 제거 */
+    border-bottom: 1px solid #eee; padding: 2px 0;
+    transition: 0.1s; align-items: center;
+  }
+  .record-row:hover { background: #fdfdfd; }
+  
+  /* 헤더 행 */
+  .header-row { background: #FFEFF7; border-radius: 10px 10px 0 0; margin-bottom: 0; padding: 8px 0; border: none;}
+  .header-row .record-cell { font-weight: 800; color: #d81b60; border: none; font-size: 13px; }
+
+  /* 데이터 행 */
+  .record-row.data-row { border-radius: 5px; margin-bottom: 2px; }
+
+  /* 합계 행 (푸터) */
+  .summary-row { 
+    background: #FFF0F5; font-weight: 800; color: #d81b60; margin-top: 5px; 
+    border-top: 2px solid #FFC2D6; padding: 8px 0; border-radius: 0 0 10px 10px;
+  }
+
+  /* 셀 공통 */
+  .record-cell {
+    padding: 6px 4px; font-size: 13px; text-align: center;
+    border-right: 1px solid rgba(0,0,0,0.03); outline: none; 
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    display: flex; justify-content: center; align-items: center; min-height: 24px;
+    color: var(--text-dark);
+  }
+  .record-cell:last-child { border-right: none; }
+  .record-cell[contenteditable="true"]:focus { background: #fff; box-shadow: inset 0 0 0 2px var(--dark-pink); }
+
+  /* 🔥 열 너비 설정 (스크린샷 비율 참고) */
+  .col-id { width: 10%; }
+  .col-nick { width: 12%; }
+  .col-amt { width: 10%; font-weight: bold; color: #d81b60; }
+  .col-one { width: 10%; font-weight: bold; color: #d81b60; } /* 원플원 */
+  .col-promise { width: 35%; } 
+  .col-reverse { width: 10%; font-weight: bold; color: #d81b60; } /* 역팬 */
+  .col-note { width: 8%; color: #888; font-size: 12px; }
+  .col-action { width: 5%; }
+
+  /* 관리 버튼 (호버시 등장) */
+  .action-buttons { display: none; gap: 2px; }
+  .record-row:hover .action-buttons { display: flex; }
+  .mini-btn { background: #FFD8EA; border: none; border-radius: 4px; padding: 2px 6px; font-size: 10px; cursor: pointer; color: #D24E78; }
+  .mini-btn:hover { background: #ffbddc; }
+
   #loading-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(255,255,255,0.9); display: flex; justify-content: center; align-items: center; z-index: 9999; font-weight: bold; color: var(--dark-pink); font-size: 1.5rem;}
-  .no-data-msg { font-size: 14px; color: #aaa; text-align: center; padding: 30px 0; font-style: italic; }
+  .no-data-msg { font-size: 14px; color: #aaa; text-align: center; padding: 50px 0; }
 
   @media (max-width: 1024px) {
     .wrapper { flex-direction: column; }
     .sidebar, .sidebar-right { width: 100%; max-height: 200px; }
-    .table { min-width: 800px; }
+    .table { min-width: 900px; }
   }
   @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 </style>
@@ -262,7 +242,6 @@
         <h2 id="current-month" style="margin:0;">2026년 1월</h2>
         <button class="nav-btn" onclick="changeMonth(1)">다음 ▶</button>
       </div>
-      
       <div class="calendar-grid" id="calendar"></div>
 
       <div id="nickname-view" style="display:none; margin-top:20px; border-top:3px dotted var(--border-pink); padding-top:20px;">
@@ -270,7 +249,6 @@
           <h3 id="selected-date-text" style="margin:0; font-size:18px;">숙제 대상자</h3>
           <button class="btn-add-show" onclick="toggleAddForm()">+ 숙제 추가</button>
         </div>
-
         <div id="add-form">
           <div class="form-row">
             <input type="date" id="new-date" class="form-input">
@@ -290,7 +268,6 @@
           <input type="text" id="new-content" class="form-input" placeholder="숙제 내용 (직접 입력)" style="margin-bottom:10px;">
           <button class="btn-register" id="btn-submit" onclick="handleTaskSubmit()">등록 완료 💖</button>
         </div>
-
         <div class="nick-list" id="nick-list-container"></div>
       </div>
 
@@ -306,7 +283,6 @@
             <button class="icon-btn close" onclick="closeDetail()">X</button>
           </div>
         </div>
-
         <div class="stat-grid">
           <div class="stat-box">
             <span class="stat-label">총 후원</span>
@@ -317,26 +293,21 @@
             <span class="stat-value reverse" id="detail-reverse">0</span>
           </div>
         </div>
-
         <div class="task-box">
           <span class="task-label">📝 숙제 내용</span>
           <div class="task-content" id="detail-content">내용</div>
-          
           <div class="status-control">
             <div class="status-options">
               <input type="radio" name="status" id="st-todo" value="todo" onchange="saveTaskStatus(false)">
               <label for="st-todo" class="status-label lbl-todo">🔴 대기</label>
-
               <input type="radio" name="status" id="st-partial" value="partial" onchange="saveTaskStatus(false)">
               <label for="st-partial" class="status-label lbl-partial">🟠 방셀만</label>
-
               <input type="radio" name="status" id="st-done" value="done" onchange="saveTaskStatus(false)">
               <label for="st-done" class="status-label lbl-done">🟢 완료</label>
             </div>
             <textarea id="detail-memo" class="memo-input" placeholder="메모를 입력하세요 (입력 후 밖을 클릭하면 자동 저장)" onblur="saveTaskStatus(false)"></textarea>
           </div>
         </div>
-
         <a href="#" target="_blank" class="btn-soop" id="detail-link">
           <svg class="soop-icon" viewBox="0 0 24 24"><path d="M21 3H3C1.89543 3 1 3.89543 1 5V17C1 18.1046 1.89543 19 3 19H8V21H16V19H21C22.1046 19 23 18.1046 23 17V5C23 3.89543 22.1046 3 21 3ZM21 17H3V5H21V17Z" /></svg>
           SOOP 방송국 바로가기
@@ -354,56 +325,59 @@
 
 <div id="page-record" class="page-section">
   <div class="season-layout">
-    <div class="record-controls">
-      <button class="nav-tab" style="font-size:12px; padding:8px 16px;" onclick="createNewSeason()">+ 새 시즌/회차 추가</button>
-      <span class="paste-guide">💡 엑셀 복사(Ctrl+C) → 화면 아무곳에 붙여넣기(Ctrl+V)</span>
+    
+    <div class="record-header-area">
+      <h2 id="current-season-title">🐰 C9 시즌2 · 3회차 낭플단</h2>
+      <div class="notice-text">모든 공약은 요청시에 가고있습니다. 당군+(hansu0131)에게 쪽지 또는 댓글로 편하게 말씀해주세요 ❤</div>
+      <div class="search-container">
+        <input type="text" id="record-search" placeholder="아이디 / 닉네임 검색" oninput="filterRecords()">
+      </div>
     </div>
 
     <div class="season-tabs" id="season-tabs-container"></div>
 
     <div id="season-content-area" style="display:none;">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-        <h3 id="current-season-title" style="margin:0; font-size:18px;"></h3>
-        <button onclick="deleteCurrentSeason()" style="font-size:11px; color:#ff5252; border:1px solid #ff5252; background:none; border-radius:6px; padding:4px 8px; cursor:pointer;">이 시즌 삭제</button>
+      <div class="controls-row">
+        <button class="nav-tab" style="font-size:12px; padding:6px 12px;" onclick="createNewSeason()">+ 새 시즌 추가</button>
+        <span class="paste-guide">💡 엑셀 복사(Ctrl+C) → 붙여넣기(Ctrl+V)</span>
+        <button class="btn-del-season" onclick="deleteCurrentSeason()">이 시즌 삭제</button>
       </div>
 
       <div class="table-scroll">
         <div class="table" id="record-table-body">
-          <div class="row header-row">
-            <div class="cell col-id">아이디</div>
-            <div class="cell col-nick">닉네임</div>
-            <div class="cell col-amt">낭플</div>
-            <div class="cell col-one">원플원</div>
-            <div class="cell col-promise">공약</div>
-            <div class="cell col-note">비고</div>
-            <div class="cell col-action"></div>
+          <div class="record-row header-row">
+            <div class="record-cell col-id">아이디</div>
+            <div class="record-cell col-nick">닉네임</div>
+            <div class="record-cell col-amt">낭플</div>
+            <div class="record-cell col-one">원플원</div>
+            <div class="record-cell col-promise">공약</div>
+            <div class="record-cell col-reverse">역팬</div>
+            <div class="record-cell col-note">비고</div>
+            <div class="record-cell col-action"></div>
           </div>
 
           <div id="record-data-rows"></div>
 
-          <div class="row summary-row">
-            <div class="cell col-id">합계</div>
-            <div class="cell col-nick"></div>
-            <div class="cell col-amt" id="sum-nang">0</div>
-            <div class="cell col-one" id="sum-one" style="font-weight:bold; color:#1e88e5;">0</div>
-            <div class="cell col-promise" id="sum-total" style="font-weight:900; color:var(--dark-pink); font-size:15px;">0</div>
-            <div class="cell col-note"></div>
-            <div class="cell col-action"></div>
+          <div class="record-row summary-row">
+            <div class="record-cell col-id">합계</div>
+            <div class="record-cell col-nick" id="sum-count" style="color:var(--dark-pink);">0명</div>
+            <div class="record-cell col-amt" id="sum-nang">0</div>
+            <div class="record-cell col-one" id="sum-one">0</div>
+            <div class="record-cell col-promise" id="sum-total" style="font-weight:900; color:#d81b60;">0</div>
+            <div class="record-cell col-reverse" id="sum-reverse">0</div>
+            <div class="record-cell col-note"></div>
+            <div class="record-cell col-action"></div>
           </div>
         </div>
       </div>
       
-      <div class="bottom-notice">
-        모든 공약은 요청시에 가고있습니다. 당군+ ( hansu0131 )으로 쪽지 또는 댓글로 편하게 말씀해주세요 ❤
-      </div>
-
       <div style="text-align:center; margin-top:20px;">
         <button class="nav-tab" onclick="addEmptyRowAtEnd()">+ 빈 줄 추가</button>
       </div>
     </div>
 
-    <div id="no-season-msg" class="no-data-msg" style="text-align:center; padding:50px; color:#aaa;">
-      등록된 회차가 없습니다. 상단 버튼을 눌러 추가해주세요!
+    <div id="no-season-msg" class="no-data-msg">
+      등록된 회차가 없습니다. '새 시즌 추가' 버튼을 눌러주세요!
     </div>
   </div>
 </div>
@@ -466,10 +440,7 @@
     if(btn) btn.classList.add('active');
   };
 
-  // =================================================================
-  // [기록실] 로직 - 3가지 합계 계산 구현
-  // =================================================================
-  
+  // --- 시즌 기록실 로직 ---
   window.createNewSeason = () => {
     const name = prompt("새 시즌/회차 이름 (예: 1회차, 경쟁전)");
     if(!name) return;
@@ -523,28 +494,34 @@
     container.innerHTML = '';
     
     const list = window.seasonData[seasonName] || [];
-    let totalNang = 0;
-    let totalOne = 0;
+    let count = 0, totalNang = 0, totalOne = 0, totalReverse = 0;
 
     list.forEach((item, index) => {
+        // 빈 줄은 카운트 제외
+        if(item.id || item.nick) count++;
+
         const amt = parseInt(item.amount || 0);
         const one = parseInt(item.oneplus || 0);
+        const rev = parseInt(item.reverse || 0);
+        
         totalNang += amt;
         totalOne += one;
+        totalReverse += rev;
         
         const bgColor = getLevelColor(amt);
         const row = document.createElement('div');
-        row.className = 'row data-row';
+        row.className = 'record-row data-row';
         row.style.background = bgColor;
         
         row.innerHTML = `
-            <div class="cell col-id" contenteditable="true" oninput="handleInput('${seasonName}', ${index}, 'id', this)" onblur="handleBlur()">${item.id || ''}</div>
-            <div class="cell col-nick" contenteditable="true" oninput="handleInput('${seasonName}', ${index}, 'nick', this)" onblur="handleBlur()">${item.nick || ''}</div>
-            <div class="cell col-amt amount-cell" contenteditable="true" oninput="handleInput('${seasonName}', ${index}, 'amount', this)" onblur="handleBlur()">${item.amount || ''}</div>
-            <div class="cell col-one oneplus-cell" contenteditable="true" oninput="handleInput('${seasonName}', ${index}, 'oneplus', this)" onblur="handleBlur()">${item.oneplus || ''}</div>
-            <div class="cell col-promise" contenteditable="true" oninput="handleInput('${seasonName}', ${index}, 'promise', this)" onblur="handleBlur()">${item.promise || ''}</div>
-            <div class="cell col-note" contenteditable="true" oninput="handleInput('${seasonName}', ${index}, 'note', this)" onblur="handleBlur()">${item.note || ''}</div>
-            <div class="cell col-action">
+            <div class="record-cell col-id" contenteditable="true" oninput="handleInput('${seasonName}', ${index}, 'id', this)" onblur="handleBlur()">${item.id || ''}</div>
+            <div class="record-cell col-nick" contenteditable="true" oninput="handleInput('${seasonName}', ${index}, 'nick', this)" onblur="handleBlur()">${item.nick || ''}</div>
+            <div class="record-cell col-amt amount-cell" contenteditable="true" oninput="handleInput('${seasonName}', ${index}, 'amount', this)" onblur="handleBlur()">${item.amount || ''}</div>
+            <div class="record-cell col-one oneplus-cell" contenteditable="true" oninput="handleInput('${seasonName}', ${index}, 'oneplus', this)" onblur="handleBlur()">${item.oneplus || ''}</div>
+            <div class="record-cell col-promise" contenteditable="true" oninput="handleInput('${seasonName}', ${index}, 'promise', this)" onblur="handleBlur()">${item.promise || ''}</div>
+            <div class="record-cell col-reverse reverse-cell" contenteditable="true" oninput="handleInput('${seasonName}', ${index}, 'reverse', this)" onblur="handleBlur()">${item.reverse || ''}</div>
+            <div class="record-cell col-note" contenteditable="true" oninput="handleInput('${seasonName}', ${index}, 'note', this)" onblur="handleBlur()">${item.note || ''}</div>
+            <div class="record-cell col-action">
                 <div class="action-buttons">
                     <button class="mini-btn" onclick="cloneRow(${index})">+</button>
                     <button class="mini-btn" onclick="removeRow(${index})">🗑</button>
@@ -554,32 +531,40 @@
         container.appendChild(row);
     });
 
-    // 합계 표시 업데이트
-    updateSumDisplay(totalNang, totalOne);
+    updateSumDisplay(count, totalNang, totalOne, totalReverse);
   };
 
-  function updateSumDisplay(nang, one) {
+  function updateSumDisplay(cnt, nang, one, rev) {
+      document.getElementById('sum-count').innerText = `${cnt}명`;
       document.getElementById('sum-nang').innerText = nang.toLocaleString();
       document.getElementById('sum-one').innerText = one.toLocaleString();
-      document.getElementById('sum-total').innerText = (nang + one).toLocaleString() + '개';
+      document.getElementById('sum-total').innerText = (nang + one).toLocaleString();
+      document.getElementById('sum-reverse').innerText = rev.toLocaleString();
   }
 
-  // 데이터 수정 시 로직 (3가지 합계 갱신)
+  // 검색 필터
+  window.filterRecords = () => {
+    const q = document.getElementById('record-search').value.toLowerCase();
+    document.querySelectorAll('.data-row').forEach(row => {
+        const txt = row.innerText.toLowerCase();
+        row.style.display = txt.includes(q) ? 'flex' : 'none';
+    });
+  };
+
   window.handleInput = (seasonName, index, field, element) => {
     let val = element.innerText.trim();
-    // 금액 관련 필드는 숫자만 남김
-    if(field === 'amount' || field === 'oneplus') val = val.replace(/[^0-9]/g, ''); 
+    if(field === 'amount' || field === 'oneplus' || field === 'reverse') val = val.replace(/[^0-9]/g, ''); 
     
     if(!window.seasonData[seasonName][index]) return;
     window.seasonData[seasonName][index][field] = val;
 
-    // 즉시 반응 (배경색 & 합계)
     if(field === 'amount') {
-        const row = element.closest('.row');
+        const row = element.closest('.record-row');
         row.style.background = getLevelColor(val);
     }
     
-    if(field === 'amount' || field === 'oneplus') {
+    // 합계 재계산
+    if(['amount','oneplus','reverse','id','nick'].includes(field)) {
         recalculateSums(seasonName);
     }
   };
@@ -587,19 +572,19 @@
   window.handleBlur = () => { window.saveSeason(); };
 
   function recalculateSums(seasonName) {
-      let nang = 0;
-      let one = 0;
-      const list = window.seasonData[seasonName];
-      list.forEach(item => {
+      let cnt = 0, nang = 0, one = 0, rev = 0;
+      window.seasonData[seasonName].forEach(item => {
+          if(item.id || item.nick) cnt++;
           nang += parseInt(item.amount || 0);
           one += parseInt(item.oneplus || 0);
+          rev += parseInt(item.reverse || 0);
       });
-      updateSumDisplay(nang, one);
+      updateSumDisplay(cnt, nang, one, rev);
   }
 
   window.cloneRow = (index) => {
     if(!window.currentSeasonName) return;
-    const newItem = { id:'', nick:'', amount:'', oneplus:'', promise:'', note:'' };
+    const newItem = { id:'', nick:'', amount:'', oneplus:'', promise:'', reverse:'', note:'' };
     window.seasonData[window.currentSeasonName].splice(index + 1, 0, newItem);
     window.saveSeason();
     renderRecordTable(window.currentSeasonName);
@@ -607,7 +592,7 @@
 
   window.addEmptyRowAtEnd = () => {
     if(!window.currentSeasonName) return;
-    const newItem = { id:'', nick:'', amount:'', oneplus:'', promise:'', note:'' };
+    const newItem = { id:'', nick:'', amount:'', oneplus:'', promise:'', reverse:'', note:'' };
     window.seasonData[window.currentSeasonName].push(newItem);
     window.saveSeason();
     renderRecordTable(window.currentSeasonName);
@@ -616,7 +601,7 @@
   window.removeRow = (index) => {
     if(!window.currentSeasonName) return;
     const list = window.seasonData[window.currentSeasonName];
-    if(list.length <= 1) { alert("최소 1개의 행은 남아있어야 합니다."); return; }
+    if(list.length <= 1) { alert("최소 1줄은 유지해야 합니다."); return; }
     if(!confirm("삭제하시겠습니까?")) return;
     list.splice(index, 1);
     window.saveSeason();
@@ -624,12 +609,13 @@
   };
 
   window.deleteCurrentSeason = () => {
-    if(!confirm("이 시즌 탭을 완전히 삭제하시겠습니까?")) return;
+    if(!confirm("이 시즌을 완전히 삭제하시겠습니까?")) return;
     delete window.seasonData[window.currentSeasonName];
     window.currentSeasonName = null;
     window.saveSeason();
   };
 
+  // 엑셀 붙여넣기 (7열 지원: ID,닉,낭,1+1,공약,역팬,비고)
   document.addEventListener('paste', (e) => {
     if(!document.getElementById('page-record').classList.contains('active')) return;
     if(!window.currentSeasonName) return;
@@ -651,9 +637,10 @@
             id: cols[0] || '',
             nick: cols[1] || '',
             amount: (cols[2] || '').replace(/[^0-9]/g, ''), 
-            oneplus: cols[3] ? cols[3].replace(/[^0-9]/g, '') : '', // 원플원도 숫자만
+            oneplus: (cols[3] || '').replace(/[^0-9]/g, ''),
             promise: cols[4] || '',
-            note: cols[5] || ''
+            reverse: (cols[5] || '').replace(/[^0-9]/g, ''),
+            note: cols[6] || ''
         };
         window.seasonData[window.currentSeasonName].push(newItem);
     });
@@ -662,7 +649,7 @@
     renderRecordTable(window.currentSeasonName);
   });
 
-  // --- 캘린더 로직 (기존 유지) ---
+  // --- 캘린더 로직 ---
   window.currentDate = new Date();
   window.selectedDateKey = null;
   window.currentTaskIndex = null;
@@ -703,7 +690,6 @@
     window.selectedDateKey = key;
     const titleEl = document.getElementById('selected-date-text');
     if(titleEl) titleEl.innerText = `${key} 리스트`;
-    
     renderNickList(window.homeworkData[key]||[]);
     document.getElementById('nickname-view').style.display='block';
     document.getElementById('detail-card').style.display='none';
@@ -837,10 +823,8 @@
     document.getElementById('detail-reverse').innerText = parseInt(task.reverse).toLocaleString();
     document.getElementById('detail-content').innerText = task.content;
     document.getElementById('detail-memo').value = task.memo || '';
-    
     const radios = document.getElementsByName('status');
     for(let r of radios) { r.checked = (r.value === task.status); }
-
     document.getElementById('detail-link').href = `https://www.sooplive.co.kr/station/${task.id}`;
   };
 
@@ -850,7 +834,6 @@
     task.memo = document.getElementById('detail-memo').value;
     const radios = document.getElementsByName('status');
     for(let r of radios) { if(r.checked) task.status = r.value; }
-    
     window.saveHomework();
     if(showMsg) alert("저장됨!");
     window.renderNickList(window.homeworkData[window.selectedDateKey]);
