@@ -5,228 +5,241 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>C9 토끼 숙제 & 낭플단 관리 🐰</title>
 <style>
-  /* --- 🐰 파스텔 핑크 테마 --- */
+  /* --- 🍓 딸기우유 테마 --- */
   :root {
-    --bg-color: #fff0f5; 
+    --bg-color: #fff5f8; /* 더 부드러운 배경색 */
     --container-bg: #ffffff;
-    --primary-pink: #ffb6c1; 
-    --dark-pink: #d81b60; 
-    --light-pink-hover: #fff5f8;
-    --border-pink: #ffe4e1; 
-    --text-gray: #555;
-    --text-dark: #2c2c2c; 
-    --accent-blue: #aed9e0; 
+    --primary-pink: #ffcdd2; /* 연한 딸기우유 */
+    --dark-pink: #f06292; /* 진한 딸기 포인트 */
+    --light-pink-hover: #ffe4e9; /* 호버용 아주 연한 핑크 */
+    --border-pink: #ffe0e6; 
+    --text-gray: #777;
+    --text-dark: #444; /* 텍스트도 부드럽게 */
+    --accent-blue: #b2ebf2; /* 파스텔 블루 포인트 */
     --radius-soft: 15px;
     --radius-round: 25px;
+    --shadow-soft: 0 8px 25px rgba(240, 98, 146, 0.15);
 
-    /* 기록실 배경색 단계 */
-    --lv0: #FFFFFF; --lv1: #FFF9FD; --lv2: #FFF3FA; --lv3: #FFE9F4; --lv4: #FFE0EF;
-    --lv5: #FFD7EB; --lv6: #FFCEE7; --lv7: #FFB3CC; --lv8: #FFA3C2; --lv9: #FF94B8;
+    /* 기록실 전용 색상 */
+    --strawberry-milk-bg: #ffeef4; /* 헤더/합계 배경 */
+    --deep-pink-text: #e91e63; /* 강조 텍스트 */
   }
 
   body { 
     font-family: 'Pretendard', 'Malgun Gothic', sans-serif; 
     background-color: var(--bg-color);
+    background-image: radial-gradient(#ffe4e1 1px, transparent 1px);
+    background-size: 25px 25px;
     padding: 20px; margin: 0; color: var(--text-dark);
   }
   input, button, textarea, select { font-family: inherit; box-sizing: border-box; outline: none; }
-  h2, h3 { color: var(--text-dark); font-weight: 800; }
+  h2, h3 { color: var(--text-dark); font-weight: 700; }
 
   /* 메인 탭 */
-  .main-nav { display: flex; justify-content: center; gap: 15px; margin-bottom: 25px; }
+  .main-nav { display: flex; justify-content: center; gap: 15px; margin-bottom: 30px; }
   .nav-tab {
-    padding: 12px 30px; border-radius: 30px; font-weight: bold; font-size: 16px;
+    padding: 12px 35px; border-radius: 35px; font-weight: bold; font-size: 16px;
     background: white; border: 3px solid var(--border-pink); color: var(--text-gray);
-    cursor: pointer; transition: 0.2s; box-shadow: 0 4px 10px rgba(255, 182, 193, 0.2);
+    cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 12px rgba(255, 182, 193, 0.2);
   }
-  .nav-tab:hover { transform: translateY(-3px); }
-  .nav-tab.active { background: var(--dark-pink); color: white; border-color: var(--dark-pink); }
+  .nav-tab:hover { transform: translateY(-3px); background: var(--light-pink-hover); border-color: var(--primary-pink); }
+  .nav-tab.active { background: var(--dark-pink); color: white; border-color: var(--dark-pink); box-shadow: 0 6px 15px rgba(240, 98, 146, 0.3); }
 
-  .page-section { display: none; animation: fadeIn 0.3s; }
+  .page-section { display: none; animation: fadeIn 0.4s ease-out; }
   .page-section.active { display: block; }
 
   /* ==========================================================================
-     [페이지 1] 캘린더 스타일 (기존 유지)
+     [페이지 1] 캘린더 스타일 (기존 유지 + 테마 적용)
      ========================================================================== */
-  .wrapper { display: flex; gap: 20px; max-width: 1400px; margin: 0 auto; align-items: flex-start; }
+  .wrapper { display: flex; gap: 25px; max-width: 1400px; margin: 0 auto; align-items: flex-start; }
   .sidebar, .sidebar-right { 
-    width: 260px; background: var(--container-bg); padding: 25px; border-radius: var(--radius-round); 
-    box-shadow: 0 8px 25px rgba(255, 182, 193, 0.2); flex-shrink: 0; max-height: 800px; overflow-y: auto; border: 2px solid #fff; 
+    width: 280px; background: var(--container-bg); padding: 30px; border-radius: var(--radius-round); 
+    box-shadow: var(--shadow-soft); flex-shrink: 0; max-height: 850px; overflow-y: auto; border: 3px solid #fff; 
   }
   .container { 
-    flex: 1; background: var(--container-bg); padding: 30px; border-radius: var(--radius-round); 
-    box-shadow: 0 8px 25px rgba(255, 182, 193, 0.2); border: 2px solid #fff; position: relative; 
+    flex: 1; background: var(--container-bg); padding: 40px; border-radius: var(--radius-round); 
+    box-shadow: var(--shadow-soft); border: 3px solid #fff; position: relative; 
   }
 
-  .calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
-  .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; margin-bottom: 25px;}
-  .day-name { text-align: center; font-size: 0.9rem; color: var(--dark-pink); font-weight: bold; padding-bottom: 10px; }
+  .calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+  .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; margin-bottom: 30px;}
+  .day-name { text-align: center; font-size: 1rem; color: var(--dark-pink); font-weight: bold; padding-bottom: 15px; }
   .day-cell { 
-    height: 70px; background: #fff; border: 2px solid var(--border-pink); border-radius: var(--radius-soft); 
-    position: relative; cursor: pointer; transition: all 0.2s ease; padding: 6px; display: flex; flex-direction: column; justify-content: space-between; 
+    height: 75px; background: #fff; border: 2px solid var(--border-pink); border-radius: var(--radius-soft); 
+    position: relative; cursor: pointer; transition: all 0.3s ease; padding: 8px; display: flex; flex-direction: column; justify-content: space-between; 
   }
-  .day-cell:hover { border-color: var(--dark-pink); background: var(--light-pink-hover); transform: scale(1.03); z-index: 1;}
-  .day-number { font-size: 14px; font-weight: bold; color: var(--text-gray); }
+  .day-cell:hover { border-color: var(--dark-pink); background: var(--light-pink-hover); transform: scale(1.05); z-index: 1; box-shadow: 0 4px 10px rgba(240, 98, 146, 0.1); }
+  .day-number { font-size: 15px; font-weight: bold; color: var(--text-gray); }
   .has-homework { background-color: #fff0f3 !important; border: 2px solid var(--primary-pink) !important; }
-  .hw-badge { align-self: flex-end; background-color: var(--dark-pink); color: white; font-size: 11px; font-weight: bold; padding: 3px 7px; border-radius: 10px; }
+  .hw-badge { align-self: flex-end; background-color: var(--dark-pink); color: white; font-size: 11px; font-weight: bold; padding: 4px 8px; border-radius: 12px; }
 
   .shortcut-btn { 
-    width: 100%; background: #fff; border: 2px solid var(--border-pink); padding: 12px 15px; 
-    border-radius: var(--radius-soft); margin-bottom: 10px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; 
+    width: 100%; background: #fff; border: 2px solid var(--border-pink); padding: 14px 18px; 
+    border-radius: var(--radius-soft); margin-bottom: 12px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: all 0.2s ease;
   }
-  .shortcut-btn:hover { background: var(--light-pink-hover); border-color: var(--primary-pink); }
+  .shortcut-btn:hover { background: var(--light-pink-hover); border-color: var(--primary-pink); transform: translateX(3px); }
   .shortcut-date { font-weight: bold; font-size: 14px; }
-  .shortcut-count { background: var(--dark-pink); color: white; padding: 2px 8px; border-radius: 10px; font-size: 12px; }
+  .shortcut-count { background: var(--dark-pink); color: white; padding: 3px 10px; border-radius: 12px; font-size: 12px; }
 
-  .nick-list { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 25px; }
+  .nick-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 12px; margin-bottom: 30px; }
   .nick-btn { 
-    background: #fff; border: 2px solid var(--border-pink); border-radius: var(--radius-soft); padding: 15px 5px; 
+    background: #fff; border: 2px solid var(--border-pink); border-radius: var(--radius-soft); padding: 16px 8px; 
     font-size: 14px; font-weight: bold; color: var(--text-gray); cursor: pointer; text-align: center; 
-    transition: 0.2s; box-shadow: 0 2px 5px rgba(0,0,0,0.05); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; width: 100%;
+    transition: all 0.2s ease; box-shadow: 0 3px 8px rgba(0,0,0,0.03); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; width: 100%;
   }
-  .nick-btn:hover { transform: translateY(-3px); }
+  .nick-btn:hover { transform: translateY(-3px); box-shadow: 0 5px 12px rgba(240, 98, 146, 0.15); }
   .nick-btn.active { border-color: var(--dark-pink); box-shadow: 0 0 0 2px var(--dark-pink) inset; color: var(--dark-pink);}
   .nick-btn.status-todo { background: #ffebee; color: #d32f2f; border-color: #ffcdd2; }
   .nick-btn.status-partial { background: #fff3e0; color: #f57c00; border-color: #ffe0b2; }
   .nick-btn.status-done { background: #e8f5e9; color: #388e3c; border-color: #c8e6c9; }
 
-  #add-form { display: none; background: #fff5f8; border: 3px dashed var(--primary-pink); padding: 20px; border-radius: var(--radius-round); margin-bottom: 25px; }
+  #add-form { display: none; background: #fff8fa; border: 3px dashed var(--primary-pink); padding: 25px; border-radius: var(--radius-round); margin-bottom: 30px; box-shadow: inset 0 0 15px rgba(255, 182, 193, 0.1); }
   .form-row { display: flex; gap: 15px; margin-bottom: 15px; }
-  .form-input { width: 100%; padding: 12px; border: 2px solid var(--border-pink); border-radius: var(--radius-soft); font-size: 14px; background: #fff; }
-  .btn-register { width: 100%; background-color: var(--dark-pink); color: white; border: none; padding: 15px; border-radius: var(--radius-soft); font-weight: bold; cursor: pointer; }
+  .form-input { width: 100%; padding: 14px; border: 2px solid var(--border-pink); border-radius: var(--radius-soft); font-size: 14px; background: #fff; transition: border-color 0.2s; }
+  .form-input:focus { border-color: var(--dark-pink); }
+  .btn-register { width: 100%; background-color: var(--dark-pink); color: white; border: none; padding: 16px; border-radius: var(--radius-soft); font-weight: bold; cursor: pointer; transition: background-color 0.2s; font-size: 15px;}
+  .btn-register:hover { background-color: #d81b60; }
   .btn-register.edit-mode { background-color: #aed9e0; }
-  .btn-add-show { background-color: var(--dark-pink); color: white; border: none; padding: 8px 16px; border-radius: var(--radius-soft); cursor: pointer; font-weight: bold; }
+  .btn-register.edit-mode:hover { background-color: #81d4fa; }
+  .btn-add-show { background-color: var(--dark-pink); color: white; border: none; padding: 10px 20px; border-radius: 25px; cursor: pointer; font-weight: bold; transition: all 0.2s; box-shadow: 0 4px 10px rgba(240, 98, 146, 0.2); }
+  .btn-add-show:hover { background-color: #d81b60; transform: translateY(-2px); }
 
-  #detail-card { display: none; margin-top: 25px; background: #fff9fb; border-radius: var(--radius-round); padding: 25px; border: 3px solid var(--border-pink); box-shadow: 0 10px 25px rgba(255,182,193,0.15); }
-  .card-header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 3px dotted var(--border-pink); padding-bottom: 15px; margin-bottom: 20px; }
-  .user-info h3 { margin: 0; font-size: 1.4rem; color: var(--text-dark); font-weight: 800; margin-bottom: 5px; }
-  .user-id { font-size: 0.95rem; color: #888; display: block; }
-  .card-actions { display: flex; gap: 8px; }
-  .icon-btn { width: 32px; height: 32px; border-radius: 8px; border: 1px solid #ddd; background: white; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 16px; transition: 0.2s; }
-  .icon-btn:hover { background: #f0f0f0; transform: translateY(-2px); }
+  #detail-card { display: none; margin-top: 30px; background: #fffafc; border-radius: var(--radius-round); padding: 30px; border: 3px solid var(--border-pink); box-shadow: var(--shadow-soft); }
+  .card-header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 3px dotted var(--border-pink); padding-bottom: 20px; margin-bottom: 25px; }
+  .user-info h3 { margin: 0; font-size: 1.6rem; color: var(--text-dark); font-weight: 800; margin-bottom: 8px; }
+  .user-id { font-size: 1rem; color: #888; display: block; }
+  .card-actions { display: flex; gap: 10px; }
+  .icon-btn { width: 36px; height: 36px; border-radius: 10px; border: 2px solid #eee; background: white; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 18px; transition: all 0.2s; }
+  .icon-btn:hover { background: #f5f5f5; transform: translateY(-2px); box-shadow: 0 3px 8px rgba(0,0,0,0.05); }
   .icon-btn.edit { color: #2196f3; border-color: #bbdefb; }
   .icon-btn.del { color: #f44336; border-color: #ffcdd2; }
   .icon-btn.close { color: #757575; border-color: #e0e0e0; }
 
-  .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
-  .stat-box { background: white; padding: 15px; border-radius: var(--radius-soft); text-align: center; border: 2px solid var(--border-pink); box-shadow: 0 4px 10px rgba(0,0,0,0.03); }
-  .stat-label { font-size: 0.85rem; color: var(--text-gray); display: block; margin-bottom: 5px; }
-  .stat-value { font-size: 1.3rem; font-weight: 900; color: var(--text-dark); }
-  .task-box { background: white; padding: 20px; border-radius: var(--radius-soft); border: 2px solid var(--border-pink); margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.03); }
-  .task-label { font-size: 0.95rem; font-weight: bold; margin-bottom: 10px; display: block; color: var(--text-dark); }
-  .task-content { font-size: 1.1rem; line-height: 1.6; color: var(--text-dark); margin-bottom: 15px; word-break: keep-all; background: var(--light-pink-hover); padding: 15px; border-radius: 10px; }
+  .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 25px; }
+  .stat-box { background: white; padding: 20px; border-radius: var(--radius-soft); text-align: center; border: 2px solid var(--border-pink); box-shadow: 0 5px 15px rgba(255, 182, 193, 0.1); }
+  .stat-label { font-size: 0.9rem; color: var(--text-gray); display: block; margin-bottom: 8px; }
+  .stat-value { font-size: 1.4rem; font-weight: 900; color: var(--text-dark); }
+  .task-box { background: white; padding: 25px; border-radius: var(--radius-soft); border: 2px solid var(--border-pink); margin-bottom: 25px; box-shadow: 0 5px 15px rgba(255, 182, 193, 0.1); }
+  .task-label { font-size: 1rem; font-weight: bold; margin-bottom: 12px; display: block; color: var(--text-dark); }
+  .task-content { font-size: 1.1rem; line-height: 1.7; color: var(--text-dark); margin-bottom: 20px; word-break: keep-all; background: var(--light-pink-hover); padding: 18px; border-radius: 12px; }
 
-  .status-control { margin-top: 20px; border-top: 3px dotted var(--border-pink); padding-top: 20px; }
-  .status-options { display: flex; gap: 15px; justify-content: center; margin-bottom: 15px; }
+  .status-control { margin-top: 25px; border-top: 3px dotted var(--border-pink); padding-top: 25px; }
+  .status-options { display: flex; gap: 20px; justify-content: center; margin-bottom: 20px; }
   .status-radio { display: none; }
-  .status-label { padding: 8px 16px; border-radius: 20px; cursor: pointer; font-size: 14px; font-weight: bold; color: #777; background: #eee; transition: 0.2s; display: flex; align-items: center; gap: 6px; }
-  input[type="radio"]:checked + .status-label.lbl-todo { background: #ff8a80; color: white; box-shadow: 0 4px 10px rgba(255, 138, 128, 0.4); }
-  input[type="radio"]:checked + .status-label.lbl-partial { background: #ffb74d; color: white; box-shadow: 0 4px 10px rgba(255, 183, 77, 0.4); }
-  input[type="radio"]:checked + .status-label.lbl-done { background: #81c784; color: white; box-shadow: 0 4px 10px rgba(129, 199, 132, 0.4); }
-  .memo-input { width: 100%; box-sizing: border-box; padding: 15px; border: 2px solid var(--border-pink); border-radius: var(--radius-soft); font-size: 14px; resize: vertical; min-height: 70px; margin-bottom: 10px; background: #fff; transition: 0.2s; }
+  .status-label { padding: 10px 20px; border-radius: 25px; cursor: pointer; font-size: 15px; font-weight: bold; color: #777; background: #eee; transition: all 0.3s; display: flex; align-items: center; gap: 8px; }
+  input[type="radio"]:checked + .status-label.lbl-todo { background: #ff8a80; color: white; box-shadow: 0 6px 15px rgba(255, 138, 128, 0.3); transform: translateY(-2px); }
+  input[type="radio"]:checked + .status-label.lbl-partial { background: #ffb74d; color: white; box-shadow: 0 6px 15px rgba(255, 183, 77, 0.3); transform: translateY(-2px); }
+  input[type="radio"]:checked + .status-label.lbl-done { background: #81c784; color: white; box-shadow: 0 6px 15px rgba(129, 199, 132, 0.3); transform: translateY(-2px); }
+  .memo-input { width: 100%; box-sizing: border-box; padding: 18px; border: 2px solid var(--border-pink); border-radius: var(--radius-soft); font-size: 15px; resize: vertical; min-height: 80px; margin-bottom: 15px; background: #fff; transition: border-color 0.2s; }
+  .memo-input:focus { border-color: var(--dark-pink); }
   
-  .btn-soop { display: flex; justify-content: center; align-items: center; gap: 8px; width: 100%; box-sizing: border-box; background-color: var(--accent-blue); color: white; border: none; padding: 15px; border-radius: var(--radius-soft); text-decoration: none; font-weight: bold; font-size: 15px; box-shadow: 0 4px 10px rgba(174, 217, 224, 0.4); margin-bottom: 10px; transition: 0.2s; }
-  .btn-soop:hover { background-color: #9ad0d8; transform: translateY(-2px); }
-  .soop-icon { width: 20px; height: 20px; fill: white; }
-  .btn-complete { width: 100%; box-sizing: border-box; background: var(--dark-pink); border: none; color: white; padding: 15px; border-radius: var(--radius-soft); cursor: pointer; font-size: 15px; font-weight: bold; box-shadow: 0 4px 10px rgba(255, 141, 161, 0.4); transition: 0.2s; }
+  .btn-soop { display: flex; justify-content: center; align-items: center; gap: 10px; width: 100%; box-sizing: border-box; background-color: var(--accent-blue); color: white; border: none; padding: 16px; border-radius: var(--radius-soft); text-decoration: none; font-weight: bold; font-size: 16px; box-shadow: 0 6px 15px rgba(174, 217, 224, 0.3); margin-bottom: 15px; transition: all 0.2s; }
+  .btn-soop:hover { background-color: #9ad0d8; transform: translateY(-3px); }
+  .soop-icon { width: 22px; height: 22px; fill: white; }
+  .btn-complete { width: 100%; box-sizing: border-box; background: var(--dark-pink); border: none; color: white; padding: 16px; border-radius: var(--radius-soft); cursor: pointer; font-size: 16px; font-weight: bold; box-shadow: 0 6px 15px rgba(240, 98, 146, 0.3); transition: all 0.2s; }
+  .btn-complete:hover { background-color: #d81b60; transform: translateY(-3px); }
   
-  .nav-btn { background: white; border: 2px solid var(--border-pink); border-radius: 12px; padding: 8px 14px; cursor: pointer; color: var(--primary-pink); font-weight: bold; transition: 0.2s; }
-  .nav-btn:hover { background: var(--primary-pink); color: white; border-color: var(--primary-pink); }
+  .nav-btn { background: white; border: 2px solid var(--border-pink); border-radius: 15px; padding: 10px 18px; cursor: pointer; color: var(--dark-pink); font-weight: bold; transition: all 0.2s; font-size: 14px;}
+  .nav-btn:hover { background: var(--dark-pink); color: white; border-color: var(--dark-pink); transform: translateY(-2px); }
 
-  .rank-item { display: flex; align-items: center; justify-content: space-between; background: #fff; border-bottom: 1px dashed var(--border-pink); padding: 12px 5px; margin-bottom: 5px; }
+  .rank-item { display: flex; align-items: center; justify-content: space-between; background: #fff; border-bottom: 2px dotted var(--border-pink); padding: 15px 10px; margin-bottom: 8px; transition: all 0.2s; border-radius: 10px;}
+  .rank-item:hover { background: var(--light-pink-hover); transform: translateX(5px); }
   .rank-info { display: flex; flex-direction: column; }
-  .rank-nick { font-weight: bold; color: var(--text-dark); font-size: 14px; }
-  .rank-id { font-size: 11px; color: var(--primary-pink); }
-  .rank-badge { background: var(--accent-blue); color: white; font-weight: bold; border-radius: 12px; padding: 5px 10px; font-size: 13px; }
+  .rank-nick { font-weight: bold; color: var(--text-dark); font-size: 15px; }
+  .rank-id { font-size: 12px; color: var(--primary-pink); }
+  .rank-badge { background: var(--accent-blue); color: white; font-weight: bold; border-radius: 15px; padding: 6px 12px; font-size: 13px; box-shadow: 0 3px 8px rgba(174, 217, 224, 0.3); }
 
   /* ==========================================================================
-     [페이지 2] 낭플단 기록실 (요청하신 디자인 적용)
+     [페이지 2] 낭플단 기록실 (딸기우유 테마 적용 + 색상변동 제거)
      ========================================================================== */
-  .season-layout { max-width: 1400px; margin: 0 auto; background: var(--container-bg); border-radius: var(--radius-round); padding: 30px; box-shadow: 0 8px 25px rgba(255, 182, 193, 0.2); border: 2px solid #fff; }
+  .season-layout { max-width: 1400px; margin: 0 auto; background: var(--container-bg); border-radius: var(--radius-round); padding: 35px; box-shadow: var(--shadow-soft); border: 3px solid #fff; }
   
-  /* 상단 헤더 영역 (타이틀, 공지, 검색) */
-  .record-header-area { text-align: center; margin-bottom: 20px; }
-  .record-header-area h2 { margin: 0 0 10px 0; font-size: 1.5rem; display: flex; align-items: center; justify-content: center; gap: 8px;}
-  .notice-text { font-size: 13px; color: #555; margin-bottom: 15px; }
-  .search-container input { padding: 8px 15px; width: 300px; border: 1px solid #ddd; border-radius: 20px; background: #f9f9f9; text-align: center; }
+  .record-header-area { text-align: center; margin-bottom: 30px; }
+  .record-header-area h2 { margin: 0 0 15px 0; font-size: 1.8rem; display: flex; align-items: center; justify-content: center; gap: 10px; color: var(--deep-pink-text); }
+  .notice-text { font-size: 14px; color: #666; margin-bottom: 20px; background: var(--strawberry-milk-bg); display: inline-block; padding: 10px 20px; border-radius: 20px; border: 2px dashed var(--primary-pink);}
+  .search-container input { padding: 12px 20px; width: 350px; border: 2px solid var(--border-pink); border-radius: 25px; background: #fff; text-align: center; font-size: 15px; transition: border-color 0.2s; }
+  .search-container input:focus { border-color: var(--dark-pink); }
   
-  .season-tabs { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px; margin-bottom: 15px; border-bottom: 2px dashed var(--border-pink); }
-  .season-tab-btn { white-space: nowrap; padding: 8px 16px; border-radius: 20px; border: 2px solid var(--border-pink); background: #fff; font-weight: bold; color: var(--text-gray); cursor: pointer; transition: 0.2s; font-size: 13px; }
-  .season-tab-btn.active { background: var(--dark-pink); color: white; border-color: var(--dark-pink); }
+  .season-tabs { display: flex; gap: 12px; overflow-x: auto; padding-bottom: 15px; margin-bottom: 25px; border-bottom: 3px dotted var(--border-pink); }
+  .season-tab-btn { white-space: nowrap; padding: 10px 20px; border-radius: 25px; border: 2px solid var(--border-pink); background: #fff; font-weight: bold; color: var(--text-gray); cursor: pointer; transition: all 0.3s; font-size: 14px; box-shadow: 0 3px 8px rgba(0,0,0,0.05); }
+  .season-tab-btn:hover { transform: translateY(-2px); background: var(--light-pink-hover); border-color: var(--primary-pink); }
+  .season-tab-btn.active { background: var(--dark-pink); color: white; border-color: var(--dark-pink); box-shadow: 0 5px 12px rgba(240, 98, 146, 0.25); }
   
-  .controls-row { display: flex; justify-content: flex-end; margin-bottom: 10px; gap: 10px; }
-  .paste-guide { font-size: 11px; color: #888; background: #fff; padding: 4px 10px; border-radius: 8px; border: 1px solid #eee; }
-  .btn-del-season { font-size: 11px; color: #ff5252; border: 1px solid #ff5252; background: none; border-radius: 6px; padding: 4px 8px; cursor: pointer; }
+  .controls-row { display: flex; justify-content: flex-end; margin-bottom: 15px; gap: 12px; align-items: center; }
+  .paste-guide { font-size: 12px; color: #777; background: #fff; padding: 8px 14px; border-radius: 15px; border: 2px solid var(--border-pink); }
+  .btn-del-season { font-size: 12px; color: #ff5252; border: 2px solid #ff5252; background: #fff; border-radius: 15px; padding: 8px 14px; cursor: pointer; font-weight: bold; transition: all 0.2s; }
+  .btn-del-season:hover { background: #ff5252; color: white; }
 
   /* 테이블 스타일 */
-  .table-scroll { overflow-x: auto; padding-bottom: 10px; }
-  .table { display: flex; flex-direction: column; gap: 2px; min-width: 1100px; }
-  
-  .record-row {
-    display: flex; background: white; border-radius: 0; overflow: hidden; /* 둥근모서리 제거 */
-    border-bottom: 1px solid #eee; padding: 2px 0;
-    transition: 0.1s; align-items: center;
-  }
-  .record-row:hover { background: #fdfdfd; }
+  .table-scroll { overflow-x: auto; padding-bottom: 15px; }
+  .table { display: flex; flex-direction: column; gap: 0; min-width: 1100px; border-radius: var(--radius-soft); overflow: hidden; border: 2px solid var(--border-pink); box-shadow: 0 5px 15px rgba(0,0,0,0.03); }
   
   /* 헤더 행 */
-  .header-row { background: #FFEFF7; border-radius: 10px 10px 0 0; margin-bottom: 0; padding: 8px 0; border: none;}
-  .header-row .record-cell { font-weight: 800; color: #d81b60; border: none; font-size: 13px; }
+  .header-row { background: var(--strawberry-milk-bg); padding: 15px 0; border-bottom: 2px solid var(--border-pink); }
+  .header-row .record-cell { font-weight: 800; color: var(--deep-pink-text); border: none; font-size: 15px; }
 
-  /* 데이터 행 */
-  .record-row.data-row { border-radius: 5px; margin-bottom: 2px; }
-
+  /* 데이터 행 (색상변동 제거, 통일된 스타일) */
+  .record-row {
+    display: flex; background: white;
+    border-bottom: 1px solid #eee; padding: 4px 0;
+    transition: all 0.2s ease; align-items: center;
+  }
+  .record-row.data-row:hover { background: #fff5f8; transform: scale(1.005); z-index: 5; box-shadow: 0 4px 12px rgba(0,0,0,0.05); } /* 호버시 살짝 핑크 */
+  
   /* 합계 행 (푸터) */
   .summary-row { 
-    background: #FFF0F5; font-weight: 800; color: #d81b60; margin-top: 5px; 
-    border-top: 2px solid #FFC2D6; padding: 8px 0; border-radius: 0 0 10px 10px;
+    background: var(--strawberry-milk-bg); font-weight: 800; color: var(--deep-pink-text);
+    border-top: 2px solid var(--primary-pink); padding: 15px 0;
   }
 
   /* 셀 공통 */
   .record-cell {
-    padding: 6px 4px; font-size: 13px; text-align: center;
-    border-right: 1px solid rgba(0,0,0,0.03); outline: none; 
+    padding: 8px 6px; font-size: 14px; text-align: center;
+    border-right: 1px solid #f0f0f0; outline: none; 
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-    display: flex; justify-content: center; align-items: center; min-height: 24px;
+    display: flex; justify-content: center; align-items: center; min-height: 30px;
     color: var(--text-dark);
   }
   .record-cell:last-child { border-right: none; }
   .record-cell[contenteditable="true"]:focus { background: #fff; box-shadow: inset 0 0 0 2px var(--dark-pink); }
 
-  /* 🔥 열 너비 설정 (스크린샷 비율 참고) */
+  /* 열 너비 */
   .col-id { width: 10%; }
-  .col-nick { width: 12%; }
-  .col-amt { width: 10%; font-weight: bold; color: #d81b60; }
-  .col-one { width: 10%; font-weight: bold; color: #d81b60; } /* 원플원 */
-  .col-promise { width: 35%; } 
-  .col-reverse { width: 10%; font-weight: bold; color: #d81b60; } /* 역팬 */
-  .col-note { width: 8%; color: #888; font-size: 12px; }
+  .col-nick { width: 12%; font-weight: 600; }
+  .col-amt { width: 10%; font-weight: bold; color: var(--deep-pink-text); }
+  .col-one { width: 10%; font-weight: bold; color: var(--deep-pink-text); } 
+  .col-promise { width: 35%; text-align: left; padding-left: 15px; justify-content: flex-start; } 
+  .col-reverse { width: 10%; font-weight: bold; color: var(--deep-pink-text); } 
+  .col-note { width: 8%; color: #999; font-size: 13px; }
   .col-action { width: 5%; }
 
-  /* 관리 버튼 (호버시 등장) */
-  .action-buttons { display: none; gap: 2px; }
+  /* 관리 버튼 */
+  .action-buttons { display: none; gap: 4px; }
   .record-row:hover .action-buttons { display: flex; }
-  .mini-btn { background: #FFD8EA; border: none; border-radius: 4px; padding: 2px 6px; font-size: 10px; cursor: pointer; color: #D24E78; }
-  .mini-btn:hover { background: #ffbddc; }
+  .mini-btn { background: #FFD8EA; border: none; border-radius: 8px; padding: 4px 8px; font-size: 11px; cursor: pointer; color: #D24E78; transition: all 0.2s; font-weight: bold; }
+  .mini-btn:hover { background: #ffbddc; transform: translateY(-2px); }
 
-  #loading-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(255,255,255,0.9); display: flex; justify-content: center; align-items: center; z-index: 9999; font-weight: bold; color: var(--dark-pink); font-size: 1.5rem;}
-  .no-data-msg { font-size: 14px; color: #aaa; text-align: center; padding: 50px 0; }
+  #loading-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(255,255,255,0.95); display: flex; justify-content: center; align-items: center; z-index: 9999; font-weight: 800; color: var(--dark-pink); font-size: 1.6rem; flex-direction: column; gap: 15px;}
+  .no-data-msg { font-size: 16px; color: #aaa; text-align: center; padding: 60px 0; font-weight: bold; }
 
   @media (max-width: 1024px) {
     .wrapper { flex-direction: column; }
-    .sidebar, .sidebar-right { width: 100%; max-height: 200px; }
-    .table { min-width: 900px; }
+    .sidebar, .sidebar-right { width: 100%; max-height: 250px; }
+    .table { min-width: 950px; }
   }
-  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 </style>
 </head>
 <body>
 
-<div id="loading-overlay">🐰 데이터를 불러오는 중...</div>
+<div id="loading-overlay">
+  <div>🐰</div>
+  <div>데이터를 불러오는 중...</div>
+</div>
 
 <nav class="main-nav">
   <button id="tab-btn-calendar" class="nav-tab active" onclick="switchPage('calendar')">📅 숙제 캘린더</button>
-  <button id="tab-btn-record" class="nav-tab" onclick="switchPage('record')">🏆 낭플단 기록실</button>
+  <button id="tab-btn-record" class="nav-tab" onclick="switchPage('record')">🍓 낭플단 기록실</button>
 </nav>
 
 <div id="page-calendar" class="page-section active">
@@ -244,9 +257,9 @@
       </div>
       <div class="calendar-grid" id="calendar"></div>
 
-      <div id="nickname-view" style="display:none; margin-top:20px; border-top:3px dotted var(--border-pink); padding-top:20px;">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-          <h3 id="selected-date-text" style="margin:0; font-size:18px;">숙제 대상자</h3>
+      <div id="nickname-view" style="display:none; margin-top:30px; border-top:3px dotted var(--border-pink); padding-top:30px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+          <h3 id="selected-date-text" style="margin:0; font-size:1.4rem;">숙제 대상자</h3>
           <button class="btn-add-show" onclick="toggleAddForm()">+ 숙제 추가</button>
         </div>
         <div id="add-form">
@@ -261,11 +274,11 @@
             <input type="number" id="new-amount" class="form-input" placeholder="풍선 개수" oninput="autoCalculate()">
             <input type="number" id="new-reverse" class="form-input" placeholder="역팬(자동)" readonly>
           </div>
-          <div style="margin-bottom:10px; display:flex; gap:10px; align-items:center;">
-             <label style="cursor:pointer;"><input type="radio" name="calc-ratio" value="0.03" checked onchange="autoCalculate()"> 3%</label>
-             <label style="cursor:pointer;"><input type="radio" name="calc-ratio" value="0.10" onchange="autoCalculate()"> 10%</label>
+          <div style="margin-bottom:15px; display:flex; gap:15px; align-items:center;">
+             <label style="cursor:pointer; font-weight:bold; color:var(--text-gray);"><input type="radio" name="calc-ratio" value="0.03" checked onchange="autoCalculate()"> 3%</label>
+             <label style="cursor:pointer; font-weight:bold; color:var(--text-gray);"><input type="radio" name="calc-ratio" value="0.10" onchange="autoCalculate()"> 10%</label>
           </div>
-          <input type="text" id="new-content" class="form-input" placeholder="숙제 내용 (직접 입력)" style="margin-bottom:10px;">
+          <input type="text" id="new-content" class="form-input" placeholder="숙제 내용 (직접 입력)" style="margin-bottom:15px;">
           <button class="btn-register" id="btn-submit" onclick="handleTaskSubmit()">등록 완료 💖</button>
         </div>
         <div class="nick-list" id="nick-list-container"></div>
@@ -327,10 +340,10 @@
   <div class="season-layout">
     
     <div class="record-header-area">
-      <h2 id="current-season-title">🐰 C9 시즌2 · 3회차 낭플단</h2>
+      <h2 id="current-season-title">🍓 C9 시즌2 · 3회차 낭플단</h2>
       <div class="notice-text">모든 공약은 요청시에 가고있습니다. 당군+(hansu0131)에게 쪽지 또는 댓글로 편하게 말씀해주세요 ❤</div>
       <div class="search-container">
-        <input type="text" id="record-search" placeholder="아이디 / 닉네임 검색" oninput="filterRecords()">
+        <input type="text" id="record-search" placeholder="아이디 / 닉네임 검색 (딸기우유 좋아! 🍓)" oninput="filterRecords()">
       </div>
     </div>
 
@@ -338,7 +351,7 @@
 
     <div id="season-content-area" style="display:none;">
       <div class="controls-row">
-        <button class="nav-tab" style="font-size:12px; padding:6px 12px;" onclick="createNewSeason()">+ 새 시즌 추가</button>
+        <button class="nav-tab" style="font-size:13px; padding:8px 15px;" onclick="createNewSeason()">+ 새 시즌 추가</button>
         <span class="paste-guide">💡 엑셀 복사(Ctrl+C) → 붙여넣기(Ctrl+V)</span>
         <button class="btn-del-season" onclick="deleteCurrentSeason()">이 시즌 삭제</button>
       </div>
@@ -350,7 +363,7 @@
             <div class="record-cell col-nick">닉네임</div>
             <div class="record-cell col-amt">낭플</div>
             <div class="record-cell col-one">원플원</div>
-            <div class="record-cell col-promise">공약</div>
+            <div class="record-cell col-promise" style="justify-content: center; padding-left:0;">공약</div>
             <div class="record-cell col-reverse">역팬</div>
             <div class="record-cell col-note">비고</div>
             <div class="record-cell col-action"></div>
@@ -360,10 +373,10 @@
 
           <div class="record-row summary-row">
             <div class="record-cell col-id">합계</div>
-            <div class="record-cell col-nick" id="sum-count" style="color:var(--dark-pink);">0명</div>
+            <div class="record-cell col-nick" id="sum-count" style="color:var(--deep-pink-text);">0명</div>
             <div class="record-cell col-amt" id="sum-nang">0</div>
             <div class="record-cell col-one" id="sum-one">0</div>
-            <div class="record-cell col-promise" id="sum-total" style="font-weight:900; color:#d81b60;">0</div>
+            <div class="record-cell col-promise" id="sum-total" style="font-weight:900; color:var(--deep-pink-text); justify-content: center; padding-left:0; font-size:16px;">0</div>
             <div class="record-cell col-reverse" id="sum-reverse">0</div>
             <div class="record-cell col-note"></div>
             <div class="record-cell col-action"></div>
@@ -371,13 +384,13 @@
         </div>
       </div>
       
-      <div style="text-align:center; margin-top:20px;">
-        <button class="nav-tab" onclick="addEmptyRowAtEnd()">+ 빈 줄 추가</button>
+      <div style="text-align:center; margin-top:25px;">
+        <button class="nav-tab" onclick="addEmptyRowAtEnd()" style="padding: 10px 25px;">+ 빈 줄 추가</button>
       </div>
     </div>
 
     <div id="no-season-msg" class="no-data-msg">
-      등록된 회차가 없습니다. '새 시즌 추가' 버튼을 눌러주세요!
+      등록된 회차가 없습니다. '새 시즌 추가' 버튼을 눌러주세요! 🍓
     </div>
   </div>
 </div>
@@ -474,19 +487,7 @@
     document.getElementById('season-content-area').style.display = 'block';
   };
 
-  function getLevelColor(amount) {
-      const num = parseInt(amount) || 0;
-      if(num >= 300000) return 'var(--lv9)';
-      if(num >= 100000) return 'var(--lv8)';
-      if(num >= 50000) return 'var(--lv7)';
-      if(num >= 10000) return 'var(--lv6)';
-      if(num >= 5000) return 'var(--lv5)';
-      if(num >= 3000) return 'var(--lv4)';
-      if(num >= 1000) return 'var(--lv3)';
-      if(num >= 299) return 'var(--lv2)';
-      if(num >= 100) return 'var(--lv1)';
-      return 'var(--lv0)';
-  }
+  // 🔥 [삭제된 함수] getLevelColor - 더 이상 사용하지 않음
 
   window.renderRecordTable = (seasonName) => {
     document.getElementById('current-season-title').innerText = seasonName;
@@ -497,7 +498,6 @@
     let count = 0, totalNang = 0, totalOne = 0, totalReverse = 0;
 
     list.forEach((item, index) => {
-        // 빈 줄은 카운트 제외
         if(item.id || item.nick) count++;
 
         const amt = parseInt(item.amount || 0);
@@ -508,10 +508,10 @@
         totalOne += one;
         totalReverse += rev;
         
-        const bgColor = getLevelColor(amt);
+        // 🔥 [변경] 배경색 변동 제거 (항상 흰색)
         const row = document.createElement('div');
         row.className = 'record-row data-row';
-        row.style.background = bgColor;
+        // row.style.background = bgColor; // 삭제됨
         
         row.innerHTML = `
             <div class="record-cell col-id" contenteditable="true" oninput="handleInput('${seasonName}', ${index}, 'id', this)" onblur="handleBlur()">${item.id || ''}</div>
@@ -542,7 +542,6 @@
       document.getElementById('sum-reverse').innerText = rev.toLocaleString();
   }
 
-  // 검색 필터
   window.filterRecords = () => {
     const q = document.getElementById('record-search').value.toLowerCase();
     document.querySelectorAll('.data-row').forEach(row => {
@@ -558,12 +557,14 @@
     if(!window.seasonData[seasonName][index]) return;
     window.seasonData[seasonName][index][field] = val;
 
+    // 🔥 [변경] 입력 시 배경색 변경 로직 제거
+    /*
     if(field === 'amount') {
         const row = element.closest('.record-row');
         row.style.background = getLevelColor(val);
     }
+    */
     
-    // 합계 재계산
     if(['amount','oneplus','reverse','id','nick'].includes(field)) {
         recalculateSums(seasonName);
     }
@@ -615,7 +616,6 @@
     window.saveSeason();
   };
 
-  // 엑셀 붙여넣기 (7열 지원: ID,닉,낭,1+1,공약,역팬,비고)
   document.addEventListener('paste', (e) => {
     if(!document.getElementById('page-record').classList.contains('active')) return;
     if(!window.currentSeasonName) return;
