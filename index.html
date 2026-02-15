@@ -142,22 +142,40 @@
   .nav-btn { background: white; border: 2px solid var(--border-pink); border-radius: 15px; padding: 10px 18px; cursor: pointer; color: var(--dark-pink); font-weight: bold; transition: all 0.2s; font-size: 14px;}
   .nav-btn:hover { background: var(--dark-pink); color: white; border-color: var(--dark-pink); transform: translateY(-2px); }
 
-    /* 랭킹 아이템 스타일 */
-  .rank-item {display: flex; align-items: center; justify-content: space-between; background: #fff; border-bottom: 2px dotted var(--border-pink); padding: 15px 10px; margin-bottom: 8px; transition: all 0.2s; border-radius: 10px; cursor: pointer; /* 클릭 가능 표시 */}
+  /* 랭킹 아이템 스타일 */
+  .rank-item { 
+    display: flex; align-items: center; justify-content: space-between; 
+    background: #fff; border-bottom: 2px dotted var(--border-pink); padding: 15px 10px; margin-bottom: 8px; 
+    transition: all 0.2s; border-radius: 10px; cursor: pointer; /* 클릭 가능 표시 */
+  }
   .rank-item:hover { background: var(--light-pink-hover); transform: translateX(5px); }
   .rank-info { display: flex; flex-direction: column; }
   .rank-nick { font-weight: bold; color: var(--text-dark); font-size: 15px; }
   .rank-id { font-size: 12px; color: var(--primary-pink); }
   .rank-badge { background: var(--accent-blue); color: white; font-weight: bold; border-radius: 15px; padding: 6px 12px; font-size: 13px; box-shadow: 0 3px 8px rgba(174, 217, 224, 0.3); }
-  /* 🔥 [신규] 숙제 기록 팝업 (모달) */
-  .modal-overlay {display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 10000; justify-content: center; align-items: center; animation: fadeIn 0.2s ease-out;}
-  .modal-content {background: white; padding: 25px; border-radius: 25px; width: 450px; max-height: 80vh; overflow-y: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.2); border: 4px solid var(--primary-pink); }
-  .modal-header {display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px dashed var(--border-pink); padding-bottom: 15px; }
+
+  /* 숙제 기록 팝업 (모달) */
+  .modal-overlay { 
+    display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+    background: rgba(0,0,0,0.5); z-index: 10000; justify-content: center; align-items: center; 
+    animation: fadeIn 0.2s ease-out;
+  }
+  .modal-content { 
+    background: white; padding: 25px; border-radius: 25px; width: 450px; max-height: 80vh; 
+    overflow-y: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.2); border: 4px solid var(--primary-pink); 
+  }
+  .modal-header { 
+    display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; 
+    border-bottom: 2px dashed var(--border-pink); padding-bottom: 15px; 
+  }
   .modal-title { font-size: 1.2rem; font-weight: 800; color: var(--text-dark); }
-  .modal-close-btn {background: none; border: 2px solid #ddd; border-radius: 50%; width: 30px; height: 30px; cursor: pointer; color: #888; font-weight: bold; transition: 0.2s; }
+  .modal-close-btn { 
+    background: none; border: 2px solid #ddd; border-radius: 50%; width: 30px; height: 30px; 
+    cursor: pointer; color: #888; font-weight: bold; transition: 0.2s; 
+  }
   .modal-close-btn:hover { background: #eee; color: #333; }
   
-  /* 기록 리스트 아이템에 클릭 스타일 추가 */
+  /* 기록 리스트 아이템 */
   .history-item { 
     padding: 12px; border-bottom: 1px solid #f0f0f0; display: flex; flex-direction: column; gap: 5px; 
     cursor: pointer; transition: all 0.2s; 
@@ -174,9 +192,9 @@
   .history-content { font-size: 15px; color: var(--text-dark); line-height: 1.4; }
 
   /* ==========================================================================
-     [페이지 2] 낭플단 기록실 (가독성 개선: 글자크게, 칸작게, 색상추가)
+     [페이지 2] 낭플단 기록실
      ========================================================================== */
-  .season-layout { max-width: 1200px; margin: 0 auto; background: var(--container-bg); border-radius: var(--radius-round); padding: 35px; box-shadow: var(--shadow-soft); border: 3px solid #fff; }
+  .season-layout { max-width: 1650px; margin: 0 auto; background: var(--container-bg); border-radius: var(--radius-round); padding: 35px; box-shadow: var(--shadow-soft); border: 3px solid #fff; }
   
   .record-header-area { text-align: center; margin-bottom: 30px; }
   .record-header-area h2 { margin: 0 0 15px 0; font-size: 1.8rem; display: flex; align-items: center; justify-content: center; gap: 10px; color: var(--deep-pink-text); }
@@ -198,7 +216,6 @@
   .table-scroll { overflow-x: auto; padding-bottom: 15px; }
   .table { display: flex; flex-direction: column; gap: 0; min-width: 1100px; border-radius: var(--radius-soft); overflow: hidden; border: 2px solid var(--border-pink); box-shadow: 0 5px 15px rgba(0,0,0,0.03); }
   
-  /* 🔥 [수정] 헤더: 파스텔 핑크 */
   .header-row { 
     background: var(--strawberry-milk-bg);
     padding: 15px 0; 
@@ -206,20 +223,22 @@
   }
   .header-row .record-cell { font-weight: 800; color: #880e4f; border: none; font-size: 16px; }
 
-  /* 🔥 [수정] 데이터 행: 높이 슬림하게 (padding: 4px 0) */
-  .record-row {display: flex; background: var(--strawberry-milk-bg); border-bottom: 1px solid #eee; padding: 4px 0; /* 높이 조절 가능 */transition: all 0.2s ease; align-items: center;}
+  .record-row {
+    display: flex; background: white;
+    border-bottom: 1px solid #eee; 
+    padding: 4px 0; 
+    transition: all 0.2s ease; align-items: center;
+  }
   .record-row.data-row:hover { transform: scale(1.002); z-index: 5; box-shadow: 0 4px 12px rgba(0,0,0,0.05); } 
   
-  /* 합계 행 (푸터) */
   .summary-row { 
     background: var(--strawberry-milk-bg); font-weight: 800; color: var(--deep-pink-text);
     border-top: 2px solid var(--primary-pink); padding: 15px 0;
   }
 
-  /* 🔥 [수정] 셀: 글자 크게(14px), 칸은 작게(padding 축소) */
   .record-cell {
-    padding: 4px 4px; /* 여백 축소 */
-    font-size: 17px; text-align: center;
+    padding: 4px 4px;
+    font-size: 14px; text-align: center;
     border-right: 1px solid rgba(0,0,0,0.05); outline: none; 
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     display: flex; justify-content: center; align-items: center; 
@@ -229,17 +248,16 @@
   .record-cell:last-child { border-right: none; }
   .record-cell[contenteditable="true"]:focus { background: #fff; box-shadow: inset 0 0 0 2px var(--dark-pink); border-radius: 4px; }
 
-  /* 🔥 [수정] 강조 제거 (기본 굵기/색상 사용) */
+  /* 🔥 [수정] 통합된 '기여도' 열 너비 조정 */
   .col-id { width: 10%; }
   .col-nick { width: 11%; font-weight: 600; }
-  .col-amt { width: 7%; font-weight: 600; color: #d81b60;} /* 강조 제거 */
-  .col-one { width: 7%; font-weight: 600; color: #d81b60;} /* 강조 제거 */
-  .col-promise { width: 46%; text-align: center; justify-content: center; } 
-  .col-reverse { width: 6%; } /* 강조 제거 */
-  .col-note { width: 8%; color: #999; font-size: 13px; }
+  .col-amt { width: 16%; font-weight: 600; color: #d81b60; } /* 통합된 기여도 (너비 확장) */
+  /* .col-one 삭제됨 */
+  .col-promise { width: 44%; text-align: center; justify-content: center; } 
+  .col-reverse { width: 8%; } 
+  .col-note { width: 6%; color: #999; font-size: 13px; }
   .col-action { width: 5%; }
 
-  /* 관리 버튼 */
   .action-buttons { display: none; gap: 4px; }
   .record-row:hover .action-buttons { display: flex; }
   .mini-btn { background: #FFD8EA; border: none; border-radius: 8px; padding: 4px 8px; font-size: 11px; cursor: pointer; color: #D24E78; transition: all 0.2s; font-weight: bold; }
@@ -398,8 +416,7 @@
           <div class="record-row header-row">
             <div class="record-cell col-id">아이디</div>
             <div class="record-cell col-nick">닉네임</div>
-            <div class="record-cell col-amt">낭플</div>
-            <div class="record-cell col-one">원플원</div>
+            <div class="record-cell col-amt">기여도</div>
             <div class="record-cell col-promise">공약</div>
             <div class="record-cell col-reverse">역팬</div>
             <div class="record-cell col-note">비고</div>
@@ -412,8 +429,7 @@
             <div class="record-cell col-id">합계</div>
             <div class="record-cell col-nick" id="sum-count" style="color:var(--deep-pink-text);">0명</div>
             <div class="record-cell col-amt" id="sum-nang" style="font-weight:900; color:var(--deep-pink-text);">0</div>
-            <div class="record-cell col-one" id="sum-one" style="font-weight:900; color:var(--deep-pink-text);">0</div>
-            <div class="record-cell col-promise" id="sum-total" style="font-weight:900; color:var(--deep-pink-text); justify-content: center; padding-left:0; font-size:16px;">0</div>
+            <div class="record-cell col-promise"></div>
             <div class="record-cell col-reverse" id="sum-reverse" style="font-weight:900; color:var(--deep-pink-text);">0</div>
             <div class="record-cell col-note"></div>
             <div class="record-cell col-action"></div>
@@ -553,17 +569,15 @@
     container.innerHTML = '';
     
     const list = window.seasonData[seasonName] || [];
-    let count = 0, totalNang = 0, totalOne = 0, totalReverse = 0;
+    let count = 0, totalNang = 0, totalReverse = 0;
 
     list.forEach((item, index) => {
         if(item.id || item.nick) count++;
 
-        const amt = parseInt(item.amount || 0);
-        const one = parseInt(item.oneplus || 0);
+        const amt = parseInt(item.amount || 0); // 이제 이게 '기여도'
         const rev = parseInt(item.reverse || 0);
         
         totalNang += amt;
-        totalOne += one;
         totalReverse += rev;
         
         // 🔥 [복구] 배경색 적용
@@ -576,7 +590,6 @@
             <div class="record-cell col-id" contenteditable="true" oninput="handleInput('${seasonName}', ${index}, 'id', this)" onblur="handleBlur()">${item.id || ''}</div>
             <div class="record-cell col-nick" contenteditable="true" oninput="handleInput('${seasonName}', ${index}, 'nick', this)" onblur="handleBlur()">${item.nick || ''}</div>
             <div class="record-cell col-amt amount-cell" contenteditable="true" oninput="handleInput('${seasonName}', ${index}, 'amount', this)" onblur="handleBlur()">${item.amount || ''}</div>
-            <div class="record-cell col-one oneplus-cell" contenteditable="true" oninput="handleInput('${seasonName}', ${index}, 'oneplus', this)" onblur="handleBlur()">${item.oneplus || ''}</div>
             <div class="record-cell col-promise" contenteditable="true" oninput="handleInput('${seasonName}', ${index}, 'promise', this)" onblur="handleBlur()">${item.promise || ''}</div>
             <div class="record-cell col-reverse reverse-cell" contenteditable="true" oninput="handleInput('${seasonName}', ${index}, 'reverse', this)" onblur="handleBlur()">${item.reverse || ''}</div>
             <div class="record-cell col-note" contenteditable="true" oninput="handleInput('${seasonName}', ${index}, 'note', this)" onblur="handleBlur()">${item.note || ''}</div>
@@ -590,14 +603,12 @@
         container.appendChild(row);
     });
 
-    updateSumDisplay(count, totalNang, totalOne, totalReverse);
+    updateSumDisplay(count, totalNang, totalReverse);
   };
 
-  function updateSumDisplay(cnt, nang, one, rev) {
+  function updateSumDisplay(cnt, nang, rev) {
       document.getElementById('sum-count').innerText = `${cnt}명`;
       document.getElementById('sum-nang').innerText = nang.toLocaleString();
-      document.getElementById('sum-one').innerText = one.toLocaleString();
-      document.getElementById('sum-total').innerText = (nang + one).toLocaleString();
       document.getElementById('sum-reverse').innerText = rev.toLocaleString();
   }
 
@@ -611,7 +622,7 @@
 
   window.handleInput = (seasonName, index, field, element) => {
     let val = element.innerText.trim();
-    if(field === 'amount' || field === 'oneplus' || field === 'reverse') val = val.replace(/[^0-9]/g, ''); 
+    if(field === 'amount' || field === 'reverse') val = val.replace(/[^0-9]/g, ''); 
     
     if(!window.seasonData[seasonName][index]) return;
     window.seasonData[seasonName][index][field] = val;
@@ -622,7 +633,7 @@
         row.style.background = getLevelColor(val);
     }
     
-    if(['amount','oneplus','reverse','id','nick'].includes(field)) {
+    if(['amount','reverse','id','nick'].includes(field)) {
         recalculateSums(seasonName);
     }
   };
@@ -630,19 +641,18 @@
   window.handleBlur = () => { window.saveSeason(); };
 
   function recalculateSums(seasonName) {
-      let cnt = 0, nang = 0, one = 0, rev = 0;
+      let cnt = 0, nang = 0, rev = 0;
       window.seasonData[seasonName].forEach(item => {
           if(item.id || item.nick) cnt++;
           nang += parseInt(item.amount || 0);
-          one += parseInt(item.oneplus || 0);
           rev += parseInt(item.reverse || 0);
       });
-      updateSumDisplay(cnt, nang, one, rev);
+      updateSumDisplay(cnt, nang, rev);
   }
 
   window.cloneRow = (index) => {
     if(!window.currentSeasonName) return;
-    const newItem = { id:'', nick:'', amount:'', oneplus:'', promise:'', reverse:'', note:'' };
+    const newItem = { id:'', nick:'', amount:'', promise:'', reverse:'', note:'' };
     window.seasonData[window.currentSeasonName].splice(index + 1, 0, newItem);
     window.saveSeason();
     renderRecordTable(window.currentSeasonName);
@@ -650,7 +660,7 @@
 
   window.addEmptyRowAtEnd = () => {
     if(!window.currentSeasonName) return;
-    const newItem = { id:'', nick:'', amount:'', oneplus:'', promise:'', reverse:'', note:'' };
+    const newItem = { id:'', nick:'', amount:'', promise:'', reverse:'', note:'' };
     window.seasonData[window.currentSeasonName].push(newItem);
     window.saveSeason();
     renderRecordTable(window.currentSeasonName);
@@ -673,6 +683,7 @@
     window.saveSeason();
   };
 
+  // 🔥 [수정] 엑셀 붙여넣기 (열 감소 반영)
   document.addEventListener('paste', (e) => {
     if(!document.getElementById('page-record').classList.contains('active')) return;
     if(!window.currentSeasonName) return;
@@ -694,10 +705,10 @@
             id: cols[0] || '',
             nick: cols[1] || '',
             amount: (cols[2] || '').replace(/[^0-9]/g, ''), 
-            oneplus: (cols[3] || '').replace(/[^0-9]/g, ''),
-            promise: cols[4] || '',
-            reverse: (cols[5] || '').replace(/[^0-9]/g, ''),
-            note: cols[6] || ''
+            // cols[3] was oneplus, now mapped to promise
+            promise: cols[3] || '',
+            reverse: (cols[4] || '').replace(/[^0-9]/g, ''),
+            note: cols[5] || ''
         };
         window.seasonData[window.currentSeasonName].push(newItem);
     });
@@ -779,7 +790,11 @@
     });
   };
 
-  window.renderTotalRanking = () => {const con = document.getElementById('total-rank-list'); con.innerHTML = '';const counts = {}; // { id: {nick, count} }
+  // 🔥 [수정됨] 랭킹 로직: ID 기준 합산 & 클릭 시 상세 보기
+  window.renderTotalRanking = () => {
+    const con = document.getElementById('total-rank-list'); 
+    con.innerHTML = '';
+    const counts = {}; // { id: {nick, count} }
 
     // 모든 날짜의 숙제를 순회하며 ID 기준으로 카운트 합산
     Object.keys(window.homeworkData).forEach(d => {
@@ -805,7 +820,7 @@
         let icon = i===0?'👑 ':i===1?'🥈 ':i===2?'🥉 ': `${i+1}. `;
         const div = document.createElement('div');
         div.className = 'rank-item';
-                div.innerHTML = `
+        div.innerHTML = `
             <div class="rank-info">
                 <span class="rank-nick">${icon}${u.nick}</span>
                 <span class="rank-id">(${u.id})</span>
@@ -814,10 +829,11 @@
         `;
         // 🔥 클릭 시 상세 기록 모달 오픈
         div.onclick = () => window.showUserHistory(u.id, u.nick);
-     con.appendChild(div);
+        con.appendChild(div);
     });
   };
- // 🔥 [신규] 유저 상세 기록 모달 열기
+
+  // 🔥 [신규] 유저 상세 기록 모달 열기
   window.showUserHistory = (userId, userNick) => {
       const modal = document.getElementById('history-modal');
       const listContainer = document.getElementById('history-list');
