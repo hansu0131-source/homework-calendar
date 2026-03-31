@@ -23,6 +23,10 @@
     /* 기록실 전용 색상 */
     --strawberry-milk-bg: #ffeef4;
     --deep-pink-text: #e91e63;
+
+    /* 금액별 배경색 (복구) */
+    --lv0: #FFFFFF; --lv1: #FFF5F8; --lv2: #FFF0F5; --lv3: #FFEBF2; --lv4: #FFE0EB;
+    --lv5: #FFD9E4; --lv6: #FFC9D9; --lv7: #FFB6CB; --lv8: #FFA3BE; --lv9: #FF80A6;
   }
 
   body { 
@@ -90,6 +94,8 @@
   }
   .nick-btn:hover { transform: translateY(-3px); box-shadow: 0 5px 12px rgba(240, 98, 146, 0.15); }
   .nick-btn.active { border-color: var(--dark-pink); box-shadow: 0 0 0 2px var(--dark-pink) inset; color: var(--dark-pink);}
+  
+  /* 닉네임 버튼 상태별 색상 */
   .nick-btn.status-todo { background: #ffebee; color: #d32f2f; border-color: #ffcdd2; }
   .nick-btn.status-bangsel, .nick-btn.status-partial { background: #fff3e0; color: #f57c00; border-color: #ffe0b2; }
   .nick-btn.status-note { background: #fff8e1; color: #fbc02d; border-color: #ffecb3; }
@@ -113,6 +119,7 @@
   .card-actions { display: flex; gap: 10px; }
   .icon-btn { width: 36px; height: 36px; border-radius: 10px; border: 2px solid #eee; background: white; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 18px; transition: all 0.2s; }
   .icon-btn:hover { background: #f5f5f5; transform: translateY(-2px); box-shadow: 0 3px 8px rgba(0,0,0,0.05); }
+  .icon-btn.clone { color: #4caf50; border-color: #c8e6c9; }
   .icon-btn.edit { color: #2196f3; border-color: #bbdefb; }
   .icon-btn.del { color: #f44336; border-color: #ffcdd2; }
   .icon-btn.close { color: #757575; border-color: #e0e0e0; }
@@ -128,18 +135,25 @@
   .status-control { margin-top: 25px; border-top: 3px dotted var(--border-pink); padding-top: 25px; }
   .status-options { display: flex; gap: 10px; justify-content: center; margin-bottom: 20px; flex-wrap: wrap; }
   .status-radio { display: none; }
-  .status-label { padding: 8px 15px; border-radius: 25px; cursor: pointer; font-size: 14px; font-weight: bold; color: #777; background: #eee; transition: all 0.3s; display: flex; align-items: center; gap: 5px; }  
+  .status-label { padding: 8px 15px; border-radius: 25px; cursor: pointer; font-size: 14px; font-weight: bold; color: #777; background: #eee; transition: all 0.3s; display: flex; align-items: center; gap: 5px; }
+  
+  /* 라디오 버튼 호버/클릭 색상 */
   input[type="radio"]:checked + .status-label.lbl-todo { background: #ff8a80; color: white; box-shadow: 0 4px 10px rgba(255, 138, 128, 0.3); transform: translateY(-2px); }
   input[type="radio"]:checked + .status-label.lbl-bangsel { background: #ffb74d; color: white; box-shadow: 0 4px 10px rgba(255, 183, 77, 0.3); transform: translateY(-2px); }
   input[type="radio"]:checked + .status-label.lbl-note { background: #ffd54f; color: white; box-shadow: 0 4px 10px rgba(255, 213, 79, 0.3); transform: translateY(-2px); text-shadow: 0 0 1px rgba(0,0,0,0.2); }
   input[type="radio"]:checked + .status-label.lbl-reversefan { background: #4fc3f7; color: white; box-shadow: 0 4px 10px rgba(79, 195, 247, 0.3); transform: translateY(-2px); }
-  input[type="radio"]:checked + .status-label.lbl-done { background: #81c784; color: white; box-shadow: 0 4px 10px rgba(129, 199, 132, 0.3); transform: translateY(-2px); }  .memo-input { width: 100%; box-sizing: border-box; padding: 18px; border: 2px solid var(--border-pink); border-radius: var(--radius-soft); font-size: 15px; resize: vertical; min-height: 80px; margin-bottom: 15px; background: #fff; transition: border-color 0.2s; }
+  input[type="radio"]:checked + .status-label.lbl-done { background: #81c784; color: white; box-shadow: 0 4px 10px rgba(129, 199, 132, 0.3); transform: translateY(-2px); }
+  
+  .memo-input { width: 100%; box-sizing: border-box; padding: 18px; border: 2px solid var(--border-pink); border-radius: var(--radius-soft); font-size: 15px; resize: vertical; min-height: 80px; margin-bottom: 15px; background: #fff; transition: border-color 0.2s; }
   .memo-input:focus { border-color: var(--dark-pink); }
-
-  .btn-note { display: flex; justify-content: center; align-items: center; gap: 10px; width: 100%; box-sizing: border-box; background-color: #ffd54f; color: #fff; border: none; padding: 16px; border-radius: var(--radius-soft); text-decoration: none; font-weight: bold; font-size: 16px; box-shadow: 0 6px 15px rgba(255, 213, 79, 0.3); margin-bottom: 10px; transition: all 0.2s; text-shadow: 0 0 2px rgba(0,0,0,0.1); }
-  .btn-note:hover { background-color: #ffca28; transform: translateY(-3px); }
+  
   .btn-soop { display: flex; justify-content: center; align-items: center; gap: 10px; width: 100%; box-sizing: border-box; background-color: var(--accent-blue); color: white; border: none; padding: 16px; border-radius: var(--radius-soft); text-decoration: none; font-weight: bold; font-size: 16px; box-shadow: 0 6px 15px rgba(174, 217, 224, 0.3); margin-bottom: 15px; transition: all 0.2s; }
   .btn-soop:hover { background-color: #9ad0d8; transform: translateY(-3px); }
+  
+  /* 쪽지 보내기 버튼 디자인 */
+  .btn-note { display: flex; justify-content: center; align-items: center; gap: 10px; width: 100%; box-sizing: border-box; background-color: #ffd54f; color: #fff; border: none; padding: 16px; border-radius: var(--radius-soft); text-decoration: none; font-weight: bold; font-size: 16px; box-shadow: 0 6px 15px rgba(255, 213, 79, 0.3); margin-bottom: 10px; transition: all 0.2s; text-shadow: 0 0 2px rgba(0,0,0,0.1); }
+  .btn-note:hover { background-color: #ffca28; transform: translateY(-3px); }
+
   .soop-icon { width: 22px; height: 22px; fill: white; }
   .btn-complete { width: 100%; box-sizing: border-box; background: var(--dark-pink); border: none; color: white; padding: 16px; border-radius: var(--radius-soft); cursor: pointer; font-size: 16px; font-weight: bold; box-shadow: 0 6px 15px rgba(240, 98, 146, 0.3); transition: all 0.2s; }
   .btn-complete:hover { background-color: #d81b60; transform: translateY(-3px); }
@@ -199,7 +213,7 @@
   /* ==========================================================================
      [페이지 2] 낭플단 기록실
      ========================================================================== */
-  .season-layout { max-width: 1200px; margin: 0 auto; background: var(--container-bg); border-radius: var(--radius-round); padding: 35px; box-shadow: var(--shadow-soft); border: 3px solid #fff; }
+  .season-layout { max-width: 1650px; margin: 0 auto; background: var(--container-bg); border-radius: var(--radius-round); padding: 35px; box-shadow: var(--shadow-soft); border: 3px solid #fff; }
   
   .record-header-area { text-align: center; margin-bottom: 30px; }
   .record-header-area h2 { margin: 0 0 15px 0; font-size: 1.8rem; display: flex; align-items: center; justify-content: center; gap: 10px; color: var(--deep-pink-text); }
@@ -229,9 +243,9 @@
   .header-row .record-cell { font-weight: 800; color: #880e4f; border: none; font-size: 16px; }
 
   .record-row {
-    display: flex; background: var(--strawberry-milk-bg);
+    display: flex; background: white;
     border-bottom: 1px solid #eee; 
-    padding: 2px 0; 
+    padding: 4px 0; 
     transition: all 0.2s ease; align-items: center;
   }
   .record-row.data-row:hover { transform: scale(1.002); z-index: 5; box-shadow: 0 4px 12px rgba(0,0,0,0.05); } 
@@ -243,7 +257,7 @@
 
   .record-cell {
     padding: 4px 4px;
-    font-size: 17px; text-align: center;
+    font-size: 14px; text-align: center;
     border-right: 1px solid rgba(0,0,0,0.05); outline: none; 
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     display: flex; justify-content: center; align-items: center; 
@@ -253,12 +267,11 @@
   .record-cell:last-child { border-right: none; }
   .record-cell[contenteditable="true"]:focus { background: #fff; box-shadow: inset 0 0 0 2px var(--dark-pink); border-radius: 4px; }
 
-  /* 🔥 [수정] 통합된 '기여도' 열 너비 조정 */
+  /* 기여도 통합 및 기본 스타일 유지 */
   .col-id { width: 10%; }
   .col-nick { width: 11%; font-weight: 600; }
-  .col-amt { width: 10%; font-weight: 600; color: #d81b60;} /* 통합된 기여도 (너비 확장) */
-  /* .col-one 삭제됨 */
-  .col-promise { width: 50%; text-align: center; justify-content: center; } 
+  .col-amt { width: 16%; font-weight: 600; color: #d81b60; } 
+  .col-promise { width: 44%; text-align: center; justify-content: center; } 
   .col-reverse { width: 8%; } 
   .col-note { width: 6%; color: #999; font-size: 13px; }
   .col-action { width: 5%; }
@@ -305,7 +318,7 @@
 <div id="page-calendar" class="page-section active">
   <div class="wrapper">
     <div class="sidebar">
-      <div class="sidebar-title">🐰 날짜별 기록</div>
+      <div class="sidebar-title" style="font-weight:bold; margin-bottom:15px; color:var(--dark-pink);">🐰 날짜별 기록</div>
       <div id="sidebar-list"></div>
     </div>
 
@@ -352,6 +365,7 @@
             <span class="user-id" id="detail-id">id_placeholder</span>
           </div>
           <div class="card-actions">
+            <button class="icon-btn clone" onclick="cloneCalendarTask()" title="복제">📋</button>
             <button class="icon-btn edit" onclick="openEditForm()" title="수정">✏️</button>
             <button class="icon-btn del" onclick="deleteTask()" title="삭제">🗑</button>
             <button class="icon-btn close" onclick="closeDetail()">X</button>
@@ -371,30 +385,29 @@
           <span class="task-label">📝 숙제 내용</span>
           <div class="task-content" id="detail-content">내용</div>
           <div class="status-control">
-          <div class="status-options">
+            <div class="status-options">
               <input type="radio" name="status" id="st-todo" value="todo" onchange="saveTaskStatus(false)">
               <label for="st-todo" class="status-label lbl-todo">🔴 대기</label>
-
+              
               <input type="radio" name="status" id="st-bangsel" value="bangsel" onchange="saveTaskStatus(false)">
               <label for="st-bangsel" class="status-label lbl-bangsel">🟠 방셀</label>
-
+              
               <input type="radio" name="status" id="st-note" value="note" onchange="saveTaskStatus(false)">
               <label for="st-note" class="status-label lbl-note">🟡 쪽지</label>
-
+              
               <input type="radio" name="status" id="st-reversefan" value="reversefan" onchange="saveTaskStatus(false)">
               <label for="st-reversefan" class="status-label lbl-reversefan">🔵 역팬</label>
-
+              
               <input type="radio" name="status" id="st-done" value="done" onchange="saveTaskStatus(false)">
               <label for="st-done" class="status-label lbl-done">🟢 완료</label>
             </div>
             <textarea id="detail-memo" class="memo-input" placeholder="메모를 입력하세요 (입력 후 밖을 클릭하면 자동 저장)" onblur="saveTaskStatus(false)"></textarea>
           </div>
         </div>
-
+        
         <a href="#" target="_blank" class="btn-note" id="detail-note-link">
           💌 쪽지 보내기
         </a>
-
         <a href="#" target="_blank" class="btn-soop" id="detail-link">
           <svg class="soop-icon" viewBox="0 0 24 24"><path d="M21 3H3C1.89543 3 1 3.89543 1 5V17C1 18.1046 1.89543 19 3 19H8V21H16V19H21C22.1046 19 23 18.1046 23 17V5C23 3.89543 22.1046 3 21 3ZM21 17H3V5H21V17Z" /></svg>
           SOOP 방송국 바로가기
@@ -404,7 +417,7 @@
     </div>
 
     <div class="sidebar-right">
-      <div class="sidebar-title">🥕 누적 숙제 랭킹</div>
+      <div class="sidebar-title" style="font-weight:bold; margin-bottom:15px; color:var(--dark-pink);">🥕 누적 숙제 랭킹</div>
       <div id="total-rank-list"></div>
     </div>
   </div>
@@ -448,7 +461,7 @@
             <div class="record-cell col-id">합계</div>
             <div class="record-cell col-nick" id="sum-count" style="color:var(--deep-pink-text);">0명</div>
             <div class="record-cell col-amt" id="sum-nang" style="font-weight:900; color:var(--deep-pink-text);">0</div>
-            <div class="record-cell col-promise"></div>
+            <div class="record-cell col-promise" id="sum-total" style="font-weight:900; color:var(--deep-pink-text); justify-content: center; padding-left:0; font-size:16px;">0</div>
             <div class="record-cell col-reverse" id="sum-reverse" style="font-weight:900; color:var(--deep-pink-text);">0</div>
             <div class="record-cell col-note"></div>
             <div class="record-cell col-action"></div>
@@ -512,7 +525,6 @@
     }
   });
 
-  // Safety Timeout
   setTimeout(() => {
       const overlay = document.getElementById('loading-overlay');
       if(overlay && overlay.style.display !== 'none') {
@@ -567,7 +579,6 @@
     document.getElementById('season-content-area').style.display = 'block';
   };
 
-  // 🔥 [복구] 금액별 색상 함수
   function getLevelColor(amount) {
       const num = parseInt(amount) || 0;
       if(num >= 300000) return 'var(--lv9)';
@@ -593,13 +604,12 @@
     list.forEach((item, index) => {
         if(item.id || item.nick) count++;
 
-        const amt = parseInt(item.amount || 0); // 이제 이게 '기여도'
+        const amt = parseInt(item.amount || 0); 
         const rev = parseInt(item.reverse || 0);
         
         totalNang += amt;
         totalReverse += rev;
         
-        // 🔥 [복구] 배경색 적용
         const bgColor = getLevelColor(amt);
         const row = document.createElement('div');
         row.className = 'record-row data-row';
@@ -646,7 +656,6 @@
     if(!window.seasonData[seasonName][index]) return;
     window.seasonData[seasonName][index][field] = val;
 
-    // 🔥 [복구] 입력 즉시 배경색 변경
     if(field === 'amount') {
         const row = element.closest('.record-row');
         row.style.background = getLevelColor(val);
@@ -702,7 +711,6 @@
     window.saveSeason();
   };
 
-  // 🔥 [수정] 엑셀 붙여넣기 (열 감소 반영)
   document.addEventListener('paste', (e) => {
     if(!document.getElementById('page-record').classList.contains('active')) return;
     if(!window.currentSeasonName) return;
@@ -724,7 +732,6 @@
             id: cols[0] || '',
             nick: cols[1] || '',
             amount: (cols[2] || '').replace(/[^0-9]/g, ''), 
-            // cols[3] was oneplus, now mapped to promise
             promise: cols[3] || '',
             reverse: (cols[4] || '').replace(/[^0-9]/g, ''),
             note: cols[5] || ''
@@ -767,7 +774,6 @@
     }
   };
 
-  // 🔥 2개월 점프 버그 수정
   window.changeMonth = (step) => { 
       window.currentDate.setDate(1); 
       window.currentDate.setMonth(window.currentDate.getMonth()+step); 
@@ -784,12 +790,11 @@
     document.getElementById('add-form').style.display='none';
   };
 
-window.renderNickList = (list) => {
+  window.renderNickList = (list) => {
     const con = document.getElementById('nick-list-container'); con.innerHTML = '';
     if(!list.length) { con.innerHTML = '<div style="grid-column:span 3; text-align:center; color:#ccc;">없음</div>'; return; }
     list.forEach((task, idx) => {
         const btn = document.createElement('button');
-        // 예전 'partial' 데이터를 'bangsel' 색상으로 호환되게 처리
         let st = task.status || 'todo';
         if(st === 'partial') st = 'bangsel';
         btn.className = `nick-btn status-${st}`;
@@ -798,6 +803,7 @@ window.renderNickList = (list) => {
         con.appendChild(btn);
     });
   };
+
   window.renderSidebar = () => {
     const con = document.getElementById('sidebar-list'); con.innerHTML = '';
     Object.keys(window.homeworkData).sort().reverse().forEach(key => {
@@ -811,17 +817,14 @@ window.renderNickList = (list) => {
     });
   };
 
-  // 🔥 [수정됨] 랭킹 로직: ID 기준 합산 & 클릭 시 상세 보기
   window.renderTotalRanking = () => {
     const con = document.getElementById('total-rank-list'); 
     con.innerHTML = '';
-    const counts = {}; // { id: {nick, count} }
+    const counts = {}; 
 
-    // 모든 날짜의 숙제를 순회하며 ID 기준으로 카운트 합산
     Object.keys(window.homeworkData).forEach(d => {
         window.homeworkData[d].forEach(t => {
             if(!t.id) return;
-            // 해당 ID가 처음 발견되면 초기화 (첫 번째 발견된 닉네임 사용)
             if(!counts[t.id]) {
                 counts[t.id] = { nick: t.nick, id: t.id, count: 0 };
             }
@@ -829,7 +832,6 @@ window.renderNickList = (list) => {
         });
     });
 
-    // 개수 내림차순 정렬
     const sorted = Object.values(counts).sort((a,b) => b.count - a.count);
 
     if(!sorted.length) { 
@@ -848,13 +850,11 @@ window.renderNickList = (list) => {
             </div>
             <div class="rank-badge">${u.count}개</div>
         `;
-        // 🔥 클릭 시 상세 기록 모달 오픈
         div.onclick = () => window.showUserHistory(u.id, u.nick);
         con.appendChild(div);
     });
   };
 
-  // 🔥 [신규] 유저 상세 기록 모달 열기
   window.showUserHistory = (userId, userNick) => {
       const modal = document.getElementById('history-modal');
       const listContainer = document.getElementById('history-list');
@@ -863,7 +863,6 @@ window.renderNickList = (list) => {
       title.innerText = `${userNick}님의 숙제 기록`;
       listContainer.innerHTML = '';
 
-      // 전체 데이터에서 해당 ID의 숙제 찾기
       const history = [];
       Object.keys(window.homeworkData).forEach(date => {
           window.homeworkData[date].forEach(task => {
@@ -873,7 +872,6 @@ window.renderNickList = (list) => {
           });
       });
 
-      // 날짜 내림차순 정렬 (최신순)
       history.sort((a, b) => new Date(b.date) - new Date(a.date));
 
       if(history.length === 0) {
@@ -886,35 +884,28 @@ window.renderNickList = (list) => {
                   <span class="history-date">${item.date}</span>
                   <span class="history-content">${item.content}</span>
               `;
-              // 🔥 [추가] 상세 이동 기능 연결
               div.onclick = () => window.goToDateFromHistory(item.date);
               listContainer.appendChild(div);
           });
       }
-
       modal.style.display = 'flex';
   };
 
-  // 🔥 [신규] 상세 날짜로 이동 함수
   window.goToDateFromHistory = (dateKey) => {
-      window.closeHistoryModal(); // 1. 팝업 닫기
+      window.closeHistoryModal(); 
       
-      // 2. 날짜 파싱 및 캘린더 이동
       const [y, m, d] = dateKey.split('-').map(Number);
-      window.currentDate = new Date(y, m - 1, 1); // 해당 월 1일로 설정
-      window.renderCalendar(); // 달력 갱신
+      window.currentDate = new Date(y, m - 1, 1); 
+      window.renderCalendar(); 
 
-      // 3. 리스트 선택 및 이동
-      window.selectDate(dateKey); // 해당 날짜 클릭 효과
+      window.selectDate(dateKey); 
       
-      // 4. 스크롤 이동 (부드럽게)
       const targetSection = document.getElementById('nickname-view');
       if (targetSection) {
           targetSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }
   };
 
-  // 🔥 [신규] 모달 닫기
   window.closeHistoryModal = () => {
       document.getElementById('history-modal').style.display = 'none';
   };
@@ -933,6 +924,30 @@ window.renderNickList = (list) => {
     btn.classList.remove('edit-mode');
   };
 
+  // 🔥 [복사 기능 추가]
+  window.cloneCalendarTask = () => {
+    const task = window.homeworkData[window.selectedDateKey][window.currentTaskIndex];
+    window.isEditMode = false; // 복제는 '새로운 등록' 취급
+    
+    document.getElementById('add-form').style.display = 'block';
+    document.getElementById('new-date').value = window.selectedDateKey; 
+    document.getElementById('new-nick').value = task.nick;
+    document.getElementById('new-id').value = task.id;
+    document.getElementById('new-amount').value = task.amount;
+    document.getElementById('new-reverse').value = task.reverse;
+    document.getElementById('new-content').value = task.content;
+    
+    const ratio = (task.amount > 0) ? (task.reverse / task.amount) : 0.03;
+    if(ratio >= 0.09) document.querySelector('input[name="calc-ratio"][value="0.10"]').checked = true;
+    else if(ratio >= 0.04) document.querySelector('input[name="calc-ratio"][value="0.05"]').checked = true;
+    else document.querySelector('input[name="calc-ratio"][value="0.03"]').checked = true;
+
+    const btn = document.getElementById('btn-submit');
+    btn.innerText = "복제본 등록 💖";
+    btn.classList.remove('edit-mode');
+    document.getElementById('detail-card').style.display = 'none';
+  };
+
   window.openEditForm = () => {
     window.isEditMode = true;
     const task = window.homeworkData[window.selectedDateKey][window.currentTaskIndex];
@@ -943,10 +958,12 @@ window.renderNickList = (list) => {
     document.getElementById('new-amount').value = task.amount;
     document.getElementById('new-reverse').value = task.reverse;
     document.getElementById('new-content').value = task.content;
+    
     const ratio = (task.amount > 0) ? (task.reverse / task.amount) : 0.03;
     if(ratio >= 0.09) document.querySelector('input[name="calc-ratio"][value="0.10"]').checked = true;
-    else if(ratio >= 0.04) document.querySelector('input[name="calc-ratio"][value="0.05"]').checked = true; // 5% 조건 추가
+    else if(ratio >= 0.04) document.querySelector('input[name="calc-ratio"][value="0.05"]').checked = true;
     else document.querySelector('input[name="calc-ratio"][value="0.03"]').checked = true;
+
     const btn = document.getElementById('btn-submit');
     btn.innerText = "수정 완료 🔄";
     btn.classList.add('edit-mode');
@@ -1004,13 +1021,13 @@ window.renderNickList = (list) => {
     document.getElementById('detail-reverse').innerText = parseInt(task.reverse).toLocaleString();
     document.getElementById('detail-content').innerText = task.content;
     document.getElementById('detail-memo').value = task.memo || '';
+    
     const radios = document.getElementsByName('status');
     let currentStatus = task.status || 'todo';
-    if(currentStatus === 'partial') currentStatus = 'bangsel'; // 예전 데이터 호환
+    if(currentStatus === 'partial') currentStatus = 'bangsel';
     for(let r of radios) { r.checked = (r.value === currentStatus); }
-    // 방송국 URL 세팅
+    
     document.getElementById('detail-link').href = `https://www.sooplive.co.kr/station/${task.id}`;
-    // 쪽지 보내기 URL 세팅
     document.getElementById('detail-note-link').href = `https://m.sooplive.co.kr/#/note/write2/${task.id}`;
   };
 
