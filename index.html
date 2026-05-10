@@ -1027,8 +1027,8 @@
     if(currentStatus === 'partial') currentStatus = 'bangsel';
     for(let r of radios) { r.checked = (r.value === currentStatus); }
     
-    document.getElementById('detail-link').href = `https://www.sooplive.co.kr/station/${task.id}`;
-    document.getElementById('detail-note-link').href = `https://m.sooplive.co.kr/#/note/write2/${task.id}`;
+    document.getElementById('detail-link').href = `https://www.sooplive.com/station/${task.id}`;
+    document.getElementById('detail-note-link').href = `https://m.sooplive.com/#/note/write2/${task.id}`;
   };
 
   window.saveTaskStatus = (showMsg=false) => {
