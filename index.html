@@ -1,0 +1,2112 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#ef5f8f">
+  <meta name="description" content="낭니의 숙제 관리">
+  <title>낭니 숙제 관리실</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #fff8f9;
+      --surface: #ffffff;
+      --surface-soft: #fff1f4;
+      --surface-strong: #ffe5eb;
+      --ink: #29252a;
+      --muted: #6f6870;
+      --line: #efdce1;
+      --primary: #d93f76;
+      --primary-strong: #b9275f;
+      --primary-soft: #ffe0e9;
+      --mint: #dff5ee;
+      --blue: #dff1fb;
+      --yellow: #fff1c7;
+      --danger: #bf2f45;
+      --danger-soft: #ffeaed;
+      --success: #247a54;
+      --warning: #995c00;
+      --focus: #2767d8;
+      --shadow-sm: 0 7px 22px rgba(96, 54, 69, 0.08);
+      --shadow-md: 0 18px 48px rgba(96, 54, 69, 0.13);
+      --radius-sm: 12px;
+      --radius-md: 18px;
+      --radius-lg: 26px;
+      --content: 1560px;
+      --lv0: #ffffff;
+      --lv1: #fff7f9;
+      --lv2: #fff1f5;
+      --lv3: #ffebf1;
+      --lv4: #ffe4ed;
+      --lv5: #ffdae6;
+      --lv6: #ffccdc;
+      --lv7: #ffbbd0;
+      --lv8: #ffa5bf;
+      --lv9: #ff8fac;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      min-width: 320px;
+      background:
+        radial-gradient(circle at 12% 8%, rgba(255, 201, 214, 0.34), transparent 26rem),
+        radial-gradient(circle at 92% 0%, rgba(217, 239, 248, 0.5), transparent 27rem),
+        var(--bg);
+      color: var(--ink);
+      font-family: Pretendard, "Noto Sans KR", "Malgun Gothic", system-ui, -apple-system, sans-serif;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+    body.is-modal-open { overflow: hidden; }
+    button, input, textarea { font: inherit; }
+    button, a, input, textarea { -webkit-tap-highlight-color: transparent; }
+    button { color: inherit; }
+    a { color: inherit; }
+    [hidden] { display: none !important; }
+
+    :focus-visible {
+      outline: 3px solid var(--focus);
+      outline-offset: 3px;
+    }
+    .skip-link {
+      position: fixed;
+      top: 10px;
+      left: 10px;
+      z-index: 10000;
+      padding: 10px 14px;
+      border-radius: 10px;
+      background: var(--ink);
+      color: #fff;
+      transform: translateY(-150%);
+      transition: transform .18s ease;
+    }
+    .skip-link:focus { transform: translateY(0); }
+    .sr-only {
+      position: absolute !important;
+      width: 1px !important;
+      height: 1px !important;
+      padding: 0 !important;
+      margin: -1px !important;
+      overflow: hidden !important;
+      clip: rect(0, 0, 0, 0) !important;
+      white-space: nowrap !important;
+      border: 0 !important;
+    }
+
+    .app-header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      border-bottom: 1px solid rgba(226, 198, 207, .78);
+      background: rgba(255, 248, 249, .86);
+      backdrop-filter: blur(16px);
+    }
+    .header-inner {
+      max-width: var(--content);
+      min-height: 74px;
+      margin: 0 auto;
+      padding: 10px clamp(16px, 3vw, 36px);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+    .brand-mark {
+      width: 46px;
+      height: 46px;
+      display: grid;
+      place-items: center;
+      flex: 0 0 auto;
+      border-radius: 16px;
+      background: linear-gradient(145deg, #fff, #ffdce6);
+      box-shadow: var(--shadow-sm);
+      font-size: 25px;
+    }
+    .brand-copy { min-width: 0; }
+    .brand-copy strong {
+      display: block;
+      font-size: 17px;
+      line-height: 1.2;
+      letter-spacing: -.02em;
+    }
+    .brand-copy span {
+      display: block;
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: 12px;
+      white-space: nowrap;
+    }
+    .sync-area {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+    .sync-pill {
+      min-height: 34px;
+      padding: 7px 11px;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, .9);
+      white-space: nowrap;
+    }
+    .sync-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #b0a9ae;
+      box-shadow: 0 0 0 4px rgba(176, 169, 174, .13);
+    }
+    .sync-pill[data-state="online"] .sync-dot { background: #2f9368; box-shadow: 0 0 0 4px rgba(47, 147, 104, .13); }
+    .sync-pill[data-state="saving"] .sync-dot { background: #d58b00; box-shadow: 0 0 0 4px rgba(213, 139, 0, .13); animation: pulse 1s infinite; }
+    .sync-pill[data-state="error"] .sync-dot,
+    .sync-pill[data-state="offline"] .sync-dot { background: #cf3d50; box-shadow: 0 0 0 4px rgba(207, 61, 80, .13); }
+
+    .page {
+      max-width: var(--content);
+      margin: 0 auto;
+      padding: 26px clamp(14px, 3vw, 36px) 56px;
+    }
+    .hero {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 24px;
+      margin: 4px 0 22px;
+    }
+    .eyebrow {
+      margin: 0 0 7px;
+      color: var(--primary-strong);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+    .hero h1 {
+      margin: 0;
+      font-size: clamp(27px, 4vw, 43px);
+      line-height: 1.13;
+      letter-spacing: -.045em;
+    }
+    .hero p {
+      max-width: 620px;
+      margin: 10px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+    .tablist {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 5px;
+      border: 1px solid var(--line);
+      border-radius: 17px;
+      background: rgba(255, 255, 255, .88);
+      box-shadow: var(--shadow-sm);
+    }
+    .tab {
+      min-height: 44px;
+      padding: 10px 17px;
+      border: 0;
+      border-radius: 12px;
+      background: transparent;
+      color: var(--muted);
+      font-weight: 800;
+      cursor: pointer;
+      transition: background .18s ease, color .18s ease, transform .18s ease;
+    }
+    .tab:hover { color: var(--primary-strong); }
+    .tab[aria-selected="true"] {
+      background: var(--primary);
+      color: #fff;
+      box-shadow: 0 8px 18px rgba(217, 63, 118, .23);
+    }
+    .tab:active { transform: translateY(1px); }
+    .panel[hidden] { display: none; }
+
+    .card {
+      border: 1px solid rgba(231, 207, 214, .9);
+      border-radius: var(--radius-lg);
+      background: rgba(255, 255, 255, .94);
+      box-shadow: var(--shadow-sm);
+    }
+    .card-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .card-title {
+      margin: 0;
+      font-size: 15px;
+      letter-spacing: -.02em;
+    }
+    .subtle { color: var(--muted); }
+
+    .calendar-shell {
+      display: grid;
+      grid-template-columns: 250px minmax(0, 1fr) 270px;
+      grid-template-areas: "dates calendar ranking";
+      gap: 18px;
+      align-items: start;
+    }
+    .date-card { grid-area: dates; padding: 20px; position: sticky; top: 94px; }
+    .calendar-card { grid-area: calendar; min-width: 0; padding: clamp(17px, 2.5vw, 28px); }
+    .ranking-card { grid-area: ranking; padding: 20px; position: sticky; top: 94px; }
+
+    .calendar-toolbar {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 21px;
+    }
+    .month-title {
+      margin: 0;
+      text-align: center;
+      font-size: clamp(20px, 3vw, 27px);
+      letter-spacing: -.035em;
+    }
+    .month-nav { display: flex; gap: 7px; }
+    .icon-button,
+    .button {
+      min-height: 42px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: #fff;
+      color: var(--ink);
+      font-weight: 800;
+      cursor: pointer;
+      transition: transform .16s ease, border-color .16s ease, background .16s ease, box-shadow .16s ease;
+    }
+    .icon-button {
+      width: 42px;
+      padding: 0;
+      display: inline-grid;
+      place-items: center;
+      font-size: 17px;
+    }
+    .button { padding: 9px 14px; }
+    .button:hover, .icon-button:hover {
+      border-color: #ddaebc;
+      background: #fff9fb;
+      box-shadow: 0 6px 16px rgba(96, 54, 69, .09);
+      transform: translateY(-1px);
+    }
+    .button:active, .icon-button:active { transform: translateY(0); }
+    .button.primary { border-color: var(--primary); background: var(--primary); color: #fff; }
+    .button.primary:hover { border-color: var(--primary-strong); background: var(--primary-strong); }
+    .button.soft { border-color: var(--primary-soft); background: var(--surface-soft); color: var(--primary-strong); }
+    .button.danger { border-color: #efbac3; background: var(--danger-soft); color: var(--danger); }
+    .button.ghost { border-color: transparent; background: transparent; color: var(--muted); box-shadow: none; }
+    .button.small { min-height: 36px; padding: 7px 11px; font-size: 13px; }
+    .button:disabled, .icon-button:disabled { cursor: not-allowed; opacity: .54; transform: none; box-shadow: none; }
+
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, minmax(0, 1fr));
+      gap: 7px;
+    }
+    .weekday {
+      padding: 5px 0 8px;
+      color: var(--muted);
+      text-align: center;
+      font-size: 12px;
+      font-weight: 800;
+    }
+    .weekday:first-child { color: #b42d4d; }
+    .weekday:nth-child(7) { color: #2e6ca9; }
+    .calendar-day {
+      position: relative;
+      min-height: clamp(70px, 7vw, 94px);
+      padding: 9px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: #fff;
+      text-align: left;
+      cursor: pointer;
+      transition: border-color .16s ease, background .16s ease, transform .16s ease, box-shadow .16s ease;
+    }
+    .calendar-day:hover {
+      z-index: 1;
+      border-color: #df9eb1;
+      background: #fff8fa;
+      box-shadow: 0 7px 17px rgba(96, 54, 69, .09);
+      transform: translateY(-2px);
+    }
+    .calendar-day.outside { background: #fbf8f9; color: #aaa3a8; }
+    .calendar-day.today { box-shadow: inset 0 0 0 2px #53a7c8; }
+    .calendar-day.selected { border-color: var(--primary); background: var(--surface-soft); box-shadow: inset 0 0 0 1px var(--primary); }
+    .calendar-day.has-tasks .day-number { color: var(--primary-strong); }
+    .day-number { font-size: 13px; font-weight: 900; }
+    .day-badge {
+      position: absolute;
+      right: 7px;
+      bottom: 7px;
+      min-width: 25px;
+      padding: 4px 7px;
+      border-radius: 999px;
+      background: var(--primary);
+      color: #fff;
+      text-align: center;
+      font-size: 11px;
+      font-weight: 900;
+    }
+    .day-statuses {
+      position: absolute;
+      left: 9px;
+      bottom: 10px;
+      display: flex;
+      gap: 3px;
+    }
+    .status-dot { width: 6px; height: 6px; border-radius: 50%; background: #c0b9bd; }
+    .status-dot.todo { background: #db4660; }
+    .status-dot.bangsel { background: #e59522; }
+    .status-dot.note { background: #d2a400; }
+    .status-dot.reversefan { background: #348aca; }
+    .status-dot.done { background: #3b956b; }
+
+    .selected-date-section {
+      margin-top: 24px;
+      padding-top: 22px;
+      border-top: 1px solid var(--line);
+    }
+    .selected-date-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+    .selected-date-head h3 { margin: 0; font-size: 18px; }
+    .task-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 10px;
+    }
+    .task-chip {
+      min-height: 76px;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: #fff;
+      text-align: left;
+      cursor: pointer;
+      transition: transform .16s ease, box-shadow .16s ease, border-color .16s ease;
+    }
+    .task-chip:hover { border-color: #daa5b4; box-shadow: var(--shadow-sm); transform: translateY(-2px); }
+    .task-chip strong, .task-chip span { display: block; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .task-chip strong { font-size: 14px; }
+    .task-chip span { margin-top: 5px; color: var(--muted); font-size: 12px; }
+    .task-chip[data-status="todo"] { background: #fff1f3; border-color: #f4c5cc; }
+    .task-chip[data-status="bangsel"] { background: #fff5e8; border-color: #f1d4a7; }
+    .task-chip[data-status="note"] { background: #fff9df; border-color: #ebdca1; }
+    .task-chip[data-status="reversefan"] { background: #edf7fd; border-color: #c4e2f3; }
+    .task-chip[data-status="done"] { background: #edf8f2; border-color: #c7e8d8; }
+
+    .compact-list { display: grid; gap: 7px; }
+    .compact-button {
+      width: 100%;
+      min-height: 48px;
+      padding: 9px 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      border: 1px solid transparent;
+      border-radius: 12px;
+      background: #fff8fa;
+      cursor: pointer;
+      text-align: left;
+    }
+    .compact-button:hover { border-color: #e4b6c3; background: #fff1f5; }
+    .compact-button strong { font-size: 13px; }
+    .compact-button small { display: block; margin-top: 2px; color: var(--muted); }
+    .count-badge {
+      min-width: 31px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: #fff;
+      color: var(--primary-strong);
+      text-align: center;
+      font-size: 11px;
+      font-weight: 900;
+      box-shadow: inset 0 0 0 1px var(--line);
+    }
+    .empty-state {
+      padding: 25px 14px;
+      border: 1px dashed #ddc8ce;
+      border-radius: 14px;
+      background: #fffbfc;
+      color: var(--muted);
+      text-align: center;
+      font-size: 13px;
+    }
+    .rank-number {
+      width: 27px;
+      flex: 0 0 auto;
+      color: var(--primary-strong);
+      font-weight: 900;
+    }
+    .rank-copy { min-width: 0; flex: 1; }
+    .rank-copy strong, .rank-copy small { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+    .record-card { overflow: hidden; }
+    .record-hero {
+      padding: clamp(20px, 3vw, 32px);
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 20px;
+      border-bottom: 1px solid var(--line);
+      background: linear-gradient(130deg, #fff, #fff0f4 58%, #edf8fb);
+    }
+    .record-hero h2 { margin: 0; font-size: clamp(23px, 3vw, 32px); letter-spacing: -.04em; }
+    .record-hero p { max-width: 730px; margin: 8px 0 0; color: var(--muted); font-size: 13px; }
+    .search-box { width: min(100%, 360px); flex: 0 1 360px; }
+    .field-input,
+    .field-textarea,
+    .table-input {
+      width: 100%;
+      border: 1px solid #dbcbd0;
+      border-radius: 12px;
+      background: #fff;
+      color: var(--ink);
+      transition: border-color .16s ease, box-shadow .16s ease, background .16s ease;
+    }
+    .field-input { min-height: 46px; padding: 10px 13px; }
+    .field-textarea { min-height: 96px; padding: 11px 13px; resize: vertical; }
+    .field-input:focus, .field-textarea:focus, .table-input:focus {
+      border-color: var(--focus);
+      box-shadow: 0 0 0 3px rgba(39, 103, 216, .13);
+      outline: none;
+    }
+    .season-bar {
+      padding: 15px clamp(16px, 3vw, 28px);
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      border-bottom: 1px solid var(--line);
+      overflow-x: auto;
+      scrollbar-width: thin;
+    }
+    .season-tab {
+      flex: 0 0 auto;
+      min-height: 40px;
+      padding: 8px 13px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: #fff;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+    .season-tab[aria-selected="true"] { border-color: var(--primary); background: var(--primary); color: #fff; }
+    .record-tools {
+      padding: 16px clamp(16px, 3vw, 28px);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      border-bottom: 1px solid var(--line);
+    }
+    .tool-group { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+    .paste-hint { color: var(--muted); font-size: 12px; }
+    .table-wrap { overflow: auto; max-height: min(68vh, 760px); }
+    .record-table {
+      width: 100%;
+      min-width: 990px;
+      border-collapse: separate;
+      border-spacing: 0;
+      font-size: 13px;
+    }
+    .record-table th {
+      position: sticky;
+      top: 0;
+      z-index: 3;
+      padding: 12px 9px;
+      border-bottom: 1px solid #dfcbd2;
+      background: #fff0f4;
+      color: #683242;
+      text-align: center;
+      white-space: nowrap;
+    }
+    .record-table td {
+      padding: 5px;
+      border-bottom: 1px solid rgba(220, 202, 208, .68);
+      vertical-align: middle;
+      transition: background .16s ease;
+    }
+    .record-table tbody tr:hover td { filter: brightness(.992); }
+    .record-table tfoot td {
+      position: sticky;
+      bottom: 0;
+      z-index: 2;
+      padding: 12px 9px;
+      border-top: 1px solid #ddb8c4;
+      border-bottom: 0;
+      background: #fff0f4;
+      color: var(--primary-strong);
+      font-weight: 900;
+      text-align: center;
+    }
+    .table-input {
+      min-height: 37px;
+      padding: 7px 8px;
+      border-color: transparent;
+      background: rgba(255, 255, 255, .7);
+      text-align: center;
+    }
+    .table-input[data-field="promise"] { text-align: left; }
+    .cell-id { width: 130px; }
+    .cell-nick { width: 135px; }
+    .cell-amount { width: 125px; }
+    .cell-promise { min-width: 330px; }
+    .cell-reverse { width: 105px; }
+    .cell-note { width: 115px; }
+    .cell-actions { width: 86px; }
+    .row-actions { display: flex; justify-content: center; gap: 5px; }
+    .row-action {
+      width: 34px;
+      height: 34px;
+      display: grid;
+      place-items: center;
+      border: 1px solid rgba(175, 131, 145, .3);
+      border-radius: 10px;
+      background: rgba(255, 255, 255, .85);
+      cursor: pointer;
+    }
+    .row-action:hover { background: #fff; border-color: #cc91a2; }
+    .record-empty { padding: 42px clamp(18px, 4vw, 50px); }
+
+    dialog {
+      width: min(calc(100% - 26px), 620px);
+      max-height: min(88vh, 820px);
+      padding: 0;
+      border: 1px solid #e5cbd3;
+      border-radius: 24px;
+      background: var(--surface);
+      color: var(--ink);
+      box-shadow: var(--shadow-md);
+      overflow: hidden;
+    }
+    dialog::backdrop { background: rgba(40, 29, 34, .54); backdrop-filter: blur(4px); }
+    .dialog-head {
+      padding: 19px 20px 15px;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      border-bottom: 1px solid var(--line);
+      background: linear-gradient(120deg, #fff, #fff2f5);
+    }
+    .dialog-head h2 { margin: 0; font-size: 21px; letter-spacing: -.03em; }
+    .dialog-head p { margin: 5px 0 0; color: var(--muted); font-size: 12px; }
+    .dialog-body { padding: 20px; overflow-y: auto; max-height: calc(88vh - 78px); }
+    .dialog-actions {
+      margin-top: 19px;
+      display: flex;
+      justify-content: flex-end;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .field { display: grid; gap: 6px; }
+    .field.full { grid-column: 1 / -1; }
+    .field label, .field legend { color: #4f464b; font-size: 12px; font-weight: 800; }
+    .field-help { color: var(--muted); font-size: 11px; }
+    fieldset.field { margin: 0; padding: 0; border: 0; }
+    .ratio-group { display: flex; flex-wrap: wrap; gap: 7px; }
+    .choice-input { position: absolute; opacity: 0; pointer-events: none; }
+    .choice-label {
+      min-height: 40px;
+      padding: 8px 12px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: #fff;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+    .choice-input:focus-visible + .choice-label { outline: 3px solid var(--focus); outline-offset: 2px; }
+    .choice-input:checked + .choice-label { border-color: var(--primary); background: var(--primary); color: #fff; }
+
+    .detail-person {
+      display: flex;
+      align-items: center;
+      gap: 13px;
+      margin-bottom: 17px;
+    }
+    .avatar {
+      width: 50px;
+      height: 50px;
+      display: grid;
+      place-items: center;
+      flex: 0 0 auto;
+      border-radius: 17px;
+      background: var(--surface-strong);
+      font-size: 25px;
+    }
+    .detail-person h3 { margin: 0; font-size: 20px; }
+    .detail-person p { margin: 2px 0 0; color: var(--muted); font-size: 13px; }
+    .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+    .stat {
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: #fff9fb;
+    }
+    .stat span, .stat strong { display: block; }
+    .stat span { color: var(--muted); font-size: 11px; }
+    .stat strong { margin-top: 3px; font-size: 19px; }
+    .detail-content {
+      min-height: 72px;
+      margin-bottom: 15px;
+      padding: 14px;
+      border-radius: 14px;
+      background: var(--surface-soft);
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    .status-group { display: flex; flex-wrap: wrap; gap: 6px; }
+    .status-choice:checked + .choice-label[data-status="todo"] { border-color: #cf3c55; background: #cf3c55; }
+    .status-choice:checked + .choice-label[data-status="bangsel"] { border-color: #c87d12; background: #c87d12; }
+    .status-choice:checked + .choice-label[data-status="note"] { border-color: #a77a00; background: #a77a00; }
+    .status-choice:checked + .choice-label[data-status="reversefan"] { border-color: #277bb9; background: #277bb9; }
+    .status-choice:checked + .choice-label[data-status="done"] { border-color: #2c815b; background: #2c815b; }
+    .link-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 14px; }
+    .external-link { text-decoration: none; text-align: center; }
+    .history-list { display: grid; gap: 9px; }
+    .history-button {
+      width: 100%;
+      padding: 13px;
+      display: grid;
+      gap: 5px;
+      border: 1px solid var(--line);
+      border-radius: 13px;
+      background: #fff;
+      text-align: left;
+      cursor: pointer;
+    }
+    .history-button:hover { background: #fff7fa; border-color: #dda7b7; }
+    .history-button time { color: var(--primary-strong); font-size: 12px; font-weight: 900; }
+    .history-button span { color: #4c4549; font-size: 13px; white-space: normal; word-break: break-word; }
+
+    .loading-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      display: grid;
+      place-items: center;
+      padding: 20px;
+      background: rgba(255, 248, 249, .94);
+      backdrop-filter: blur(8px);
+    }
+    .loading-card {
+      width: min(100%, 360px);
+      padding: 28px;
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      background: #fff;
+      box-shadow: var(--shadow-md);
+      text-align: center;
+    }
+    .loader-mark { font-size: 38px; animation: hop 1.1s ease-in-out infinite; }
+    .loading-card h2 { margin: 10px 0 5px; font-size: 18px; }
+    .loading-card p { margin: 0; color: var(--muted); font-size: 13px; }
+    .loading-card .button { margin-top: 16px; }
+    .toast-region {
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      z-index: 10001;
+      width: min(360px, calc(100% - 36px));
+      display: grid;
+      gap: 8px;
+      pointer-events: none;
+    }
+    .toast {
+      padding: 12px 14px;
+      border: 1px solid rgba(255,255,255,.5);
+      border-radius: 13px;
+      background: #302a2d;
+      color: #fff;
+      box-shadow: var(--shadow-md);
+      font-size: 13px;
+      animation: toast-in .2s ease both;
+    }
+    .toast.success { background: #236f50; }
+    .toast.error { background: #a72e42; }
+
+    @keyframes pulse { 50% { opacity: .42; } }
+    @keyframes hop { 50% { transform: translateY(-7px) rotate(-4deg); } }
+    @keyframes toast-in { from { opacity: 0; transform: translateY(8px); } }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; }
+    }
+
+    @media (max-width: 1180px) {
+      .calendar-shell {
+        grid-template-columns: minmax(0, 1fr) minmax(240px, 320px);
+        grid-template-areas: "calendar calendar" "dates ranking";
+      }
+      .date-card, .ranking-card { position: static; }
+    }
+    @media (max-width: 780px) {
+      .header-inner { min-height: 66px; }
+      .brand-copy span, #last-sync { display: none; }
+      .page { padding-top: 18px; }
+      .hero { align-items: stretch; flex-direction: column; margin-bottom: 16px; }
+      .hero p { font-size: 13px; }
+      .tablist { width: 100%; }
+      .tab { flex: 1; padding-inline: 10px; }
+      .calendar-shell { grid-template-columns: minmax(0, 1fr); grid-template-areas: "calendar" "dates" "ranking"; }
+      .calendar-card, .date-card, .ranking-card { border-radius: 20px; }
+      .calendar-toolbar { grid-template-columns: 1fr auto; }
+      .calendar-toolbar .month-title { grid-column: 1 / -1; grid-row: 1; }
+      .month-nav:first-of-type { grid-column: 1; grid-row: 2; }
+      .month-nav:last-of-type { grid-column: 2; grid-row: 2; }
+      .calendar-day { min-height: 62px; padding: 7px; border-radius: 11px; }
+      .day-badge { right: 5px; bottom: 5px; min-width: 22px; padding: 3px 5px; }
+      .day-statuses { display: none; }
+      .task-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .record-hero { align-items: stretch; flex-direction: column; }
+      .search-box { width: 100%; flex-basis: auto; }
+      .record-tools { align-items: stretch; flex-direction: column; }
+      .record-tools .tool-group { width: 100%; }
+      .paste-hint { order: 2; }
+    }
+    @media (max-width: 520px) {
+      .sync-area { gap: 0; }
+      .sync-pill { padding-inline: 9px; }
+      .sync-label { display: none; }
+      .hero h1 { font-size: 28px; }
+      .calendar-card { padding: 13px; }
+      .calendar-grid { gap: 4px; }
+      .weekday { font-size: 11px; }
+      .calendar-day { min-height: 52px; padding: 6px; }
+      .calendar-day.today { box-shadow: inset 0 0 0 1px #53a7c8; }
+      .day-number { font-size: 12px; }
+      .day-badge { font-size: 9px; }
+      .selected-date-head { align-items: stretch; flex-direction: column; }
+      .task-list { grid-template-columns: 1fr; }
+      .form-grid { grid-template-columns: 1fr; }
+      .field.full { grid-column: auto; }
+      .stats, .link-row { grid-template-columns: 1fr; }
+      .dialog-actions .button { flex: 1 1 auto; }
+      .toast-region { right: 12px; bottom: 12px; width: calc(100% - 24px); }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">본문으로 건너뛰기</a>
+
+  <header class="app-header">
+    <div class="header-inner">
+      <div class="brand" aria-label="낭니의 숙제 관리실">
+        <div class="brand-mark" aria-hidden="true">🐰</div>
+        <div class="brand-copy">
+          <strong>낭니의 숙제 관리실</strong>
+          <span>Calendar · Nangple records</span>
+        </div>
+      </div>
+      <div class="sync-area" aria-live="polite">
+        <span id="last-sync">동기화 준비 중</span>
+        <span id="sync-pill" class="sync-pill" data-state="loading">
+          <span class="sync-dot" aria-hidden="true"></span>
+          <span id="sync-label" class="sync-label">연결 중</span>
+        </span>
+      </div>
+    </div>
+  </header>
+
+  <main id="main-content" class="page">
+    <section class="hero" aria-labelledby="page-title">
+      <div>
+        <p class="eyebrow">HOMEWORK DESK</p>
+        <h1 id="page-title">숙제와 기록을<br>가볍고 또렷하게.</h1>
+        <p>날짜별 숙제, 누적 랭킹, 시즌별 낭플단 기록을 한 화면에서 안전하게 관리하세요.</p>
+      </div>
+      <div class="tablist" role="tablist" aria-label="관리 화면 선택">
+        <button id="tab-calendar" class="tab" type="button" role="tab" aria-selected="true" aria-controls="panel-calendar" tabindex="0">📅 숙제 캘린더</button>
+        <button id="tab-records" class="tab" type="button" role="tab" aria-selected="false" aria-controls="panel-records" tabindex="-1">🍓 낭플단 기록실</button>
+      </div>
+    </section>
+
+    <section id="panel-calendar" class="panel" role="tabpanel" aria-labelledby="tab-calendar">
+      <div class="calendar-shell">
+        <aside class="card date-card" aria-labelledby="date-list-title">
+          <div class="card-head">
+            <h2 id="date-list-title" class="card-title">최근 숙제 날짜</h2>
+            <span id="date-total" class="count-badge">0</span>
+          </div>
+          <div id="date-list" class="compact-list"></div>
+        </aside>
+
+        <section class="card calendar-card" aria-labelledby="month-title">
+          <div class="calendar-toolbar">
+            <div class="month-nav">
+              <button id="prev-month" class="icon-button" type="button" aria-label="이전 달">‹</button>
+              <button id="today-button" class="button small" type="button">오늘</button>
+            </div>
+            <h2 id="month-title" class="month-title" aria-live="polite"></h2>
+            <div class="month-nav">
+              <button id="next-month" class="icon-button" type="button" aria-label="다음 달">›</button>
+            </div>
+          </div>
+          <div id="calendar-grid" class="calendar-grid" role="grid" aria-labelledby="month-title"></div>
+
+          <div class="selected-date-section">
+            <div class="selected-date-head">
+              <div>
+                <p class="eyebrow">SELECTED DATE</p>
+                <h3 id="selected-date-title">날짜를 선택해 주세요</h3>
+              </div>
+              <button id="add-task-button" class="button primary" type="button" disabled>+ 숙제 등록</button>
+            </div>
+            <div id="task-list" class="task-list" aria-live="polite"></div>
+          </div>
+        </section>
+
+        <aside class="card ranking-card" aria-labelledby="ranking-title">
+          <div class="card-head">
+            <h2 id="ranking-title" class="card-title">누적 숙제 랭킹</h2>
+            <span aria-hidden="true">🥕</span>
+          </div>
+          <div id="ranking-list" class="compact-list"></div>
+        </aside>
+      </div>
+    </section>
+
+    <section id="panel-records" class="panel" role="tabpanel" aria-labelledby="tab-records" hidden>
+      <div class="card record-card">
+        <div class="record-hero">
+          <div>
+            <p class="eyebrow">NANGPLE ARCHIVE</p>
+            <h2 id="current-season-title">낭플단 기록실</h2>
+            <p>모든 공약은 요청 시 진행하고 있습니다. 당군+(hansu0131)에게 쪽지 또는 댓글로 편하게 말씀해 주세요.</p>
+          </div>
+          <div class="search-box">
+            <label class="sr-only" for="record-search">아이디 또는 닉네임 검색</label>
+            <input id="record-search" class="field-input" type="search" placeholder="아이디 또는 닉네임 검색" autocomplete="off">
+          </div>
+        </div>
+
+        <div id="season-tabs" class="season-bar" role="tablist" aria-label="시즌 선택"></div>
+
+        <div id="record-content" hidden>
+          <div class="record-tools">
+            <div class="tool-group">
+              <button id="new-season-button" class="button primary small" type="button">+ 새 시즌</button>
+              <button id="paste-button" class="button soft small" type="button">엑셀 붙여넣기</button>
+              <button id="add-row-button" class="button small" type="button">+ 빈 줄</button>
+              <span class="paste-hint">표를 복사한 뒤 이 화면에서 Ctrl+V도 가능합니다.</span>
+            </div>
+            <button id="delete-season-button" class="button danger small" type="button">시즌 삭제</button>
+          </div>
+
+          <div class="table-wrap" tabindex="0" aria-label="낭플단 기록 표. 가로로 스크롤할 수 있습니다.">
+            <table class="record-table">
+              <caption class="sr-only">선택한 시즌의 낭플단 기록</caption>
+              <thead>
+                <tr>
+                  <th scope="col" class="cell-id">아이디</th>
+                  <th scope="col" class="cell-nick">닉네임</th>
+                  <th scope="col" class="cell-amount">기여도</th>
+                  <th scope="col" class="cell-promise">공약</th>
+                  <th scope="col" class="cell-reverse">역팬</th>
+                  <th scope="col" class="cell-note">비고</th>
+                  <th scope="col" class="cell-actions">관리</th>
+                </tr>
+              </thead>
+              <tbody id="record-rows"></tbody>
+              <tfoot>
+                <tr>
+                  <td>합계</td>
+                  <td id="sum-count">0명</td>
+                  <td id="sum-amount">0</td>
+                  <td>—</td>
+                  <td id="sum-reverse">0</td>
+                  <td colspan="2"></td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+        </div>
+
+        <div id="record-empty" class="record-empty">
+          <div class="empty-state">
+            <p>아직 등록된 시즌이 없습니다.</p>
+            <button id="empty-new-season-button" class="button primary" type="button">첫 시즌 만들기</button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <dialog id="task-editor" aria-labelledby="task-editor-title">
+    <div class="dialog-head">
+      <div>
+        <h2 id="task-editor-title">숙제 등록</h2>
+        <p id="task-editor-subtitle">새 숙제 정보를 입력해 주세요.</p>
+      </div>
+      <button class="icon-button dialog-close" type="button" aria-label="닫기">×</button>
+    </div>
+    <form id="task-form" class="dialog-body">
+      <div class="form-grid">
+        <div class="field full">
+          <label for="task-date">날짜</label>
+          <input id="task-date" class="field-input" type="date" required>
+        </div>
+        <div class="field">
+          <label for="task-nick">닉네임</label>
+          <input id="task-nick" class="field-input" type="text" maxlength="40" autocomplete="off" required>
+        </div>
+        <div class="field">
+          <label for="task-id">아이디</label>
+          <input id="task-id" class="field-input" type="text" maxlength="80" autocomplete="off" required>
+        </div>
+        <div class="field">
+          <label for="task-amount">총 후원</label>
+          <input id="task-amount" class="field-input" type="text" inputmode="numeric" autocomplete="off" placeholder="0">
+        </div>
+        <div class="field">
+          <label for="task-reverse">역팬</label>
+          <input id="task-reverse" class="field-input" type="text" inputmode="numeric" autocomplete="off" placeholder="자동 계산">
+        </div>
+        <fieldset class="field full">
+          <legend>역팬 자동 계산 비율</legend>
+          <div class="ratio-group">
+            <input class="choice-input" type="radio" name="ratio" id="ratio-3" value="0.03" checked>
+            <label class="choice-label" for="ratio-3">3%</label>
+            <input class="choice-input" type="radio" name="ratio" id="ratio-5" value="0.05">
+            <label class="choice-label" for="ratio-5">5%</label>
+            <input class="choice-input" type="radio" name="ratio" id="ratio-10" value="0.10">
+            <label class="choice-label" for="ratio-10">10%</label>
+          </div>
+          <span class="field-help">후원 금액을 입력하면 선택한 비율로 역팬이 계산됩니다. 직접 수정도 가능합니다.</span>
+        </fieldset>
+        <div class="field full">
+          <label for="task-content">숙제 내용</label>
+          <textarea id="task-content" class="field-textarea" maxlength="500" placeholder="숙제 내용을 입력하세요"></textarea>
+        </div>
+      </div>
+      <div class="dialog-actions">
+        <button class="button ghost dialog-close" type="button">취소</button>
+        <button id="task-submit-button" class="button primary" type="submit">등록하기</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="task-detail" aria-labelledby="detail-title">
+    <div class="dialog-head">
+      <div>
+        <h2 id="detail-title">숙제 상세</h2>
+        <p>상태와 메모는 변경 즉시 저장됩니다.</p>
+      </div>
+      <button class="icon-button dialog-close" type="button" aria-label="닫기">×</button>
+    </div>
+    <div class="dialog-body">
+      <div class="detail-person">
+        <div class="avatar" aria-hidden="true">🐇</div>
+        <div>
+          <h3 id="detail-nick"></h3>
+          <p id="detail-id"></p>
+        </div>
+      </div>
+      <div class="stats">
+        <div class="stat"><span>총 후원</span><strong id="detail-amount">0</strong></div>
+        <div class="stat"><span>역팬</span><strong id="detail-reverse">0</strong></div>
+      </div>
+      <p id="detail-content" class="detail-content"></p>
+      <fieldset class="field">
+        <legend>진행 상태</legend>
+        <div id="detail-status-group" class="status-group">
+          <input class="choice-input status-choice" type="radio" name="detail-status" id="status-todo" value="todo">
+          <label class="choice-label" data-status="todo" for="status-todo">🔴 대기</label>
+          <input class="choice-input status-choice" type="radio" name="detail-status" id="status-bangsel" value="bangsel">
+          <label class="choice-label" data-status="bangsel" for="status-bangsel">🟠 방셀</label>
+          <input class="choice-input status-choice" type="radio" name="detail-status" id="status-note" value="note">
+          <label class="choice-label" data-status="note" for="status-note">🟡 쪽지</label>
+          <input class="choice-input status-choice" type="radio" name="detail-status" id="status-reversefan" value="reversefan">
+          <label class="choice-label" data-status="reversefan" for="status-reversefan">🔵 역팬</label>
+          <input class="choice-input status-choice" type="radio" name="detail-status" id="status-done" value="done">
+          <label class="choice-label" data-status="done" for="status-done">🟢 완료</label>
+        </div>
+      </fieldset>
+      <div class="field" style="margin-top:14px">
+        <label for="detail-memo">메모</label>
+        <textarea id="detail-memo" class="field-textarea" maxlength="1000" placeholder="메모를 입력하세요"></textarea>
+        <span id="memo-state" class="field-help" aria-live="polite"></span>
+      </div>
+      <div class="link-row">
+        <a id="detail-note-link" class="button soft external-link" href="#" target="_blank" rel="noopener noreferrer">💌 쪽지 보내기</a>
+        <a id="detail-soop-link" class="button soft external-link" href="#" target="_blank" rel="noopener noreferrer">📺 SOOP 방송국</a>
+      </div>
+      <div class="dialog-actions">
+        <button id="clone-task-button" class="button" type="button">복제</button>
+        <button id="edit-task-button" class="button" type="button">수정</button>
+        <button id="delete-task-button" class="button danger" type="button">삭제</button>
+        <button id="complete-task-button" class="button primary" type="button">완료 후 삭제</button>
+      </div>
+    </div>
+  </dialog>
+
+  <dialog id="history-dialog" aria-labelledby="history-title">
+    <div class="dialog-head">
+      <div><h2 id="history-title">숙제 기록</h2><p id="history-subtitle"></p></div>
+      <button class="icon-button dialog-close" type="button" aria-label="닫기">×</button>
+    </div>
+    <div class="dialog-body"><div id="history-list" class="history-list"></div></div>
+  </dialog>
+
+  <dialog id="season-dialog" aria-labelledby="season-dialog-title">
+    <div class="dialog-head">
+      <div><h2 id="season-dialog-title">새 시즌 만들기</h2><p>숫자가 포함된 이름도 자연스럽게 정렬됩니다.</p></div>
+      <button class="icon-button dialog-close" type="button" aria-label="닫기">×</button>
+    </div>
+    <form id="season-form" class="dialog-body">
+      <div class="field">
+        <label for="season-name">시즌/회차 이름</label>
+        <input id="season-name" class="field-input" type="text" maxlength="80" placeholder="예: C9 시즌2 · 3회차 낭플단" required>
+        <span class="field-help">Firebase 키에 사용할 수 없는 문자 . # $ / [ ] 는 입력할 수 없습니다.</span>
+      </div>
+      <div class="dialog-actions">
+        <button class="button ghost dialog-close" type="button">취소</button>
+        <button class="button primary" type="submit">시즌 만들기</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="confirm-dialog" aria-labelledby="confirm-title">
+    <div class="dialog-head">
+      <div><h2 id="confirm-title">확인</h2><p id="confirm-description"></p></div>
+    </div>
+    <div class="dialog-body">
+      <p id="confirm-message"></p>
+      <div class="dialog-actions">
+        <button id="confirm-cancel" class="button" type="button">취소</button>
+        <button id="confirm-ok" class="button danger" type="button">확인</button>
+      </div>
+    </div>
+  </dialog>
+
+  <div id="loading-overlay" class="loading-overlay" role="status" aria-live="polite">
+    <div class="loading-card">
+      <div class="loader-mark" aria-hidden="true">🐰</div>
+      <h2 id="loading-title">기록을 불러오고 있어요</h2>
+      <p id="loading-message">Firebase와 안전하게 연결하는 중입니다.</p>
+      <button id="retry-button" class="button primary" type="button" hidden>다시 시도</button>
+    </div>
+  </div>
+  <div id="toast-region" class="toast-region" aria-live="polite" aria-atomic="true"></div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import {
+      getDatabase,
+      onValue,
+      ref,
+      runTransaction,
+      update
+    } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBhduAPQ_9IyEH1rnr9m9qtumgnIF90RII",
+      authDomain: "homework-c9.firebaseapp.com",
+      databaseURL: "https://homework-c9-default-rtdb.firebaseio.com",
+      projectId: "homework-c9",
+      storageBucket: "homework-c9.firebasestorage.app",
+      messagingSenderId: "293416059203",
+      appId: "1:293416059203:web:e962586275e2bd2b356ff6"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    const homeworkRef = ref(db, "homework_data");
+    const seasonRef = ref(db, "season_data");
+    const connectedRef = ref(db, ".info/connected");
+
+    const STATUS = {
+      todo: { label: "대기", icon: "🔴" },
+      bangsel: { label: "방셀", icon: "🟠" },
+      note: { label: "쪽지", icon: "🟡" },
+      reversefan: { label: "역팬", icon: "🔵" },
+      done: { label: "완료", icon: "🟢" }
+    };
+    const WEEKDAYS = ["일", "월", "화", "수", "목", "금", "토"];
+    const collator = new Intl.Collator("ko", { numeric: true, sensitivity: "base" });
+    const state = {
+      homework: {},
+      seasons: {},
+      currentMonth: startOfMonth(new Date()),
+      selectedDate: formatDate(new Date()),
+      selectedTaskIndex: null,
+      selectedTaskSnapshot: null,
+      editorMode: "create",
+      currentSeason: null,
+      recordQuery: "",
+      loaded: { homework: false, seasons: false },
+      writeCount: 0,
+      online: false,
+      seasonDrafts: new Map(),
+      seasonSaveTimer: null,
+      memoTimer: null
+    };
+
+    const $ = (selector, root = document) => root.querySelector(selector);
+    const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
+    const elements = {
+      tabs: $$("[role=tab].tab"),
+      panels: $$("[role=tabpanel].panel"),
+      calendarGrid: $("#calendar-grid"),
+      monthTitle: $("#month-title"),
+      selectedDateTitle: $("#selected-date-title"),
+      addTaskButton: $("#add-task-button"),
+      taskList: $("#task-list"),
+      dateList: $("#date-list"),
+      dateTotal: $("#date-total"),
+      rankingList: $("#ranking-list"),
+      taskEditor: $("#task-editor"),
+      taskDetail: $("#task-detail"),
+      taskForm: $("#task-form"),
+      historyDialog: $("#history-dialog"),
+      seasonDialog: $("#season-dialog"),
+      confirmDialog: $("#confirm-dialog"),
+      seasonTabs: $("#season-tabs"),
+      recordContent: $("#record-content"),
+      recordEmpty: $("#record-empty"),
+      recordRows: $("#record-rows"),
+      recordSearch: $("#record-search"),
+      loadingOverlay: $("#loading-overlay"),
+      toastRegion: $("#toast-region"),
+      syncPill: $("#sync-pill"),
+      syncLabel: $("#sync-label"),
+      lastSync: $("#last-sync")
+    };
+
+    function node(tag, attrs = {}, children = []) {
+      const item = document.createElement(tag);
+      Object.entries(attrs).forEach(([key, value]) => {
+        if (key === "class") item.className = value;
+        else if (key === "text") item.textContent = value;
+        else if (key === "dataset") Object.assign(item.dataset, value);
+        else if (key.startsWith("aria")) item.setAttribute(key.replace(/[A-Z]/g, m => `-${m.toLowerCase()}`), value);
+        else if (key in item) item[key] = value;
+        else item.setAttribute(key, value);
+      });
+      const list = Array.isArray(children) ? children : [children];
+      list.filter(child => child !== null && child !== undefined).forEach(child => {
+        item.append(child instanceof Node ? child : document.createTextNode(String(child)));
+      });
+      return item;
+    }
+
+    function normalizeStatus(value) {
+      if (value === "partial") return "bangsel";
+      return STATUS[value] ? value : "todo";
+    }
+
+    function toList(value) {
+      if (Array.isArray(value)) return value.map(item => item || emptyRecord());
+      if (!value || typeof value !== "object") return [];
+      return Object.keys(value)
+        .sort((a, b) => Number(a) - Number(b))
+        .map(key => value[key] || emptyRecord());
+    }
+
+    function normalizeHomework(value) {
+      if (!value || typeof value !== "object") return {};
+      const output = {};
+      Object.entries(value).forEach(([date, list]) => { output[date] = toList(list); });
+      return output;
+    }
+
+    function normalizeSeasons(value) {
+      if (!value || typeof value !== "object") return {};
+      const output = {};
+      Object.entries(value).forEach(([name, list]) => { output[name] = toList(list); });
+      return output;
+    }
+
+    function emptyRecord() {
+      return { id: "", nick: "", amount: "", promise: "", reverse: "", note: "" };
+    }
+
+    function cloneData(value) {
+      return value == null ? value : JSON.parse(JSON.stringify(value));
+    }
+
+    function digits(value) {
+      return String(value ?? "").replace(/[^0-9]/g, "");
+    }
+
+    function numberValue(value) {
+      const parsed = Number.parseInt(digits(value), 10);
+      return Number.isFinite(parsed) ? parsed : 0;
+    }
+
+    function formatNumber(value) {
+      return numberValue(value).toLocaleString("ko-KR");
+    }
+
+    function startOfMonth(date) {
+      return new Date(date.getFullYear(), date.getMonth(), 1);
+    }
+
+    function formatDate(date) {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const day = String(date.getDate()).padStart(2, "0");
+      return `${year}-${month}-${day}`;
+    }
+
+    function parseLocalDate(key) {
+      const [year, month, day] = String(key).split("-").map(Number);
+      return new Date(year, month - 1, day);
+    }
+
+    function friendlyDate(key, options = {}) {
+      const base = { year: "numeric", month: "long", day: "numeric", weekday: "short", ...options };
+      return new Intl.DateTimeFormat("ko-KR", base).format(parseLocalDate(key));
+    }
+
+    function sortedSeasonNames() {
+      return Object.keys(state.seasons).sort((a, b) => collator.compare(b, a));
+    }
+
+    function setSyncState(kind, label) {
+      elements.syncPill.dataset.state = kind;
+      elements.syncLabel.textContent = label;
+    }
+
+    function markSynced() {
+      const time = new Intl.DateTimeFormat("ko-KR", { hour: "2-digit", minute: "2-digit", second: "2-digit" }).format(new Date());
+      elements.lastSync.textContent = `최근 동기화 ${time}`;
+      if (state.writeCount === 0) setSyncState(state.online ? "online" : "offline", state.online ? "연결됨" : "오프라인");
+    }
+
+    async function performWrite(label, operation, options = {}) {
+      state.writeCount += 1;
+      setSyncState("saving", "저장 중");
+      try {
+        const result = await operation();
+        markSynced();
+        if (!options.quiet) toast(`${label} 저장했습니다.`, "success");
+        return result;
+      } catch (error) {
+        console.error(error);
+        setSyncState("error", "저장 오류");
+        toast(`${label} 저장에 실패했습니다. 연결 상태와 Firebase 규칙을 확인해 주세요.`, "error", 6500);
+        throw error;
+      } finally {
+        state.writeCount = Math.max(0, state.writeCount - 1);
+        if (state.writeCount === 0 && elements.syncPill.dataset.state !== "error") markSynced();
+      }
+    }
+
+    function toast(message, kind = "default", duration = 3300) {
+      const item = node("div", { class: `toast ${kind}`, role: kind === "error" ? "alert" : "status", text: message });
+      elements.toastRegion.append(item);
+      window.setTimeout(() => item.remove(), duration);
+    }
+
+    function openDialog(dialog) {
+      if (!dialog.open) dialog.showModal();
+      document.body.classList.add("is-modal-open");
+    }
+
+    function closeDialog(dialog) {
+      if (dialog.open) dialog.close();
+      if (!$("dialog[open]")) document.body.classList.remove("is-modal-open");
+    }
+
+    let confirmResolver = null;
+    function askConfirm({ title = "확인", description = "", message, confirmText = "확인", danger = true }) {
+      $("#confirm-title").textContent = title;
+      $("#confirm-description").textContent = description;
+      $("#confirm-message").textContent = message;
+      const ok = $("#confirm-ok");
+      ok.textContent = confirmText;
+      ok.className = `button ${danger ? "danger" : "primary"}`;
+      openDialog(elements.confirmDialog);
+      return new Promise(resolve => { confirmResolver = resolve; });
+    }
+
+    function resolveConfirm(value) {
+      if (confirmResolver) confirmResolver(value);
+      confirmResolver = null;
+      closeDialog(elements.confirmDialog);
+    }
+
+    function switchPanel(tab) {
+      elements.tabs.forEach(item => {
+        const selected = item === tab;
+        item.setAttribute("aria-selected", String(selected));
+        item.tabIndex = selected ? 0 : -1;
+      });
+      elements.panels.forEach(panel => { panel.hidden = panel.id !== tab.getAttribute("aria-controls"); });
+      if (tab.id === "tab-records") renderRecords();
+    }
+
+    function setupTabs() {
+      elements.tabs.forEach((tab, index) => {
+        tab.addEventListener("click", () => switchPanel(tab));
+        tab.addEventListener("keydown", event => {
+          if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
+          event.preventDefault();
+          let next = index;
+          if (event.key === "ArrowRight") next = (index + 1) % elements.tabs.length;
+          if (event.key === "ArrowLeft") next = (index - 1 + elements.tabs.length) % elements.tabs.length;
+          if (event.key === "Home") next = 0;
+          if (event.key === "End") next = elements.tabs.length - 1;
+          elements.tabs[next].focus();
+          switchPanel(elements.tabs[next]);
+        });
+      });
+    }
+
+    function renderCalendar() {
+      const month = state.currentMonth;
+      const year = month.getFullYear();
+      const monthIndex = month.getMonth();
+      elements.monthTitle.textContent = `${year}년 ${monthIndex + 1}월`;
+      elements.calendarGrid.replaceChildren();
+      WEEKDAYS.forEach(day => elements.calendarGrid.append(node("div", { class: "weekday", role: "columnheader", text: day })));
+
+      const first = new Date(year, monthIndex, 1);
+      const gridStart = new Date(year, monthIndex, 1 - first.getDay());
+      const todayKey = formatDate(new Date());
+      for (let offset = 0; offset < 42; offset += 1) {
+        const date = new Date(gridStart);
+        date.setDate(gridStart.getDate() + offset);
+        const key = formatDate(date);
+        const tasks = state.homework[key] || [];
+        const outside = date.getMonth() !== monthIndex;
+        const button = node("button", {
+          class: `calendar-day${outside ? " outside" : ""}${key === todayKey ? " today" : ""}${key === state.selectedDate ? " selected" : ""}${tasks.length ? " has-tasks" : ""}`,
+          type: "button",
+          role: "gridcell",
+          ariaLabel: `${friendlyDate(key)}${tasks.length ? `, 숙제 ${tasks.length}건` : ", 숙제 없음"}`,
+          ariaSelected: String(key === state.selectedDate),
+          dataset: { date: key }
+        });
+        button.append(node("span", { class: "day-number", text: date.getDate() }));
+        if (tasks.length) {
+          const dots = node("span", { class: "day-statuses", ariaHidden: "true" });
+          [...new Set(tasks.slice(0, 5).map(task => normalizeStatus(task.status)))].forEach(status => dots.append(node("span", { class: `status-dot ${status}` })));
+          button.append(dots, node("span", { class: "day-badge", text: tasks.length }));
+        }
+        button.addEventListener("click", () => selectDate(key, outside));
+        elements.calendarGrid.append(button);
+      }
+    }
+
+    function selectDate(key, moveMonth = false) {
+      state.selectedDate = key;
+      if (moveMonth) state.currentMonth = startOfMonth(parseLocalDate(key));
+      renderCalendar();
+      renderSelectedTasks();
+    }
+
+    function renderSelectedTasks() {
+      const key = state.selectedDate;
+      elements.addTaskButton.disabled = !key;
+      elements.selectedDateTitle.textContent = key ? friendlyDate(key) : "날짜를 선택해 주세요";
+      elements.taskList.replaceChildren();
+      if (!key) return;
+      const tasks = state.homework[key] || [];
+      if (!tasks.length) {
+        const empty = node("div", { class: "empty-state" }, [
+          node("strong", { text: "등록된 숙제가 없습니다." }),
+          node("div", { class: "subtle", text: "숙제 등록 버튼으로 첫 기록을 추가해 보세요." })
+        ]);
+        empty.style.gridColumn = "1 / -1";
+        elements.taskList.append(empty);
+        return;
+      }
+      tasks.forEach((task, index) => {
+        const status = normalizeStatus(task.status);
+        const button = node("button", {
+          class: "task-chip",
+          type: "button",
+          dataset: { status },
+          ariaLabel: `${task.nick || "이름 없음"}, ${STATUS[status].label}, 숙제 상세 열기`
+        }, [
+          node("strong", { text: `${STATUS[status].icon} ${task.nick || "이름 없음"}` }),
+          node("span", { text: task.content || "숙제 내용 없음" })
+        ]);
+        button.addEventListener("click", () => openTaskDetail(index));
+        elements.taskList.append(button);
+      });
+    }
+
+    function renderDateList() {
+      const dates = Object.keys(state.homework)
+        .filter(key => (state.homework[key] || []).length)
+        .sort((a, b) => b.localeCompare(a));
+      elements.dateTotal.textContent = dates.length;
+      elements.dateList.replaceChildren();
+      if (!dates.length) {
+        elements.dateList.append(node("div", { class: "empty-state", text: "아직 숙제 기록이 없습니다." }));
+        return;
+      }
+      dates.slice(0, 14).forEach(key => {
+        const button = node("button", { class: "compact-button", type: "button", ariaLabel: `${friendlyDate(key)}, 숙제 ${state.homework[key].length}건` }, [
+          node("span", {}, [node("strong", { text: key }), node("small", { text: friendlyDate(key, { weekday: "short" }) })]),
+          node("span", { class: "count-badge", text: `${state.homework[key].length}건` })
+        ]);
+        button.addEventListener("click", () => {
+          state.currentMonth = startOfMonth(parseLocalDate(key));
+          selectDate(key);
+          $(".calendar-card").scrollIntoView({ behavior: "smooth", block: "start" });
+        });
+        elements.dateList.append(button);
+      });
+    }
+
+    function renderRanking() {
+      const counts = new Map();
+      Object.values(state.homework).forEach(tasks => tasks.forEach(task => {
+        const id = String(task.id || "").trim();
+        if (!id) return;
+        const current = counts.get(id) || { id, nick: task.nick || id, count: 0 };
+        current.count += 1;
+        if (task.nick) current.nick = task.nick;
+        counts.set(id, current);
+      }));
+      const ranking = [...counts.values()].sort((a, b) => b.count - a.count || collator.compare(a.nick, b.nick));
+      elements.rankingList.replaceChildren();
+      if (!ranking.length) {
+        elements.rankingList.append(node("div", { class: "empty-state", text: "랭킹 데이터가 없습니다." }));
+        return;
+      }
+      ranking.slice(0, 15).forEach((user, index) => {
+        const rank = index === 0 ? "👑" : index === 1 ? "🥈" : index === 2 ? "🥉" : `${index + 1}`;
+        const button = node("button", { class: "compact-button", type: "button", ariaLabel: `${index + 1}위 ${user.nick}, 숙제 ${user.count}개. 기록 보기` }, [
+          node("span", { class: "rank-number", text: rank }),
+          node("span", { class: "rank-copy" }, [node("strong", { text: user.nick }), node("small", { text: `@${user.id}` })]),
+          node("span", { class: "count-badge", text: `${user.count}개` })
+        ]);
+        button.addEventListener("click", () => openHistory(user));
+        elements.rankingList.append(button);
+      });
+    }
+
+    function renderCalendarArea() {
+      renderCalendar();
+      renderSelectedTasks();
+      renderDateList();
+      renderRanking();
+    }
+
+    function openTaskEditor(mode, task = null) {
+      state.editorMode = mode;
+      const isEdit = mode === "edit";
+      $("#task-editor-title").textContent = isEdit ? "숙제 수정" : mode === "clone" ? "숙제 복제" : "숙제 등록";
+      $("#task-editor-subtitle").textContent = isEdit ? "기존 상태와 메모는 그대로 유지됩니다." : "새 숙제 정보를 입력해 주세요.";
+      $("#task-submit-button").textContent = isEdit ? "수정 저장" : mode === "clone" ? "복제본 등록" : "등록하기";
+      const source = task || {};
+      $("#task-date").value = state.selectedDate || formatDate(new Date());
+      $("#task-nick").value = source.nick || "";
+      $("#task-id").value = source.id || "";
+      $("#task-amount").value = source.amount || "";
+      $("#task-reverse").value = source.reverse || "";
+      $("#task-content").value = source.content || "";
+      const ratio = numberValue(source.amount) ? numberValue(source.reverse) / numberValue(source.amount) : .03;
+      const ratioValue = ratio >= .09 ? "0.10" : ratio >= .04 ? "0.05" : "0.03";
+      const ratioInput = $(`input[name=ratio][value="${ratioValue}"]`);
+      if (ratioInput) ratioInput.checked = true;
+      closeDialog(elements.taskDetail);
+      openDialog(elements.taskEditor);
+      window.setTimeout(() => $("#task-nick").focus(), 0);
+    }
+
+    function autoCalculateReverse() {
+      const amount = numberValue($("#task-amount").value);
+      const selected = $("input[name=ratio]:checked");
+      $("#task-reverse").value = amount ? String(Math.floor(amount * Number(selected?.value || .03))) : "";
+    }
+
+    function taskFromForm() {
+      return {
+        nick: $("#task-nick").value.trim(),
+        id: $("#task-id").value.trim(),
+        amount: digits($("#task-amount").value),
+        reverse: digits($("#task-reverse").value),
+        content: $("#task-content").value.trim(),
+        status: "todo",
+        memo: ""
+      };
+    }
+
+    async function transactDate(dateKey, label, mutator, options = {}) {
+      const target = ref(db, `homework_data/${dateKey}`);
+      return performWrite(label, () => runTransaction(target, current => {
+        const list = toList(current);
+        const next = mutator(list);
+        return next && next.length ? next : null;
+      }, { applyLocally: false }), options);
+    }
+
+    async function saveTaskForm(event) {
+      event.preventDefault();
+      if (!elements.taskForm.reportValidity()) return;
+      const dateKey = $("#task-date").value;
+      const newTask = taskFromForm();
+      if (!dateKey || !newTask.nick || !newTask.id) {
+        toast("날짜, 닉네임, 아이디를 확인해 주세요.", "error");
+        return;
+      }
+      const submit = $("#task-submit-button");
+      submit.disabled = true;
+      try {
+        if (state.editorMode === "edit") {
+          const oldDate = state.selectedDate;
+          const oldIndex = state.selectedTaskIndex;
+          const oldTask = state.selectedTaskSnapshot || {};
+          newTask.status = normalizeStatus(oldTask.status);
+          newTask.memo = oldTask.memo || "";
+          if (dateKey === oldDate) {
+            await transactDate(dateKey, "숙제", list => {
+              if (!list[oldIndex]) throw new Error("수정할 숙제를 찾지 못했습니다.");
+              list[oldIndex] = newTask;
+              return list;
+            });
+          } else {
+            await performWrite("숙제 이동", () => runTransaction(homeworkRef, current => {
+              const root = normalizeHomework(current);
+              const oldList = root[oldDate] || [];
+              if (!oldList[oldIndex]) return;
+              oldList.splice(oldIndex, 1);
+              if (oldList.length) root[oldDate] = oldList;
+              else delete root[oldDate];
+              root[dateKey] = [...(root[dateKey] || []), newTask];
+              return root;
+            }, { applyLocally: false }));
+          }
+        } else {
+          await transactDate(dateKey, state.editorMode === "clone" ? "숙제 복제" : "숙제", list => [...list, newTask]);
+        }
+        state.selectedDate = dateKey;
+        state.currentMonth = startOfMonth(parseLocalDate(dateKey));
+        closeDialog(elements.taskEditor);
+      } finally {
+        submit.disabled = false;
+      }
+    }
+
+    function openTaskDetail(index) {
+      const task = state.homework[state.selectedDate]?.[index];
+      if (!task) return;
+      state.selectedTaskIndex = index;
+      state.selectedTaskSnapshot = cloneData(task);
+      $("#detail-nick").textContent = task.nick || "이름 없음";
+      $("#detail-id").textContent = task.id ? `@${task.id}` : "아이디 없음";
+      $("#detail-amount").textContent = formatNumber(task.amount);
+      $("#detail-reverse").textContent = formatNumber(task.reverse);
+      $("#detail-content").textContent = task.content || "숙제 내용이 없습니다.";
+      $("#detail-memo").value = task.memo || "";
+      $("#memo-state").textContent = "";
+      const status = normalizeStatus(task.status);
+      const radio = $(`input[name=detail-status][value="${status}"]`);
+      if (radio) radio.checked = true;
+      const safeId = encodeURIComponent(String(task.id || "").trim());
+      $("#detail-soop-link").href = safeId ? `https://www.sooplive.com/station/${safeId}` : "#";
+      $("#detail-note-link").href = safeId ? `https://m.sooplive.com/#/note/write2/${safeId}` : "#";
+      $("#detail-soop-link").setAttribute("aria-disabled", String(!safeId));
+      $("#detail-note-link").setAttribute("aria-disabled", String(!safeId));
+      openDialog(elements.taskDetail);
+    }
+
+    async function saveTaskPatch(patch, options = {}) {
+      const dateKey = state.selectedDate;
+      const index = state.selectedTaskIndex;
+      if (!dateKey || index == null) return;
+      await transactDate(dateKey, "숙제 상태", list => {
+        if (!list[index]) throw new Error("저장할 숙제를 찾지 못했습니다.");
+        list[index] = { ...list[index], ...patch };
+        return list;
+      }, options);
+      state.selectedTaskSnapshot = { ...(state.selectedTaskSnapshot || {}), ...patch };
+    }
+
+    async function removeSelectedTask(completed = false) {
+      const task = state.homework[state.selectedDate]?.[state.selectedTaskIndex];
+      if (!task) return;
+      const accepted = await askConfirm({
+        title: completed ? "완료 후 삭제" : "숙제 삭제",
+        description: task.nick || "선택한 숙제",
+        message: completed ? "완료 처리한 뒤 목록에서 삭제할까요? 삭제된 기록은 되돌릴 수 없습니다." : "이 숙제를 삭제할까요? 삭제된 기록은 되돌릴 수 없습니다.",
+        confirmText: completed ? "완료 후 삭제" : "삭제"
+      });
+      if (!accepted) return;
+      const dateKey = state.selectedDate;
+      const index = state.selectedTaskIndex;
+      await transactDate(dateKey, "숙제 삭제", list => {
+        if (!list[index]) throw new Error("삭제할 숙제를 찾지 못했습니다.");
+        list.splice(index, 1);
+        return list;
+      });
+      closeDialog(elements.taskDetail);
+      state.selectedTaskIndex = null;
+      state.selectedTaskSnapshot = null;
+    }
+
+    function openHistory(user) {
+      $("#history-title").textContent = `${user.nick}님의 숙제 기록`;
+      $("#history-subtitle").textContent = `@${user.id} · 총 ${user.count}개`;
+      const list = $("#history-list");
+      list.replaceChildren();
+      const items = [];
+      Object.entries(state.homework).forEach(([date, tasks]) => tasks.forEach(task => {
+        if (String(task.id || "") === user.id) items.push({ date, task });
+      }));
+      items.sort((a, b) => b.date.localeCompare(a.date));
+      items.forEach(({ date, task }) => {
+        const button = node("button", { class: "history-button", type: "button" }, [
+          node("time", { dateTime: date, text: `${date} · ${STATUS[normalizeStatus(task.status)].label}` }),
+          node("span", { text: task.content || "숙제 내용 없음" })
+        ]);
+        button.addEventListener("click", () => {
+          closeDialog(elements.historyDialog);
+          state.currentMonth = startOfMonth(parseLocalDate(date));
+          selectDate(date);
+          switchPanel($("#tab-calendar"));
+          $(".calendar-card").scrollIntoView({ behavior: "smooth", block: "start" });
+        });
+        list.append(button);
+      });
+      if (!items.length) list.append(node("div", { class: "empty-state", text: "기록이 없습니다." }));
+      openDialog(elements.historyDialog);
+    }
+
+    function levelColor(amount) {
+      const value = numberValue(amount);
+      if (value >= 300000) return "var(--lv9)";
+      if (value >= 100000) return "var(--lv8)";
+      if (value >= 50000) return "var(--lv7)";
+      if (value >= 10000) return "var(--lv6)";
+      if (value >= 5000) return "var(--lv5)";
+      if (value >= 3000) return "var(--lv4)";
+      if (value >= 1000) return "var(--lv3)";
+      if (value >= 299) return "var(--lv2)";
+      if (value >= 100) return "var(--lv1)";
+      return "var(--lv0)";
+    }
+
+    function renderSeasonTabs() {
+      const names = sortedSeasonNames();
+      elements.seasonTabs.replaceChildren();
+      if (!names.length) {
+        state.currentSeason = null;
+        elements.recordContent.hidden = true;
+        elements.recordEmpty.hidden = false;
+        return;
+      }
+      if (!state.currentSeason || !state.seasons[state.currentSeason]) state.currentSeason = names[0];
+      names.forEach(name => {
+        const button = node("button", {
+          class: "season-tab",
+          type: "button",
+          role: "tab",
+          ariaSelected: String(name === state.currentSeason),
+          tabIndex: name === state.currentSeason ? 0 : -1,
+          text: name
+        });
+        button.addEventListener("click", () => {
+          flushSeasonDrafts();
+          state.currentSeason = name;
+          state.recordQuery = "";
+          elements.recordSearch.value = "";
+          renderRecords();
+        });
+        elements.seasonTabs.append(button);
+      });
+      elements.recordContent.hidden = false;
+      elements.recordEmpty.hidden = true;
+    }
+
+    function filteredRecords() {
+      const list = state.seasons[state.currentSeason] || [];
+      const query = state.recordQuery.trim().toLocaleLowerCase("ko");
+      return list.map((item, index) => ({ item, index })).filter(({ item }) => {
+        if (!query) return true;
+        return [item.id, item.nick, item.promise, item.note].some(value => String(value || "").toLocaleLowerCase("ko").includes(query));
+      });
+    }
+
+    function recordInput(item, index, field, label) {
+      const input = node("input", {
+        class: "table-input",
+        type: "text",
+        value: item[field] || "",
+        ariaLabel: `${index + 1}행 ${label}`,
+        dataset: { index: String(index), field },
+        inputMode: ["amount", "reverse"].includes(field) ? "numeric" : "text",
+        maxLength: field === "promise" ? 500 : 120,
+        autocomplete: "off"
+      });
+      input.addEventListener("input", onRecordInput);
+      input.addEventListener("blur", () => flushSeasonDrafts());
+      return input;
+    }
+
+    function renderRecordRows() {
+      elements.recordRows.replaceChildren();
+      if (!state.currentSeason) return;
+      const rows = filteredRecords();
+      rows.forEach(({ item, index }) => {
+        const row = node("tr");
+        row.style.setProperty("--row-bg", levelColor(item.amount));
+        row.style.background = "var(--row-bg)";
+        const fields = [
+          ["id", "아이디", "cell-id"],
+          ["nick", "닉네임", "cell-nick"],
+          ["amount", "기여도", "cell-amount"],
+          ["promise", "공약", "cell-promise"],
+          ["reverse", "역팬", "cell-reverse"],
+          ["note", "비고", "cell-note"]
+        ];
+        fields.forEach(([field, label, className]) => row.append(node("td", { class: className }, recordInput(item, index, field, label))));
+        const cloneButton = node("button", { class: "row-action", type: "button", title: "아래에 빈 줄 추가", ariaLabel: `${index + 1}행 아래에 빈 줄 추가`, text: "+" });
+        cloneButton.addEventListener("click", () => addRecordRow(index + 1));
+        const deleteButton = node("button", { class: "row-action", type: "button", title: "행 삭제", ariaLabel: `${index + 1}행 삭제`, text: "🗑" });
+        deleteButton.addEventListener("click", () => deleteRecordRow(index));
+        row.append(node("td", { class: "cell-actions" }, node("div", { class: "row-actions" }, [cloneButton, deleteButton])));
+        elements.recordRows.append(row);
+      });
+      if (!rows.length) {
+        const message = state.recordQuery ? "검색 결과가 없습니다." : "빈 줄을 추가하거나 엑셀 데이터를 붙여넣어 주세요.";
+        const cell = node("td", { colSpan: 7 }, node("div", { class: "empty-state", text: message }));
+        elements.recordRows.append(node("tr", {}, cell));
+      }
+      updateRecordSums();
+    }
+
+    function updateRecordSums() {
+      const list = state.seasons[state.currentSeason] || [];
+      const count = list.filter(item => item.id || item.nick).length;
+      const amount = list.reduce((sum, item) => sum + numberValue(item.amount), 0);
+      const reverse = list.reduce((sum, item) => sum + numberValue(item.reverse), 0);
+      $("#sum-count").textContent = `${count}명`;
+      $("#sum-amount").textContent = amount.toLocaleString("ko-KR");
+      $("#sum-reverse").textContent = reverse.toLocaleString("ko-KR");
+    }
+
+    function renderRecords() {
+      renderSeasonTabs();
+      if (!state.currentSeason) {
+        $("#current-season-title").textContent = "낭플단 기록실";
+        return;
+      }
+      $("#current-season-title").textContent = state.currentSeason;
+      renderRecordRows();
+    }
+
+    function onRecordInput(event) {
+      const input = event.currentTarget;
+      const index = Number(input.dataset.index);
+      const field = input.dataset.field;
+      let value = input.value;
+      if (["amount", "reverse"].includes(field)) {
+        value = digits(value);
+        if (input.value !== value) input.value = value;
+      }
+      const item = state.seasons[state.currentSeason]?.[index];
+      if (!item) return;
+      item[field] = value.trim();
+      state.seasonDrafts.set(`${index}/${field}`, item[field]);
+      if (field === "amount") input.closest("tr").style.setProperty("--row-bg", levelColor(value));
+      updateRecordSums();
+      setSyncState("saving", "입력 중");
+      window.clearTimeout(state.seasonSaveTimer);
+      state.seasonSaveTimer = window.setTimeout(flushSeasonDrafts, 700);
+    }
+
+    async function flushSeasonDrafts() {
+      window.clearTimeout(state.seasonSaveTimer);
+      if (!state.currentSeason || !state.seasonDrafts.size) return;
+      const seasonName = state.currentSeason;
+      const patch = Object.fromEntries(state.seasonDrafts);
+      state.seasonDrafts.clear();
+      try {
+        await performWrite("시즌 기록", () => update(ref(db, `season_data/${seasonName}`), patch), { quiet: true });
+      } catch {
+        Object.entries(patch).forEach(([key, value]) => state.seasonDrafts.set(key, value));
+      }
+    }
+
+    async function transactSeason(name, label, mutator) {
+      await flushSeasonDrafts();
+      return performWrite(label, () => runTransaction(ref(db, `season_data/${name}`), current => {
+        const list = toList(current);
+        const next = mutator(list);
+        return next && next.length ? next : null;
+      }, { applyLocally: false }));
+    }
+
+    async function createSeason(event) {
+      event.preventDefault();
+      const name = $("#season-name").value.trim();
+      if (!name) return;
+      if (/[.#$\/\[\]]/.test(name)) {
+        toast("시즌 이름에 . # $ / [ ] 문자를 사용할 수 없습니다.", "error");
+        return;
+      }
+      if (state.seasons[name]) {
+        toast("같은 이름의 시즌이 이미 있습니다.", "error");
+        return;
+      }
+      const result = await performWrite("새 시즌", () => runTransaction(ref(db, `season_data/${name}`), current => current == null ? [emptyRecord()] : undefined, { applyLocally: false }));
+      if (!result.committed) {
+        toast("같은 이름의 시즌이 이미 생성되었습니다.", "error");
+        return;
+      }
+      state.currentSeason = name;
+      $("#season-name").value = "";
+      closeDialog(elements.seasonDialog);
+    }
+
+    async function deleteCurrentSeason() {
+      const name = state.currentSeason;
+      if (!name) return;
+      const accepted = await askConfirm({ title: "시즌 삭제", description: name, message: "이 시즌과 모든 행을 삭제할까요? 삭제된 데이터는 되돌릴 수 없습니다.", confirmText: "시즌 삭제" });
+      if (!accepted) return;
+      await performWrite("시즌 삭제", () => runTransaction(ref(db, `season_data/${name}`), () => null, { applyLocally: false }));
+      state.currentSeason = null;
+    }
+
+    async function addRecordRow(atIndex = null) {
+      const name = state.currentSeason;
+      if (!name) return;
+      await transactSeason(name, "빈 줄", list => {
+        const index = atIndex == null ? list.length : Math.min(Math.max(atIndex, 0), list.length);
+        list.splice(index, 0, emptyRecord());
+        return list;
+      });
+    }
+
+    async function deleteRecordRow(index) {
+      const list = state.seasons[state.currentSeason] || [];
+      if (list.length <= 1) {
+        toast("최소 한 줄은 유지해 주세요.", "error");
+        return;
+      }
+      const accepted = await askConfirm({ title: "행 삭제", message: `${index + 1}번째 행을 삭제할까요?`, confirmText: "행 삭제" });
+      if (!accepted) return;
+      await transactSeason(state.currentSeason, "행 삭제", current => {
+        current.splice(index, 1);
+        return current;
+      });
+    }
+
+    function parseClipboard(text) {
+      return String(text || "")
+        .trim()
+        .split(/\r?\n/)
+        .map(line => line.split("\t"))
+        .map(columns => ({
+          id: (columns[0] || "").trim(),
+          nick: (columns[1] || "").trim(),
+          amount: digits(columns[2] || ""),
+          promise: (columns[3] || "").trim(),
+          reverse: digits(columns[4] || ""),
+          note: (columns[5] || "").trim()
+        }))
+        .filter(item => Object.values(item).some(Boolean));
+    }
+
+    async function importClipboardText(text) {
+      if (!state.currentSeason) return;
+      const rows = parseClipboard(text);
+      if (!rows.length) {
+        toast("붙여넣을 표 데이터를 찾지 못했습니다.", "error");
+        return;
+      }
+      const accepted = await askConfirm({ title: "엑셀 데이터 붙여넣기", description: `${rows.length}행`, message: "현재 시즌의 마지막 줄 아래에 데이터를 추가할까요?", confirmText: "추가하기", danger: false });
+      if (!accepted) return;
+      await transactSeason(state.currentSeason, "엑셀 데이터", list => [...list, ...rows]);
+    }
+
+    async function readClipboard() {
+      try {
+        if (!navigator.clipboard?.readText) throw new Error("Clipboard API unavailable");
+        const text = await navigator.clipboard.readText();
+        await importClipboardText(text);
+      } catch (error) {
+        console.warn(error);
+        toast("클립보드를 읽을 수 없습니다. 표를 복사한 뒤 이 화면에서 Ctrl+V를 눌러 주세요.", "error", 5200);
+      }
+    }
+
+    function setupEvents() {
+      setupTabs();
+      $("#prev-month").addEventListener("click", () => { state.currentMonth.setMonth(state.currentMonth.getMonth() - 1); renderCalendar(); });
+      $("#next-month").addEventListener("click", () => { state.currentMonth.setMonth(state.currentMonth.getMonth() + 1); renderCalendar(); });
+      $("#today-button").addEventListener("click", () => { state.currentMonth = startOfMonth(new Date()); selectDate(formatDate(new Date())); });
+      elements.addTaskButton.addEventListener("click", () => openTaskEditor("create"));
+      elements.taskForm.addEventListener("submit", saveTaskForm);
+      $("#task-amount").addEventListener("input", autoCalculateReverse);
+      $$('input[name="ratio"]').forEach(input => input.addEventListener("change", autoCalculateReverse));
+      $("#clone-task-button").addEventListener("click", () => openTaskEditor("clone", state.selectedTaskSnapshot));
+      $("#edit-task-button").addEventListener("click", () => openTaskEditor("edit", state.selectedTaskSnapshot));
+      $("#delete-task-button").addEventListener("click", () => removeSelectedTask(false));
+      $("#complete-task-button").addEventListener("click", () => removeSelectedTask(true));
+      $$('input[name="detail-status"]').forEach(input => input.addEventListener("change", async event => {
+        try { await saveTaskPatch({ status: event.target.value }, { quiet: true }); }
+        catch { openTaskDetail(state.selectedTaskIndex); }
+      }));
+      $("#detail-memo").addEventListener("input", () => {
+        $("#memo-state").textContent = "입력 중…";
+        window.clearTimeout(state.memoTimer);
+        state.memoTimer = window.setTimeout(async () => {
+          try {
+            await saveTaskPatch({ memo: $("#detail-memo").value }, { quiet: true });
+            $("#memo-state").textContent = "저장됨";
+          } catch { $("#memo-state").textContent = "저장 실패"; }
+        }, 700);
+      });
+      $("#detail-memo").addEventListener("blur", async () => {
+        window.clearTimeout(state.memoTimer);
+        try {
+          await saveTaskPatch({ memo: $("#detail-memo").value }, { quiet: true });
+          $("#memo-state").textContent = "저장됨";
+        } catch { $("#memo-state").textContent = "저장 실패"; }
+      });
+
+      $("#new-season-button").addEventListener("click", () => openDialog(elements.seasonDialog));
+      $("#empty-new-season-button").addEventListener("click", () => openDialog(elements.seasonDialog));
+      $("#season-form").addEventListener("submit", createSeason);
+      $("#delete-season-button").addEventListener("click", deleteCurrentSeason);
+      $("#add-row-button").addEventListener("click", () => addRecordRow());
+      $("#paste-button").addEventListener("click", readClipboard);
+      elements.recordSearch.addEventListener("input", event => { state.recordQuery = event.target.value; renderRecordRows(); });
+      document.addEventListener("paste", event => {
+        if ($("#panel-records").hidden || !state.currentSeason) return;
+        const target = event.target;
+        if (target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement || target.isContentEditable) return;
+        const text = event.clipboardData?.getData("text/plain");
+        if (!text) return;
+        event.preventDefault();
+        importClipboardText(text);
+      });
+
+      elements.calendarGrid.addEventListener("keydown", event => {
+        const current = event.target.closest(".calendar-day");
+        if (!current) return;
+        const buttons = $$(".calendar-day", elements.calendarGrid);
+        const index = buttons.indexOf(current);
+        let next = null;
+        if (event.key === "ArrowRight") next = index + 1;
+        if (event.key === "ArrowLeft") next = index - 1;
+        if (event.key === "ArrowDown") next = index + 7;
+        if (event.key === "ArrowUp") next = index - 7;
+        if (event.key === "Home") next = index - (index % 7);
+        if (event.key === "End") next = index + (6 - index % 7);
+        if (event.key === "PageUp" || event.key === "PageDown") {
+          event.preventDefault();
+          state.currentMonth.setMonth(state.currentMonth.getMonth() + (event.key === "PageUp" ? -1 : 1));
+          renderCalendar();
+          $(".calendar-day:not(.outside)")?.focus();
+          return;
+        }
+        if (next != null && buttons[next]) {
+          event.preventDefault();
+          buttons[next].focus();
+        }
+      });
+
+      $$(".dialog-close").forEach(button => button.addEventListener("click", () => closeDialog(button.closest("dialog"))));
+      $$('dialog').forEach(dialog => {
+        dialog.addEventListener("close", () => { if (!$("dialog[open]")) document.body.classList.remove("is-modal-open"); });
+        dialog.addEventListener("click", event => {
+          const rect = dialog.getBoundingClientRect();
+          const outside = event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom;
+          if (outside && dialog !== elements.confirmDialog) closeDialog(dialog);
+        });
+      });
+      $("#confirm-cancel").addEventListener("click", () => resolveConfirm(false));
+      $("#confirm-ok").addEventListener("click", () => resolveConfirm(true));
+      elements.confirmDialog.addEventListener("cancel", event => { event.preventDefault(); resolveConfirm(false); });
+      $("#retry-button").addEventListener("click", () => location.reload());
+      window.addEventListener("beforeunload", event => {
+        if (!state.seasonDrafts.size) return;
+        event.preventDefault();
+        event.returnValue = "";
+      });
+    }
+
+    function markLoaded(type) {
+      state.loaded[type] = true;
+      if (state.loaded.homework && state.loaded.seasons) {
+        elements.loadingOverlay.hidden = true;
+        markSynced();
+      }
+    }
+
+    function showLoadError(message) {
+      $("#loading-title").textContent = "데이터를 불러오지 못했어요";
+      $("#loading-message").textContent = message;
+      $("#retry-button").hidden = false;
+      setSyncState("error", "연결 오류");
+    }
+
+    function subscribeData() {
+      onValue(homeworkRef, snapshot => {
+        state.homework = normalizeHomework(snapshot.val());
+        renderCalendarArea();
+        markLoaded("homework");
+      }, error => {
+        console.error(error);
+        showLoadError("숙제 데이터를 읽을 수 없습니다. Firebase 연결 또는 읽기 권한을 확인해 주세요.");
+      });
+
+      onValue(seasonRef, snapshot => {
+        state.seasons = normalizeSeasons(snapshot.val());
+        const editingTable = $("#record-rows")?.contains(document.activeElement) && state.seasonDrafts.size;
+        if (!editingTable) renderRecords();
+        markLoaded("seasons");
+      }, error => {
+        console.error(error);
+        showLoadError("시즌 데이터를 읽을 수 없습니다. Firebase 연결 또는 읽기 권한을 확인해 주세요.");
+      });
+
+      onValue(connectedRef, snapshot => {
+        state.online = snapshot.val() === true;
+        if (state.writeCount === 0) setSyncState(state.online ? "online" : "offline", state.online ? "연결됨" : "오프라인");
+      });
+
+      window.setTimeout(() => {
+        if (!state.loaded.homework || !state.loaded.seasons) {
+          $("#loading-message").textContent = "연결이 평소보다 오래 걸리고 있습니다. 잠시 기다리거나 다시 시도해 주세요.";
+          $("#retry-button").hidden = false;
+        }
+      }, 8000);
+    }
+
+    setupEvents();
+    renderCalendarArea();
+    renderRecords();
+    subscribeData();
+  </script>
+</body>
+</html>
