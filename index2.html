@@ -236,6 +236,74 @@
     .tab:active { transform: translateY(1px); }
     .panel[hidden] { display: none; }
 
+    /* 모든 날짜의 미완료 숙제를 검색하고 상태별로 모아보는 화면 */
+    .tablist { flex-shrink: 0; }
+    .tab-count { margin-left: 4px; font-size: 12px; }
+    .pending-card { overflow: hidden; }
+    .pending-toolbar { padding: 18px clamp(16px, 3vw, 28px); }
+    .pending-controls { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 14px; }
+    .pending-sort { display: flex; align-items: center; gap: 8px; }
+    .pending-sort label { flex-shrink: 0; font-size: 13px; font-weight: 800; }
+    .pending-sort select { width: auto; min-width: 160px; font: inherit; }
+    .pending-sort-help { margin: 8px 0 0; color: var(--muted); font-size: 12px; line-height: 1.6; }
+    .pending-search { display: flex; gap: 8px; align-items: center; margin-top: 7px; }
+    .pending-search .field-input { min-width: 0; }
+    .pending-search .button { flex-shrink: 0; }
+    .pending-search-label { font-size: 13px; font-weight: 800; }
+    .pending-filters { display: flex; flex-wrap: wrap; gap: 8px; }
+    .pending-filter[aria-pressed="true"] { border-color: var(--primary); background: var(--primary); color: #fff; }
+    .pending-filter .count-badge { margin-left: 5px; }
+    .pending-summary { margin: 13px 0 0; color: var(--muted); font-size: 13px; }
+    .pending-board {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      align-items: start;
+      gap: 14px;
+      padding: 0 clamp(16px, 3vw, 28px) 24px;
+    }
+    .pending-board.single-status { grid-template-columns: minmax(0, 1fr); }
+    .pending-column { min-width: 0; padding: 13px; border: 1px solid var(--line); border-radius: 18px; background: #fffbfc; }
+    .pending-column[data-status="todo"] { background: #fff1f3; border-color: #f4c5cc; }
+    .pending-column[data-status="bangsel"] { background: #fff5e8; border-color: #f1d4a7; }
+    .pending-column[data-status="note"] { background: #fff9df; border-color: #ebdca1; }
+    .pending-column[data-status="reversefan"] { background: #edf7fd; border-color: #c4e2f3; }
+    .pending-column-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 12px; }
+    .pending-column-head h3 { margin: 0; font-size: 15px; }
+    .pending-items { display: grid; gap: 10px; padding: 0; margin: 0; list-style: none; }
+    .pending-task {
+      width: 100%; min-height: 112px; display: grid; gap: 7px; padding: 13px;
+      border: 1px solid var(--line); border-radius: 13px; background: #fff;
+      text-align: left; cursor: pointer; overflow-wrap: anywhere;
+    }
+    .pending-task:hover { border-color: var(--primary); box-shadow: var(--shadow-sm); }
+    .pending-task time { font-size: 12px; font-weight: 800; color: var(--primary-strong); }
+    .pending-person { display: grid; gap: 2px; }
+    .pending-person strong { font-size: 15px; }
+    .pending-person small { color: var(--muted); }
+    .pending-donation { justify-self: start; padding: 3px 8px; border-radius: 8px; background: var(--primary-soft); color: var(--primary-strong); font-size: 12px; font-weight: 700; }
+    .pending-content { white-space: pre-wrap; font-size: 14px; line-height: 1.6; }
+    .pending-task-hint { color: var(--muted); font-size: 11px; }
+    .pending-board.single-status .pending-items { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
+    .pending-empty { grid-column: 1 / -1; }
+    @media (max-width: 1180px) {
+      .pending-board { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .hero { flex-wrap: wrap; }
+    }
+    @media (max-width: 600px) {
+      .pending-board { grid-template-columns: minmax(0, 1fr); }
+      .pending-board.single-status .pending-items { grid-template-columns: minmax(0, 1fr); }
+    }
+    @media (max-width: 520px) {
+      .tablist { flex-wrap: wrap; }
+      .tablist .tab { flex: 1 1 calc(50% - 5px); white-space: nowrap; font-size: 13px; }
+      #tab-pending { flex-basis: 100%; }
+      .pending-filters { gap: 6px; }
+      .pending-filter { min-height: 44px; }
+      #pending-search, #pending-sort { font-size: 16px; }
+      .pending-sort { width: 100%; }
+      .pending-sort select { flex: 1; min-width: 0; }
+    }
+
     .card {
       border: 1px solid rgba(231, 207, 214, .9);
       border-radius: var(--radius-lg);
@@ -843,11 +911,12 @@
       <div>
         <p class="eyebrow">HOMEWORK DESK</p>
         <h1 id="page-title">숙제와 기록을<br>가볍고 또렷하게.</h1>
-        <p>날짜별 숙제, 누적 랭킹, 시즌별 낭플단 기록을 한 화면에서 안전하게 관리하세요.</p>
+        <p>날짜별 숙제, 누적 랭킹 기록을 한 화면에서 안전하게 관리하세요.</p>
       </div>
       <div class="tablist" role="tablist" aria-label="관리 화면 선택">
         <button id="tab-calendar" class="tab" type="button" role="tab" aria-selected="true" aria-controls="panel-calendar" tabindex="0">📅 숙제 캘린더</button>
         <button id="tab-records" class="tab" type="button" role="tab" aria-selected="false" aria-controls="panel-records" tabindex="-1">🍓 낭플단 기록실</button>
+        <button id="tab-pending" class="tab" type="button" role="tab" aria-selected="false" aria-controls="panel-pending" tabindex="-1">📋 미완료 숙제 <span id="pending-total" class="tab-count">0건</span></button>
       </div>
     </section>
 
@@ -893,6 +962,48 @@
           </div>
           <div id="ranking-list" class="compact-list"></div>
         </aside>
+      </div>
+    </section>
+
+    <section id="panel-pending" class="panel" role="tabpanel" aria-labelledby="tab-pending" hidden>
+      <div class="card pending-card">
+        <div class="record-hero">
+          <div>
+            <p class="eyebrow">PENDING HOMEWORK</p>
+            <h2>미완료 숙제 모아보기</h2>
+            <p id="pending-help">모든 날짜의 미완료 숙제를 모아 보여드려요. ‘완료’는 제외되며, 카드를 누르면 상세창이 열립니다.</p>
+          </div>
+          <div class="search-box">
+            <label class="pending-search-label" for="pending-search">닉네임 또는 아이디 검색</label>
+            <div class="pending-search">
+              <input id="pending-search" class="field-input" type="search" placeholder="닉네임 / 아이디 (일부만 입력 가능)" autocomplete="off" spellcheck="false" aria-describedby="pending-help" aria-controls="pending-board">
+              <button id="pending-clear" class="button small" type="button" aria-label="검색과 상태 필터 초기화">초기화</button>
+            </div>
+          </div>
+        </div>
+        <div class="pending-toolbar">
+          <div class="pending-controls">
+          <div id="pending-filters" class="pending-filters" role="group" aria-label="미완료 숙제 상태 필터">
+            <button class="button pending-filter" type="button" data-status="all" aria-pressed="true" aria-controls="pending-board">전체 <span class="count-badge" data-count="all">0</span></button>
+            <button class="button pending-filter" type="button" data-status="todo" aria-pressed="false" aria-controls="pending-board">🔴 대기 <span class="count-badge" data-count="todo">0</span></button>
+            <button class="button pending-filter" type="button" data-status="bangsel" aria-pressed="false" aria-controls="pending-board">🟠 방셀 <span class="count-badge" data-count="bangsel">0</span></button>
+            <button class="button pending-filter" type="button" data-status="note" aria-pressed="false" aria-controls="pending-board">🟡 쪽지 <span class="count-badge" data-count="note">0</span></button>
+            <button class="button pending-filter" type="button" data-status="reversefan" aria-pressed="false" aria-controls="pending-board">🔵 역팬 <span class="count-badge" data-count="reversefan">0</span></button>
+          </div>
+          <div class="pending-sort">
+            <label for="pending-sort">정렬</label>
+            <select id="pending-sort" class="field-input" aria-describedby="pending-sort-help" aria-controls="pending-board">
+              <option value="newest">최근순</option>
+              <option value="oldest" selected>오래된순</option>
+              <option value="count-asc">별풍선 개수 낮은순</option>
+              <option value="count-desc">별풍선 개수 높은순</option>
+            </select>
+          </div>
+          </div>
+          <p id="pending-sort-help" class="pending-sort-help">각 상태 안에서 정렬합니다. 날짜는 숙제 날짜, 개수는 각 숙제에 등록된 별풍선 후원 개수 기준입니다. 후원 미입력은 0개로 표시합니다.</p>
+          <p id="pending-summary" class="pending-summary" role="status" aria-live="polite" aria-atomic="true"></p>
+        </div>
+        <div id="pending-board" class="pending-board" aria-label="상태별 미완료 숙제 목록"></div>
       </div>
     </section>
 
@@ -1026,7 +1137,7 @@
     </div>
     <div class="dialog-body">
       <div class="detail-person">
-        <div class="avatar" aria-hidden="true">🐇</div>
+        <div class="avatar" aria-hidden="true">🐰</div>
         <div>
           <h3 id="detail-nick"></h3>
           <p id="detail-id"></p>
@@ -1153,6 +1264,8 @@
       done: { label: "완료", icon: "🟢" }
     };
     const WEEKDAYS = ["일", "월", "화", "수", "목", "금", "토"];
+    const PENDING_STATUSES = ["todo", "bangsel", "note", "reversefan"];
+    const PENDING_SORTS = { newest: "최근순", oldest: "오래된순", "count-asc": "별풍선 개수 낮은순", "count-desc": "별풍선 개수 높은순" };
     const collator = new Intl.Collator("ko", { numeric: true, sensitivity: "base" });
     const state = {
       homework: {},
@@ -1164,6 +1277,9 @@
       editorMode: "create",
       currentSeason: null,
       recordQuery: "",
+      pendingQuery: "",
+      pendingStatus: "all",
+      pendingSort: "oldest",
       loaded: { homework: false, seasons: false },
       writeCount: 0,
       online: false,
@@ -1182,6 +1298,12 @@
       selectedDateTitle: $("#selected-date-title"),
       addTaskButton: $("#add-task-button"),
       taskList: $("#task-list"),
+      pendingSearch: $("#pending-search"),
+      pendingSort: $("#pending-sort"),
+      pendingBoard: $("#pending-board"),
+      pendingSummary: $("#pending-summary"),
+      pendingTotal: $("#pending-total"),
+      pendingFilters: $$(".pending-filter"),
       dateList: $("#date-list"),
       dateTotal: $("#date-total"),
       rankingList: $("#ranking-list"),
@@ -1222,7 +1344,7 @@
 
     function normalizeStatus(value) {
       if (value === "partial") return "bangsel";
-      return STATUS[value] ? value : "todo";
+      return Object.prototype.hasOwnProperty.call(STATUS, value) ? value : "todo";
     }
 
     function toList(value) {
@@ -1365,6 +1487,97 @@
       });
       elements.panels.forEach(panel => { panel.hidden = panel.id !== tab.getAttribute("aria-controls"); });
       if (tab.id === "tab-records") renderRecords();
+      if (tab.id === "tab-pending") renderPendingTasks();
+    }
+
+    function normalizeSearch(value) {
+      return String(value ?? "").normalize("NFC").trim().toLocaleLowerCase("ko");
+    }
+
+    // 날짜와 원래 행 번호를 유지한 조회용 목록. 저장된 목록을 정렬하거나 변경하지 않습니다.
+    function collectPendingTasks(homework) {
+      const entries = [];
+      Object.entries(homework).forEach(([date, tasks]) => {
+        tasks.forEach((task, index) => {
+          if (!task || typeof task !== "object") return;
+          const status = normalizeStatus(task.status);
+          if (status === "done") return;
+          // 기존 총 후원(amount)을 조회용 숫자로 변환합니다. 사람별로 합산하지 않습니다.
+          entries.push({ date, index, task, status, donationCount: numberValue(task.amount) });
+        });
+      });
+      return entries;
+    }
+
+    function sortPendingTasks(entries, order) {
+      const oldestFirst = (a, b) => a.date.localeCompare(b.date) || a.index - b.index;
+      return [...entries].sort((a, b) => {
+        if (order === "newest") return oldestFirst(b, a);
+        if (order === "count-asc") return a.donationCount - b.donationCount || oldestFirst(a, b);
+        if (order === "count-desc") return b.donationCount - a.donationCount || oldestFirst(a, b);
+        return oldestFirst(a, b);
+      });
+    }
+
+    function renderPendingTasks() {
+      const allPending = collectPendingTasks(state.homework);
+      const search = normalizeSearch(state.pendingQuery);
+      const idSearch = search.startsWith("@") ? search.slice(1) : search;
+      const matches = sortPendingTasks(allPending.filter(({ task }) => !search ||
+        normalizeSearch(task.nick).includes(search) || normalizeSearch(task.id).includes(idSearch)), state.pendingSort);
+      const buckets = Object.fromEntries(PENDING_STATUSES.map(status => [status, []]));
+      matches.forEach(entry => buckets[entry.status].push(entry));
+      elements.pendingTotal.textContent = `${allPending.length}건`;
+      elements.pendingFilters.forEach(button => {
+        const status = button.dataset.status;
+        button.setAttribute("aria-pressed", String(status === state.pendingStatus));
+        $("[data-count]", button).textContent = status === "all" ? matches.length : buckets[status].length;
+      });
+      const visibleStatuses = state.pendingStatus === "all" ? PENDING_STATUSES : [state.pendingStatus];
+      const visibleCount = visibleStatuses.reduce((total, status) => total + buckets[status].length, 0);
+      const filterLabel = state.pendingStatus === "all" ? "전체 상태" : STATUS[state.pendingStatus].label;
+      elements.pendingSummary.textContent = `${state.pendingQuery.trim() ? `“${state.pendingQuery.trim()}” 검색 · ` : ""}${filterLabel} ${visibleCount}건 · 전체 미완료 ${allPending.length}건 · ${PENDING_SORTS[state.pendingSort]}`;
+
+      const fragment = document.createDocumentFragment();
+      if (!allPending.length) {
+        fragment.append(node("div", { class: "empty-state pending-empty", text: "남아 있는 미완료 숙제가 없습니다. 🐰" }));
+      } else if (!visibleCount) {
+        fragment.append(node("div", { class: "empty-state pending-empty", text: "조건에 맞는 미완료 숙제가 없습니다. 검색어나 상태를 바꾸거나 초기화를 눌러 주세요." }));
+      } else {
+        visibleStatuses.forEach(status => {
+          const headingId = `pending-heading-${status}`;
+          const column = node("section", { class: "pending-column", dataset: { status }, ariaLabelledby: headingId });
+          column.append(node("div", { class: "pending-column-head" }, [
+            node("h3", { id: headingId, text: `${STATUS[status].icon} ${STATUS[status].label}` }),
+            node("span", { class: "count-badge", text: `${buckets[status].length}건` })
+          ]));
+          const list = node("ul", { class: "pending-items" });
+          buckets[status].forEach(({ date, index, task, donationCount }) => {
+            const button = node("button", {
+              class: "pending-task", type: "button", dataset: { date, index: String(index) },
+              ariaLabel: `${date}, ${task.nick || "이름 없음"}, ${task.id || "아이디 없음"}, 별풍선 후원 ${formatNumber(donationCount)}개, ${STATUS[status].label}, ${task.content || "내용 없음"}. 상세 보기`
+            }, [
+              node("time", { dateTime: date, text: date }),
+              node("span", { class: "pending-person" }, [
+                node("strong", { text: task.nick || "이름 없음" }),
+                node("small", { text: task.id ? `@${task.id}` : "아이디 없음" })
+              ]),
+              node("span", { class: "pending-donation", text: `별풍선 ${formatNumber(donationCount)}개` }),
+              node("span", { class: "pending-content", text: task.content || "숙제 내용 없음" }),
+              node("span", { class: "pending-task-hint", text: "상세 보기 · 상태 변경" })
+            ]);
+            button.addEventListener("click", () => openTaskDetail(index, date));
+            list.append(node("li", {}, button));
+          });
+          if (!buckets[status].length) {
+            list.append(node("li", { class: "empty-state", text: state.pendingQuery.trim() ? "검색된 숙제 없음" : "남은 숙제 없음" }));
+          }
+          column.append(list);
+          fragment.append(column);
+        });
+      }
+      elements.pendingBoard.classList.toggle("single-status", state.pendingStatus !== "all");
+      elements.pendingBoard.replaceChildren(fragment);
     }
 
     function setupTabs() {
@@ -1516,6 +1729,7 @@
       renderSelectedTasks();
       renderDateList();
       renderRanking();
+      renderPendingTasks();
     }
 
     function openTaskEditor(mode, task = null) {
@@ -1614,9 +1828,13 @@
       }
     }
 
-    function openTaskDetail(index) {
-      const task = state.homework[state.selectedDate]?.[index];
+    function openTaskDetail(index, dateKey = state.selectedDate) {
+      const task = state.homework[dateKey]?.[index];
       if (!task) return;
+      state.selectedDate = dateKey;
+      state.currentMonth = startOfMonth(parseLocalDate(dateKey));
+      renderCalendar();
+      renderSelectedTasks();
       state.selectedTaskIndex = index;
       state.selectedTaskSnapshot = cloneData(task);
       $("#detail-nick").textContent = task.nick || "이름 없음";
@@ -1637,16 +1855,38 @@
       openDialog(elements.taskDetail);
     }
 
-    async function saveTaskPatch(patch, options = {}) {
-      const dateKey = state.selectedDate;
-      const index = state.selectedTaskIndex;
+    function taskContext() {
+      return { dateKey: state.selectedDate, index: state.selectedTaskIndex, snapshot: cloneData(state.selectedTaskSnapshot) };
+    }
+
+    function isCurrentTask(context) {
+      return context.dateKey === state.selectedDate && context.index === state.selectedTaskIndex;
+    }
+
+    function matchesTask(task, snapshot) {
+      if (!task || !snapshot) return false;
+      return ["id", "nick", "amount", "reverse", "content"].every(field => String(task[field] ?? "") === String(snapshot[field] ?? ""));
+    }
+
+    async function saveTaskPatch(patch, options = {}, context = taskContext()) {
+      const { dateKey, index, snapshot } = context;
       if (!dateKey || index == null) return;
       await transactDate(dateKey, "숙제 상태", list => {
-        if (!list[index]) throw new Error("저장할 숙제를 찾지 못했습니다.");
+        if (!matchesTask(list[index], snapshot)) throw new Error("숙제가 변경되었습니다. 목록에서 다시 열어 주세요.");
         list[index] = { ...list[index], ...patch };
         return list;
       }, options);
-      state.selectedTaskSnapshot = { ...(state.selectedTaskSnapshot || {}), ...patch };
+      if (isCurrentTask(context)) state.selectedTaskSnapshot = { ...(state.selectedTaskSnapshot || {}), ...patch };
+    }
+
+    function saveMemo(value, context) {
+      if (value === String(context.snapshot?.memo || "")) return;
+      // 다른 날짜의 카드를 열어도 입력 당시 숙제에만 저장합니다.
+      return saveTaskPatch({ memo: value }, { quiet: true }, context).then(() => {
+        if (isCurrentTask(context)) $("#memo-state").textContent = "저장됨";
+      }).catch(() => {
+        if (isCurrentTask(context)) $("#memo-state").textContent = "저장 실패";
+      });
     }
 
     async function removeSelectedTask(completed = false) {
@@ -1960,6 +2200,32 @@
 
     function setupEvents() {
       setupTabs();
+      elements.pendingSearch.addEventListener("input", event => {
+        state.pendingQuery = event.target.value;
+        renderPendingTasks();
+      });
+      elements.pendingSort.addEventListener("change", event => {
+        const order = event.target.value;
+        if (!Object.prototype.hasOwnProperty.call(PENDING_SORTS, order)) return;
+        state.pendingSort = order;
+        renderPendingTasks();
+      });
+      elements.pendingFilters.forEach(button => button.addEventListener("click", () => {
+        state.pendingStatus = button.dataset.status;
+        renderPendingTasks();
+      }));
+      $("#pending-clear").addEventListener("click", () => {
+        state.pendingQuery = "";
+        state.pendingStatus = "all";
+        elements.pendingSearch.value = "";
+        renderPendingTasks();
+        elements.pendingSearch.focus();
+      });
+      elements.taskDetail.addEventListener("close", () => {
+        if (!$("dialog[open]") && !$("#panel-pending").hidden && document.activeElement === document.body) {
+          elements.pendingSearch.focus();
+        }
+      });
       $("#prev-month").addEventListener("click", () => { state.currentMonth.setMonth(state.currentMonth.getMonth() - 1); renderCalendar(); });
       $("#next-month").addEventListener("click", () => { state.currentMonth.setMonth(state.currentMonth.getMonth() + 1); renderCalendar(); });
       $("#today-button").addEventListener("click", () => { state.currentMonth = startOfMonth(new Date()); selectDate(formatDate(new Date())); });
@@ -1972,25 +2238,25 @@
       $("#delete-task-button").addEventListener("click", () => removeSelectedTask(false));
       $("#complete-task-button").addEventListener("click", () => removeSelectedTask(true));
       $$('input[name="detail-status"]').forEach(input => input.addEventListener("change", async event => {
-        try { await saveTaskPatch({ status: event.target.value }, { quiet: true }); }
-        catch { openTaskDetail(state.selectedTaskIndex); }
+        const context = taskContext();
+        try { await saveTaskPatch({ status: event.target.value }, { quiet: true }, context); }
+        catch {
+          if (isCurrentTask(context)) {
+            const previousStatus = normalizeStatus(context.snapshot?.status);
+            $(`input[name=detail-status][value="${previousStatus}"]`).checked = true;
+          }
+        }
       }));
       $("#detail-memo").addEventListener("input", () => {
         $("#memo-state").textContent = "입력 중…";
         window.clearTimeout(state.memoTimer);
-        state.memoTimer = window.setTimeout(async () => {
-          try {
-            await saveTaskPatch({ memo: $("#detail-memo").value }, { quiet: true });
-            $("#memo-state").textContent = "저장됨";
-          } catch { $("#memo-state").textContent = "저장 실패"; }
-        }, 700);
+        const context = taskContext();
+        const value = $("#detail-memo").value;
+        state.memoTimer = window.setTimeout(() => saveMemo(value, context), 700);
       });
-      $("#detail-memo").addEventListener("blur", async () => {
+      $("#detail-memo").addEventListener("blur", () => {
         window.clearTimeout(state.memoTimer);
-        try {
-          await saveTaskPatch({ memo: $("#detail-memo").value }, { quiet: true });
-          $("#memo-state").textContent = "저장됨";
-        } catch { $("#memo-state").textContent = "저장 실패"; }
+        saveMemo($("#detail-memo").value, taskContext());
       });
 
       $("#new-season-button").addEventListener("click", () => openDialog(elements.seasonDialog));
@@ -2110,4 +2376,3 @@
   </script>
 </body>
 </html>
-
